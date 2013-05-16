@@ -62,6 +62,7 @@
         android:gravity="center">
  
         <!-- Player Buttons -->
+        
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -70,6 +71,13 @@
             android:background="@layout/rounded_corner"
             android:paddingLeft="10dp"
             android:paddingRight="10dp">
+            <!-- Previous Button -->
+            <ImageButton
+                android:id="@+id/btnPrevious"
+                android:src="@drawable/btn_previous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"/>
              <!-- Backward Button -->
             <ImageButton
                 android:id="@+id/btnBackward"
@@ -84,12 +92,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"/>
-            <ImageButton
-                android:id="@+id/btnPause"
-                android:src="@drawable/btn_pause"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@null"/>
             <!-- Forward Button -->
             <ImageButton
                 android:id="@+id/btnForward"
@@ -97,7 +99,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"/>
-            
+             <!-- Next Button -->
+            <ImageButton
+                android:id="@+id/btnNext"
+                android:src="@drawable/btn_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"/>
             
             
         </LinearLayout>

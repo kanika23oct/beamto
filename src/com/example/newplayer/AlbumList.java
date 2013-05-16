@@ -1,0 +1,100 @@
+package com.example.newplayer;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import android.content.res.AssetManager;
+import android.util.Log;
+
+import org.json.*;
+
+public class AlbumList {
+	private static String url = "http://dev.beamto.us/albums.json?page=1";
+	private static final String TAG_ID = "id";
+	private static final String TAG_NAME = "name";
+	private static final String TAG_LABEL_NAME = "label_name";
+	private static final String TAG_ALBUM_IMAGE = "coverart_small";
+
+	private ArrayList<HashMap<String, String>> albumList = new ArrayList<HashMap<String, String>>();
+
+	public ArrayList<HashMap<String, String>> songList() {
+		try {
+			JSONParser jParser = new JSONParser();
+			String jsonString = jParser.readJsonFromUrl(url);
+			JSONArray json = new JSONArray(jsonString);
+			for (int i = 0; i < json.length(); i++) {
+				HashMap<String, String> album = new HashMap<String, String>();
+				JSONObject albumDetails = json.getJSONObject(i);
+				String id = albumDetails.getString(TAG_ID);
+				String name = albumDetails.getString(TAG_NAME);
+				String labelName = albumDetails.getString(TAG_LABEL_NAME);
+				String albumImage = albumDetails.getString(TAG_ALBUM_IMAGE);
+				album.put(TAG_ID, id);
+				album.put(TAG_NAME, name);
+				album.put(TAG_LABEL_NAME, labelName);
+				album.put(TAG_ALBUM_IMAGE, albumImage);
+				albumList.add(album);
+			}
+
+			Log.i("AlbumListActivity", "Size of album list " + albumList.size());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return albumList;
+	}
+
+	public ArrayList<HashMap<String, String>> sampleSongList(InputStream is) {
+		try {
+
+			BufferedReader br = new BufferedReader(new InputStreamReader(is));
+			StringBuffer sb = new StringBuffer();
+			String eachLine = br.readLine();
+			while (eachLine != null) {
+				sb.append(eachLine);
+				eachLine = br.readLine();
+			}
+			String readFile = sb.toString();
+			JSONObject object = new JSONObject(readFile);
+			JSONArray json = object.getJSONArray("data");
+			for (int i = 0; i < json.length(); i++) {
+				HashMap<String, String> album = new HashMap<String, String>();
+				JSONObject albumDetails = json.getJSONObject(i);
+
+				/*String id = songDetails.getString("id");
+				String name = songDetails.getString("title");
+				String artist = songDetails.getString("artist");
+				song.put("id", id);
+				song.put(TAG_NAME, name);
+				song.put(TAG_LABEL_NAME, artist);
+				songsList.add(song);*/
+
+				String id = albumDetails.getString(TAG_ID);
+				String name = albumDetails.getString(TAG_NAME);
+				String labelName = albumDetails.getString(TAG_LABEL_NAME);
+				String albumImage = albumDetails.getString(TAG_ALBUM_IMAGE);
+				album.put(TAG_ID, id);
+				album.put(TAG_NAME, name);
+				album.put(TAG_LABEL_NAME, labelName);
+				album.put(TAG_ALBUM_IMAGE, albumImage);
+				albumList.add(album);
+
+			}
+			Log.v("Play List", "Size of songs list" + albumList.size());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return albumList;
+	}
+
+}

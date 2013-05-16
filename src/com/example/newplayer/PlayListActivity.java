@@ -26,11 +26,11 @@ public class PlayListActivity extends ListActivity {
 
 		ArrayList<HashMap<String, String>> songsListData = new ArrayList<HashMap<String, String>>();
 
-		PlayList plm = new PlayList();
+		AlbumList plm = new AlbumList();
 		AssetManager am = this.getAssets();
 		InputStream is;
 		try {
-			is = am.open("output.json");
+			is = am.open("beamtoNew.json");
 			this.songsList = plm.sampleSongList(is);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -45,7 +45,7 @@ public class PlayListActivity extends ListActivity {
 
 		ListAdapter adapter = new SimpleAdapter(this, songsListData,
 				R.layout.playlist_item, new String[] { "name" },
-				new int[] { R.id.songTitle });
+				new int[] { R.id.albumTitle });
 
 		setListAdapter(adapter);
 		ListView lv = getListView();
@@ -54,13 +54,12 @@ public class PlayListActivity extends ListActivity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				int songIndex = position;
-
+				HashMap<String, String> song = songsList.get(position);
+				int songIndex = Integer.parseInt(song.get("id"));
 				Intent in = new Intent(getApplicationContext(),
-						NewMediaPlayer.class);
-				in.putExtra("songIndex", songIndex);
-				setResult(100, in);
-				finish();
+						SongListActivity.class);
+				in.putExtra("albumIndex", songIndex);
+				startActivityForResult(in, 0);
 			}
 		});
 
