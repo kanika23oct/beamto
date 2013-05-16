@@ -9,16 +9,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.view.Menu;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.view.View;
 
 public class NewMediaPlayer extends Activity implements OnCompletionListener {
-	private MediaPlayer mediaPlayer;
+	private static MediaPlayer mediaPlayer = new MediaPlayer();
 	private ImageButton btnPlay;
 	private ImageButton btnForward;
 	private ImageButton btnBackward;
 	private ImageButton btnPrevious;
 	private ImageButton btnPause;
 	private ImageButton btnPlaylist;
+	private TextView songTitleLabel;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +31,9 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener {
 		btnBackward = (ImageButton) findViewById(R.id.btnBackward);
 		btnPause = (ImageButton) findViewById(R.id.btnBackward);
 		btnPlaylist = (ImageButton) findViewById(R.id.btnPlaylist);
-		mediaPlayer = new MediaPlayer();
+		songTitleLabel = (TextView) findViewById(R.id.songTitle);
+		
+		mediaPlayer.pause();
 		mediaPlayer.setOnCompletionListener(this);
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
@@ -41,6 +45,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener {
 
 			@Override
 			public void onClick(View arg0) {
+				
 				Intent i = new Intent(getApplicationContext(),
 						PlayListActivity.class);
 				startActivityForResult(i, 100);
@@ -75,7 +80,6 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener {
 		
 		try {
 			if (url != null) {
-				mediaPlayer.pause();
 				mediaPlayer.reset();
 				mediaPlayer.setDataSource(url);
 				mediaPlayer.prepare();

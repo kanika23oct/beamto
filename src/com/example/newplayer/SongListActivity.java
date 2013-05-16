@@ -28,6 +28,7 @@ public class SongListActivity extends ListActivity {
 	int albumIndex = 0;
 	StringBuffer url = new StringBuffer("http://dev.beamto.us/albums/");
 	public ArrayList<HashMap<String, String>> songList = new ArrayList<HashMap<String, String>>();
+	HashMap<String, String> song;
 	private static final String TAG_ID = "id";
 	private static final String TAG_NAME = "name";
 	private static final String SOURCE_URL = "source_url";
@@ -53,10 +54,10 @@ public class SongListActivity extends ListActivity {
 						JSONObject songDetails = songs.getJSONObject(i);
 						String id = songDetails.getString(TAG_ID);
 						String name = songDetails.getString(TAG_NAME);
-						String songUrl = songDetails.getString(SOURCE_URL);
+						// String songUrl = songDetails.getString(SOURCE_URL);
 						song.put(TAG_ID, id);
 						song.put(TAG_NAME, name);
-						song.put(SOURCE_URL, songUrl);
+						// song.put(SOURCE_URL, songUrl);
 						songList.add(song);
 						System.out.println("Test");
 					}
@@ -89,15 +90,46 @@ public class SongListActivity extends ListActivity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				HashMap<String, String> song = songList.get(position);
-				String songUrl = song.get(SOURCE_URL);
-				Intent in = new Intent(getApplicationContext(),
-						NewMediaPlayer.class);
-				in.putExtra("songUrl", songUrl);
-				startActivityForResult(in, 0);
+				song = songList.get(position);
+				
+				Thread t = new Thread() {
+					public void run() {
+						
+						JSONParser jParser = new JSONParser();
+						try {
+							String jsonSongURL = "http://dev.beamto.us/songs/"
+									+ song.get(TAG_ID) + ".json";
+							String jsonString = jParser
+									.readJsonFromUrl(jsonSongURL);
+							JSONObject jsonObject = new JSONObject(jsonString);
+						//	JSONObject songs = jsonObject.getString("url")
+						//	JSONObject songDetails = songs.getJSONObject(0);
+							String songUrl = jsonObject.getString("url");
+
+							Intent in = new Intent(getApplicationContext(),
+									NewMediaPlayer.class);
+							in.putExtra("songUrl", songUrl);
+							startActivityForResult(in, 0);
+							finish();
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				};
+				t.start();
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
+
 		});
 	}
 
-	
 }
