@@ -10,14 +10,20 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.ListActivity;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import org.json.JSONArray;
@@ -32,16 +38,19 @@ public class SongListActivity extends ListActivity {
 	private static final String TAG_ID = "id";
 	private static final String TAG_NAME = "name";
 	private static final String SOURCE_URL = "source_url";
-
+	private String albumName = "";
+    Button submitButton;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.songlist);
 		albumIndex = getIntent().getExtras().getInt("albumIndex");
+		albumName = getIntent().getExtras().getString("albumName");
 		url.append(albumIndex + "/songs.json");
+		submitButton = (Button ) findViewById(R.id.button);
+		
 		// new SongList().execute(url.toString());
-
-		Thread t = new Thread() {
+		 Thread t = new Thread() {
 			public void run() {
 				JSONParser jParser = new JSONParser();
 
@@ -72,21 +81,39 @@ public class SongListActivity extends ListActivity {
 		};
 		t.start();
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Log.i("SongListActivity", "Size of songs list" + songList.size());
-		ListAdapter adapter = new SimpleAdapter(this, songList,
-				R.layout.songlist_item, new String[] { "name" },
-				new int[] { R.id.songTitle });
+	String []items = new String[songList.size()];
+	for(int i = 0;i<items.length;i++)
+	{
+		HashMap<String, String> song = songList.get(i);
+		items[i] = song.get(TAG_NAME);
+		
+	}
+	/*ListAdapter adapter = new SimpleAdapter(this, songList,
+			android.R.layout.simple_list_item_multiple_choice, new String[] { "name" },
+				new int[] { R.id.songTitle });*/
 
-		setListAdapter(adapter);
+		setListAdapter(new ArrayAdapter<String>(this,
+				 android.R.layout.simple_list_item_multiple_choice, items));
+	//	setListAdapter(adapter);
 
-		ListView lv = getListView();
-		lv.setOnItemClickListener(new OnItemClickListener() {
+		final ListView lv = getListView();
+		lv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+		submitButton.setOnClickListener(new View.OnClickListener() {
 
+			@Override
+			public void onClick(View arg0) {
+				 SparseBooleanArray checked = lv.getCheckedItemPositions();
+				
+				
+			}
+		});
+	/*	lv.setOnItemClickListener(new OnItemClickListener() {
+		
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
@@ -102,13 +129,13 @@ public class SongListActivity extends ListActivity {
 							String jsonString = jParser
 									.readJsonFromUrl(jsonSongURL);
 							JSONObject jsonObject = new JSONObject(jsonString);
-						//	JSONObject songs = jsonObject.getString("url")
-						//	JSONObject songDetails = songs.getJSONObject(0);
 							String songUrl = jsonObject.getString("url");
 
 							Intent in = new Intent(getApplicationContext(),
 									NewMediaPlayer.class);
 							in.putExtra("songUrl", songUrl);
+							in.putExtra("songName", song.get(TAG_NAME));
+							in.putExtra("albumName", albumName);
 							startActivityForResult(in, 0);
 							finish();
 						} catch (JSONException e) {
@@ -122,14 +149,15 @@ public class SongListActivity extends ListActivity {
 				};
 				t.start();
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(500);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 
-		});
+		});*/
 	}
+	
 
 }

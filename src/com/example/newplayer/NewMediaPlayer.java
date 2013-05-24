@@ -38,6 +38,10 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener {
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
 			String url = getIntent().getExtras().getString("songUrl");
+			String name = getIntent().getExtras().getString("songName");
+			String albumName = getIntent().getExtras().getString("albumName");
+			if(name !=null)
+				songTitleLabel.setText(albumName+" - "+name);
 			playSong(url);
 		}
 
@@ -59,17 +63,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener {
 		return true;
 	}
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		// if (resultCode == 100) {
-		String url = data.getExtras().getString("songUrl");
-		// play selected song
-		playSong(url);
-		// }
-
-	}
-
+	
 	@Override
 	public void onCompletion(android.media.MediaPlayer arg0) {
 		// TODO Auto-generated method stub

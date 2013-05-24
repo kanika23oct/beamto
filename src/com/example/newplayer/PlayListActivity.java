@@ -56,9 +56,11 @@ public class PlayListActivity extends ListActivity {
 					int position, long id) {
 				HashMap<String, String> song = songsList.get(position);
 				int songIndex = Integer.parseInt(song.get("id"));
+				String albumName = (song.get("name"));
 				Intent in = new Intent(getApplicationContext(),
 						SongListActivity.class);
 				in.putExtra("albumIndex", songIndex);
+				in.putExtra("albumName", albumName);
 				startActivityForResult(in, 0);
 			}
 		});
