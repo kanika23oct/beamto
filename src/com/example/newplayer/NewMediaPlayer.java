@@ -1,6 +1,8 @@
 package com.example.newplayer;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer;
@@ -37,9 +39,11 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener {
 		mediaPlayer.setOnCompletionListener(this);
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
-			String url = getIntent().getExtras().getString("songUrl");
-			String name = getIntent().getExtras().getString("songName");
-			String albumName = getIntent().getExtras().getString("albumName");
+			ArrayList<HashMap<String, String>> selectedSongs =  (ArrayList<HashMap<String, String>>)getIntent().getSerializableExtra("SelectedSongList");
+			 HashMap<String, String> song = selectedSongs .get(0);
+			String url = song.get("songUrl");
+			String name = song.get("songName");
+			String albumName = song.get("albumName");
 			if(name !=null)
 				songTitleLabel.setText(albumName+" - "+name);
 			playSong(url);
