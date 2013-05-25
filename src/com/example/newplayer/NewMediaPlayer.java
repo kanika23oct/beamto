@@ -70,50 +70,55 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener {
 			}
 		});
 
-		btnForward.setOnClickListener(new View.OnClickListener() {
+		btnNext.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
-				if(selectedSongs.size()>1)
-				{
-					currentIndex = currentIndex+1;
-					HashMap<String, String> song = selectedSongs.get(currentIndex);
+				if (selectedSongs.size() > 1) {
+					if (currentIndex == (selectedSongs.size() - 1))
+						currentIndex = 0;
+					else
+						currentIndex = currentIndex + 1;
+					HashMap<String, String> song = selectedSongs
+							.get(currentIndex);
 					url = song.get("songUrl");
 					name = song.get("songName");
 					albumName = song.get("albumName");
 					if (name != null)
 						songTitleLabel.setText(albumName + " - " + name);
 					playSong(url);
-					
-				}
-			}
-		});
-		
-		btnBackward.setOnClickListener(new View.OnClickListener() {
 
-			@Override
-			public void onClick(View arg0) {
-				if(selectedSongs.size()>1)
-				{
-					currentIndex = currentIndex-1;
-					HashMap<String, String> song = selectedSongs.get(currentIndex);
-					url = song.get("songUrl");
-					name = song.get("songName");
-					albumName = song.get("albumName");
-					if (name != null)
-						songTitleLabel.setText(albumName + " - " + name);
-					playSong(url);
-					
 				}
 			}
 		});
-		
+
 		btnPrevious.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
-				if(selectedSongs.size()>1)
-				{
+				if (selectedSongs.size() > 1) {
+					if (currentIndex == 0)
+						currentIndex =selectedSongs.size() - 1;
+					else
+						currentIndex = currentIndex - 1;
+					HashMap<String, String> song = selectedSongs
+							.get(currentIndex);
+					url = song.get("songUrl");
+					name = song.get("songName");
+					albumName = song.get("albumName");
+					if (name != null)
+						songTitleLabel.setText(albumName + " - " + name);
+					playSong(url);
+
+				}
+			}
+		});
+
+		btnBackward.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				if (selectedSongs.size() > 1) {
 					HashMap<String, String> song = selectedSongs.get(0);
 					url = song.get("songUrl");
 					name = song.get("songName");
@@ -121,35 +126,31 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener {
 					if (name != null)
 						songTitleLabel.setText(albumName + " - " + name);
 					playSong(url);
-					
+
 				}
 			}
 		});
-		
-		btnNext.setOnClickListener(new View.OnClickListener() {
+
+		btnForward.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
-				if(selectedSongs.size()>1)
-				{
+				if (selectedSongs.size() > 1) {
 					int size = selectedSongs.size();
-					HashMap<String, String> song = selectedSongs.get(selectedSongs.size() -1);
+					HashMap<String, String> song = selectedSongs
+							.get(selectedSongs.size() - 1);
 					url = song.get("songUrl");
 					name = song.get("songName");
 					albumName = song.get("albumName");
 					if (name != null)
 						songTitleLabel.setText(albumName + " - " + name);
 					playSong(url);
-					
+
 				}
 			}
 		});
 
-	
-
 	}
-	
-	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
