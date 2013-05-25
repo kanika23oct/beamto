@@ -23,6 +23,12 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener {
 	private ImageButton btnPause;
 	private ImageButton btnPlaylist;
 	private TextView songTitleLabel;
+	private ImageButton btnNext;
+	ArrayList<HashMap<String, String>> selectedSongs;
+	String name;
+	String url;
+	String albumName;
+	int currentIndex;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,18 +40,22 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener {
 		btnPause = (ImageButton) findViewById(R.id.btnBackward);
 		btnPlaylist = (ImageButton) findViewById(R.id.btnPlaylist);
 		songTitleLabel = (TextView) findViewById(R.id.songTitle);
-		
+		btnPrevious = (ImageButton) findViewById(R.id.btnPrevious);
+		btnNext = (ImageButton) findViewById(R.id.btnNext);
+
 		mediaPlayer.pause();
 		mediaPlayer.setOnCompletionListener(this);
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
-			ArrayList<HashMap<String, String>> selectedSongs =  (ArrayList<HashMap<String, String>>)getIntent().getSerializableExtra("SelectedSongList");
-			 HashMap<String, String> song = selectedSongs .get(0);
-			String url = song.get("songUrl");
-			String name = song.get("songName");
-			String albumName = song.get("albumName");
-			if(name !=null)
-				songTitleLabel.setText(albumName+" - "+name);
+			selectedSongs = (ArrayList<HashMap<String, String>>) getIntent()
+					.getSerializableExtra("SelectedSongList");
+			currentIndex = 0;
+			HashMap<String, String> song = selectedSongs.get(0);
+			url = song.get("songUrl");
+			name = song.get("songName");
+			albumName = song.get("albumName");
+			if (name != null)
+				songTitleLabel.setText(albumName + " - " + name);
 			playSong(url);
 		}
 
@@ -53,13 +63,93 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener {
 
 			@Override
 			public void onClick(View arg0) {
-				
+
 				Intent i = new Intent(getApplicationContext(),
 						PlayListActivity.class);
 				startActivityForResult(i, 100);
 			}
 		});
+
+		btnForward.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				if(selectedSongs.size()>1)
+				{
+					currentIndex = currentIndex+1;
+					HashMap<String, String> song = selectedSongs.get(currentIndex);
+					url = song.get("songUrl");
+					name = song.get("songName");
+					albumName = song.get("albumName");
+					if (name != null)
+						songTitleLabel.setText(albumName + " - " + name);
+					playSong(url);
+					
+				}
+			}
+		});
+		
+		btnBackward.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				if(selectedSongs.size()>1)
+				{
+					currentIndex = currentIndex-1;
+					HashMap<String, String> song = selectedSongs.get(currentIndex);
+					url = song.get("songUrl");
+					name = song.get("songName");
+					albumName = song.get("albumName");
+					if (name != null)
+						songTitleLabel.setText(albumName + " - " + name);
+					playSong(url);
+					
+				}
+			}
+		});
+		
+		btnPrevious.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				if(selectedSongs.size()>1)
+				{
+					HashMap<String, String> song = selectedSongs.get(0);
+					url = song.get("songUrl");
+					name = song.get("songName");
+					albumName = song.get("albumName");
+					if (name != null)
+						songTitleLabel.setText(albumName + " - " + name);
+					playSong(url);
+					
+				}
+			}
+		});
+		
+		btnNext.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				if(selectedSongs.size()>1)
+				{
+					int size = selectedSongs.size();
+					HashMap<String, String> song = selectedSongs.get(selectedSongs.size() -1);
+					url = song.get("songUrl");
+					name = song.get("songName");
+					albumName = song.get("albumName");
+					if (name != null)
+						songTitleLabel.setText(albumName + " - " + name);
+					playSong(url);
+					
+				}
+			}
+		});
+
+	
+
 	}
+	
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -67,7 +157,6 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener {
 		return true;
 	}
 
-	
 	@Override
 	public void onCompletion(android.media.MediaPlayer arg0) {
 		// TODO Auto-generated method stub
@@ -75,7 +164,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener {
 	}
 
 	public void playSong(String url) {
-		
+
 		try {
 			if (url != null) {
 				mediaPlayer.reset();
