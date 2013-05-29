@@ -37,7 +37,6 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener {
 		btnPlay = (ImageButton) findViewById(R.id.btnPlay);
 		btnForward = (ImageButton) findViewById(R.id.btnForward);
 		btnBackward = (ImageButton) findViewById(R.id.btnBackward);
-		btnPause = (ImageButton) findViewById(R.id.btnBackward);
 		btnPlaylist = (ImageButton) findViewById(R.id.btnPlaylist);
 		songTitleLabel = (TextView) findViewById(R.id.songTitle);
 		btnPrevious = (ImageButton) findViewById(R.id.btnPrevious);
@@ -98,7 +97,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener {
 			public void onClick(View arg0) {
 				if (selectedSongs.size() > 1) {
 					if (currentIndex == 0)
-						currentIndex =selectedSongs.size() - 1;
+						currentIndex = selectedSongs.size() - 1;
 					else
 						currentIndex = currentIndex - 1;
 					HashMap<String, String> song = selectedSongs
@@ -150,6 +149,25 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener {
 			}
 		});
 
+		btnPlay.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				if(!mediaPlayer.isPlaying())
+				{
+					mediaPlayer.start();
+                      // Changing button image to pause button
+                      btnPlay.setImageResource(R.drawable.btn_pause);
+				}
+				else
+				{
+					mediaPlayer.pause();
+					btnPlay.setImageResource(R.drawable.btn_play);
+				}
+			}
+		});
+		
+		
 	}
 
 	@Override
