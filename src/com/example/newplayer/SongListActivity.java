@@ -173,32 +173,7 @@ public class SongListActivity extends Activity {
 			}
 		});
 
-		/*
-		 * lv.setOnItemClickListener(new OnItemClickListener() {
-		 * 
-		 * @Override public void onItemClick(AdapterView<?> parent, View view,
-		 * int position, long id) { song = songList.get(position);
-		 * 
-		 * Thread t = new Thread() { public void run() {
-		 * 
-		 * JSONParser jParser = new JSONParser(); try { String jsonSongURL =
-		 * "http://dev.beamto.us/songs/" + song.get(TAG_ID) + ".json"; String
-		 * jsonString = jParser .readJsonFromUrl(jsonSongURL); JSONObject
-		 * jsonObject = new JSONObject(jsonString); String songUrl =
-		 * jsonObject.getString("url");
-		 * 
-		 * Intent in = new Intent(getApplicationContext(),
-		 * NewMediaPlayer.class); in.putExtra("songUrl", songUrl);
-		 * in.putExtra("songName", song.get(TAG_NAME)); in.putExtra("albumName",
-		 * albumName); startActivityForResult(in, 0); finish(); } catch
-		 * (JSONException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); } catch (IOException e) { // TODO Auto-generated
-		 * catch block e.printStackTrace(); } } }; t.start(); try {
-		 * Thread.sleep(500); } catch (InterruptedException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); } }
-		 * 
-		 * });
-		 */
+		
 	}
 
 	public void onListItemClick(ListView parent, View v, int position, long id) {
