@@ -16,7 +16,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.view.View;
 
-public class NewMediaPlayer extends Activity implements OnCompletionListener,SeekBar.OnSeekBarChangeListener {
+public class NewMediaPlayer extends Activity implements OnCompletionListener,
+		SeekBar.OnSeekBarChangeListener {
 	private static MediaPlayer mediaPlayer = new MediaPlayer();
 	private ImageButton btnPlay;
 	private ImageButton btnForward;
@@ -30,7 +31,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,See
 	private TextView songCurrentDurationLabel;
 	private TextView songTotalDurationLabel;
 	private Utilities utils;
-	ArrayList<HashMap<String, String>> selectedSongs;
+	public ArrayList<HashMap<String, String>> selectedSongs = new ArrayList<HashMap<String, String>>();
 	// Handler to update UI timer, progress bar etc,.
 	private Handler mHandler = new Handler();;
 	private int seekForwardTime = 5000; // 5000 milliseconds
@@ -55,13 +56,12 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,See
 		songProgressBar = (SeekBar) findViewById(R.id.songProgressBar);
 		songCurrentDurationLabel = (TextView) findViewById(R.id.songCurrentDurationLabel);
 		songTotalDurationLabel = (TextView) findViewById(R.id.songTotalDurationLabel);
-        
-		utils = new Utilities();
 
+		utils = new Utilities();
 
 		mediaPlayer.pause();
 		// Listeners
-        songProgressBar.setOnSeekBarChangeListener(this); // Important
+		songProgressBar.setOnSeekBarChangeListener(this); // Important
 		mediaPlayer.setOnCompletionListener(this);
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
@@ -172,21 +172,17 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,See
 
 			@Override
 			public void onClick(View arg0) {
-				if(!mediaPlayer.isPlaying())
-				{
+				if (!mediaPlayer.isPlaying()) {
 					mediaPlayer.start();
-                      // Changing button image to pause button
-                      btnPlay.setImageResource(R.drawable.btn_pause);
-				}
-				else
-				{
+					// Changing button image to pause button
+					btnPlay.setImageResource(R.drawable.btn_pause);
+				} else {
 					mediaPlayer.pause();
 					btnPlay.setImageResource(R.drawable.btn_play);
 				}
 			}
 		});
-		
-		
+
 	}
 
 	@Override
@@ -194,7 +190,6 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,See
 		getMenuInflater().inflate(R.menu.media_player, menu);
 		return true;
 	}
-
 
 	public void playSong(String url) {
 
@@ -210,9 +205,9 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,See
 				// set Progress bar values
 				songProgressBar.setProgress(0);
 				songProgressBar.setMax(100);
-				
+
 				// Updating progress bar
-				updateProgressBar();		
+				updateProgressBar();
 			}
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
@@ -228,42 +223,47 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,See
 			e.printStackTrace();
 		}
 	}
+
 	/**
 	 * Update timer on seekbar
 	 * */
 	public void updateProgressBar() {
-        mHandler.postDelayed(mUpdateTimeTask, 100);        
-    }	
-	
+		mHandler.postDelayed(mUpdateTimeTask, 100);
+	}
+
 	/**
 	 * Background Runnable thread
 	 * */
 	private Runnable mUpdateTimeTask = new Runnable() {
-		   public void run() {
-			   long totalDuration = mediaPlayer.getDuration();
-			   long currentDuration = mediaPlayer.getCurrentPosition();
-			  
-			   // Displaying Total Duration time
-			   songTotalDurationLabel.setText(""+utils.milliSecondsToTimer(totalDuration));
-			   // Displaying time completed playing
-			   songCurrentDurationLabel.setText(""+utils.milliSecondsToTimer(currentDuration));
-			   
-			   // Updating progress bar
-			   int progress = (int)(utils.getProgressPercentage(currentDuration, totalDuration));
-			   //Log.d("Progress", ""+progress);
-			   songProgressBar.setProgress(progress);
-			   
-			   // Running this thread after 100 milliseconds
-		       mHandler.postDelayed(this, 100);
-		   }
-		};
-		
+		public void run() {
+			long totalDuration = mediaPlayer.getDuration();
+			long currentDuration = mediaPlayer.getCurrentPosition();
+
+			// Displaying Total Duration time
+			songTotalDurationLabel.setText(""
+					+ utils.milliSecondsToTimer(totalDuration));
+			// Displaying time completed playing
+			songCurrentDurationLabel.setText(""
+					+ utils.milliSecondsToTimer(currentDuration));
+
+			// Updating progress bar
+			int progress = (int) (utils.getProgressPercentage(currentDuration,
+					totalDuration));
+			// Log.d("Progress", ""+progress);
+			songProgressBar.setProgress(progress);
+
+			// Running this thread after 100 milliseconds
+			mHandler.postDelayed(this, 100);
+		}
+	};
+
 	/**
 	 * 
 	 * */
 	@Override
-	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
-		
+	public void onProgressChanged(SeekBar seekBar, int progress,
+			boolean fromTouch) {
+
 	}
 
 	/**
@@ -273,31 +273,49 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,See
 	public void onStartTrackingTouch(SeekBar seekBar) {
 		// remove message Handler from updating progress bar
 		mHandler.removeCallbacks(mUpdateTimeTask);
-		
-    }
-	
+
+	}
+
 	/**
 	 * When user stops moving the progress hanlder
 	 * */
 	@Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
+	public void onStopTrackingTouch(SeekBar seekBar) {
 		mHandler.removeCallbacks(mUpdateTimeTask);
 		int totalDuration = mediaPlayer.getDuration();
-		int currentPosition = utils.progressToTimer(seekBar.getProgress(), totalDuration);
-		
+		int currentPosition = utils.progressToTimer(seekBar.getProgress(),
+				totalDuration);
+
 		// forward or backward to certain seconds
 		mediaPlayer.seekTo(currentPosition);
-		
+
 		// update timer progress again
 		updateProgressBar();
-    }
-
-	
+	}
 
 	@Override
 	public void onCompletion(android.media.MediaPlayer arg0) {
-		// TODO Auto-generated method stub
+		HashMap<String, String> song = null;
+		if (selectedSongs.size() >= 1) {
+			if (currentIndex < (selectedSongs.size() - 1)) {
+				currentIndex = currentIndex + 1;
+				song = selectedSongs.get(currentIndex);
+				
+			} else {
+				// play first song
+				song = selectedSongs.get(0);
 
+				currentIndex = 0;
+			}
+			if (song != null) {
+				url = song.get("songUrl");
+				name = song.get("songName");
+				albumName = song.get("albumName");
+				if (name != null)
+					songTitleLabel.setText(albumName + " - " + name);
+				playSong(url);
+			}
+		}
 	}
 
 }
