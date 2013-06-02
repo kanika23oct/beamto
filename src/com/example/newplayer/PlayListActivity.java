@@ -11,7 +11,11 @@ import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
+import android.widget.TextView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -23,9 +27,11 @@ public class PlayListActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.playlist);
-
 		ArrayList<HashMap<String, String>> songsListData = new ArrayList<HashMap<String, String>>();
-
+		LayoutInflater inflater = getLayoutInflater();
+		View convertView  = inflater.inflate(R.layout.playlist_item, null);
+		ImageButton albumPlayButton = (ImageButton)convertView.findViewById(R.id.btnAlbumPlay);
+		
 		AlbumList plm = new AlbumList();
 		AssetManager am = this.getAssets();
 		InputStream is;
@@ -48,8 +54,10 @@ public class PlayListActivity extends ListActivity {
 				new int[] { R.id.albumTitle });
 
 		setListAdapter(adapter);
+		
+		
 		ListView lv = getListView();
-		lv.setOnItemClickListener(new OnItemClickListener() {
+	    lv.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -65,5 +73,15 @@ public class PlayListActivity extends ListActivity {
 			}
 		});
 
+	    albumPlayButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				
+			}
+		});
+
 	}
+	
+	
 }
