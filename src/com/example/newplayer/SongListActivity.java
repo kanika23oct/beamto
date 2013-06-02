@@ -35,12 +35,13 @@ public class SongListActivity extends Activity {
 	int albumIndex = 0;
 	StringBuffer url = new StringBuffer("http://dev.beamto.us/albums/");
 	public ArrayList<HashMap<String, String>> songList = new ArrayList<HashMap<String, String>>();
-	
+
 	private static final String TAG_ID = "id";
 	private static final String TAG_NAME = "name";
 	private static final String SOURCE_URL = "source_url";
 	private String albumName = "";
 	Button submitButton;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,9 +49,8 @@ public class SongListActivity extends Activity {
 		albumIndex = getIntent().getExtras().getInt("albumIndex");
 		albumName = getIntent().getExtras().getString("albumName");
 		url.append(albumIndex + "/songs.json");
-		submitButton = (Button ) findViewById(R.id.button);
-		
-		 Thread t = new Thread() {
+		submitButton = (Button) findViewById(R.id.button);
+		final Thread thread = new Thread() {
 			public void run() {
 				JSONParser jParser = new JSONParser();
 
@@ -70,6 +70,9 @@ public class SongListActivity extends Activity {
 						songList.add(song);
 						System.out.println("Test");
 					}
+					synchronized (this) {
+						this.notifyAll();
+					}
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -77,136 +80,131 @@ public class SongListActivity extends Activity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+
 			}
+
 		};
-		t.start();
-		try {
-			Thread.sleep(1500);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		synchronized (thread) {
+			thread.start();
+			try {
+				thread.wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
-	String []items = new String[songList.size()];
-	for(int i = 0;i<items.length;i++)
-	{
-		HashMap<String, String> song = songList.get(i);
-		items[i] = song.get(TAG_NAME);
-		
-	}
-	/*ListAdapter adapter = new SimpleAdapter(this, songList,
-			android.R.layout.simple_list_item_multiple_choice, new String[] { "name" },
-				new int[] { R.id.songTitle });*/
-	ArrayAdapter<String> adaptor = new ArrayAdapter<String>(this,
-			 android.R.layout.simple_list_item_multiple_choice, items); 
-	  //	setListAdapter(adapter);
+		String[] items = new String[songList.size()];
+		for (int i = 0; i < items.length; i++) {
+			HashMap<String, String> song = songList.get(i);
+			items[i] = song.get(TAG_NAME);
+
+		}
+		/*
+		 * ListAdapter adapter = new SimpleAdapter(this, songList,
+		 * android.R.layout.simple_list_item_multiple_choice, new String[] {
+		 * "name" }, new int[] { R.id.songTitle });
+		 */
+		ArrayAdapter<String> adaptor = new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_multiple_choice, items);
+
+		// setListAdapter(adapter);
 
 		final ListView lv = (ListView) findViewById(android.R.id.list);
 		lv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 		lv.setAdapter(adaptor);
-		final  ArrayList<HashMap<String, String>> selectedSongList = new ArrayList<HashMap<String, String>>();
+		final ArrayList<HashMap<String, String>> selectedSongList = new ArrayList<HashMap<String, String>>();
 		submitButton.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
-				
-				 SparseBooleanArray checked = lv.getCheckedItemPositions();
-				 for (int i = 0; i < checked.size(); i++) {
-					final int position = checked.keyAt(i); 
+
+				SparseBooleanArray checked = lv.getCheckedItemPositions();
+				for (int i = 0; i < checked.size(); i++) {
+					final int position = checked.keyAt(i);
 					System.out.println("Adding Selected Song");
-					 Thread t = new Thread() {
-							public void run() {
-								 HashMap<String, String> song = new HashMap<String, String>();
-								JSONParser jParser = new JSONParser();
-								try {
-									String jsonSongURL = "http://dev.beamto.us/songs/"
-											+ songList.get(position).get(TAG_ID) + ".json";
-									String jsonString = jParser
-											.readJsonFromUrl(jsonSongURL);
-									JSONObject jsonObject = new JSONObject(jsonString);
-									String songUrl = jsonObject.getString("url");
-									System.out.println(songUrl);
-									song.put("songUrl", songUrl);
-									song.put("songName", songList.get(position).get(TAG_NAME));
-									song.put("albumName", albumName);
-									selectedSongList.add(song);
-									
-								} catch (JSONException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								} catch (IOException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+					Thread t = new Thread() {
+						public void run() {
+							HashMap<String, String> song = new HashMap<String, String>();
+							JSONParser jParser = new JSONParser();
+							try {
+								String jsonSongURL = "http://dev.beamto.us/songs/"
+										+ songList.get(position).get(TAG_ID)
+										+ ".json";
+								String jsonString = jParser
+										.readJsonFromUrl(jsonSongURL);
+								JSONObject jsonObject = new JSONObject(
+										jsonString);
+								String songUrl = jsonObject.getString("url");
+								System.out.println(songUrl);
+								song.put("songUrl", songUrl);
+								song.put("songName", songList.get(position)
+										.get(TAG_NAME));
+								song.put("albumName", albumName);
+								selectedSongList.add(song);
+								synchronized (this) {
+									this.notifyAll();
 								}
+							} catch (JSONException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
 							}
-						};
-						t.start();
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
 						}
-					
-				 }
-				 Intent in = new Intent(getApplicationContext(),
-							NewMediaPlayer.class);
-					in.putExtra("SelectedSongList", selectedSongList);
-					startActivityForResult(in, 0);
-					finish();
+					};
+					t.start();
+					try {
+						synchronized (t) {
+							t.wait();
+						}
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				}
+				Intent in = new Intent(getApplicationContext(),
+						NewMediaPlayer.class);
+				in.putExtra("SelectedSongList", selectedSongList);
+				startActivityForResult(in, 0);
+				finish();
 			}
 		});
-		
-		
-		
-	/*	lv.setOnItemClickListener(new OnItemClickListener() {
-		
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				song = songList.get(position);
-				
-				Thread t = new Thread() {
-					public void run() {
-						
-						JSONParser jParser = new JSONParser();
-						try {
-							String jsonSongURL = "http://dev.beamto.us/songs/"
-									+ song.get(TAG_ID) + ".json";
-							String jsonString = jParser
-									.readJsonFromUrl(jsonSongURL);
-							JSONObject jsonObject = new JSONObject(jsonString);
-							String songUrl = jsonObject.getString("url");
 
-							Intent in = new Intent(getApplicationContext(),
-									NewMediaPlayer.class);
-							in.putExtra("songUrl", songUrl);
-							in.putExtra("songName", song.get(TAG_NAME));
-							in.putExtra("albumName", albumName);
-							startActivityForResult(in, 0);
-							finish();
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				};
-				t.start();
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-
-		});*/
+		/*
+		 * lv.setOnItemClickListener(new OnItemClickListener() {
+		 * 
+		 * @Override public void onItemClick(AdapterView<?> parent, View view,
+		 * int position, long id) { song = songList.get(position);
+		 * 
+		 * Thread t = new Thread() { public void run() {
+		 * 
+		 * JSONParser jParser = new JSONParser(); try { String jsonSongURL =
+		 * "http://dev.beamto.us/songs/" + song.get(TAG_ID) + ".json"; String
+		 * jsonString = jParser .readJsonFromUrl(jsonSongURL); JSONObject
+		 * jsonObject = new JSONObject(jsonString); String songUrl =
+		 * jsonObject.getString("url");
+		 * 
+		 * Intent in = new Intent(getApplicationContext(),
+		 * NewMediaPlayer.class); in.putExtra("songUrl", songUrl);
+		 * in.putExtra("songName", song.get(TAG_NAME)); in.putExtra("albumName",
+		 * albumName); startActivityForResult(in, 0); finish(); } catch
+		 * (JSONException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); } catch (IOException e) { // TODO Auto-generated
+		 * catch block e.printStackTrace(); } } }; t.start(); try {
+		 * Thread.sleep(500); } catch (InterruptedException e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); } }
+		 * 
+		 * });
+		 */
 	}
-	
-	public void onListItemClick(ListView parent, View v, int position, long id){
-        Toast.makeText(this, "You have selected " + songList.get(position).get("songName"), Toast.LENGTH_SHORT).show();
-    }
+
+	public void onListItemClick(ListView parent, View v, int position, long id) {
+		Toast.makeText(this,
+				"You have selected " + songList.get(position).get("songName"),
+				Toast.LENGTH_SHORT).show();
+	}
 
 }
