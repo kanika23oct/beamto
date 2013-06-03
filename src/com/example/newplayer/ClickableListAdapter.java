@@ -60,8 +60,6 @@ public class ClickableListAdapter extends BaseAdapter {
 		else
 			v = inflater.inflate(R.layout.playlist_item, parent, false);
 		
-		View playerView = inflater.inflate(R.layout.player, parent, false);
-		songTitleLabel = (TextView) playerView.findViewById(R.id.songTitle);
 		TextView itemAlbumName = (TextView) v.findViewById(R.id.albumTitle);
 		itemAlbumName.setText(song.get("name"));
 		ImageButton albumPlayButton = (ImageButton) v
@@ -141,7 +139,7 @@ public class ClickableListAdapter extends BaseAdapter {
 							String songName = playingSong.get(TAG_NAME);
 							//albumName = playingSong.get("albumName");
 							 if (songName != null)
-							 songTitleLabel.setText(albumName + " - " +
+							 NewMediaPlayer.songTitleLabel.setText(albumName + " - " +
 							 songName);
 							NewMediaPlayer.playSong(url);
 						}
