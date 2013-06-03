@@ -18,24 +18,24 @@ import android.view.View;
 
 public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		SeekBar.OnSeekBarChangeListener {
-	private static MediaPlayer mediaPlayer = new MediaPlayer();
-	private ImageButton btnPlay;
-	private ImageButton btnForward;
-	private ImageButton btnBackward;
-	private ImageButton btnPrevious;
-	private ImageButton btnPause;
-	private ImageButton btnPlaylist;
-	private TextView songTitleLabel;
-	private ImageButton btnNext;
-	private SeekBar songProgressBar;
-	private TextView songCurrentDurationLabel;
-	private TextView songTotalDurationLabel;
-	private Utilities utils;
-	public ArrayList<HashMap<String, String>> selectedSongs = new ArrayList<HashMap<String, String>>();
+	public static MediaPlayer mediaPlayer = new MediaPlayer();
+	private static ImageButton btnPlay;
+	private static ImageButton btnForward;
+	private static ImageButton btnBackward;
+	private static ImageButton btnPrevious;
+	private static ImageButton btnPause;
+	private static ImageButton btnPlaylist;
+	private static TextView songTitleLabel;
+	private static ImageButton btnNext;
+	private static SeekBar songProgressBar;
+	private static TextView songCurrentDurationLabel;
+	private static TextView songTotalDurationLabel;
+	private static Utilities utils;
+	public static ArrayList<HashMap<String, String>> selectedSongs = new ArrayList<HashMap<String, String>>();
 	// Handler to update UI timer, progress bar etc,.
-	private Handler mHandler = new Handler();;
-	private int seekForwardTime = 5000; // 5000 milliseconds
-	private int seekBackwardTime = 5000; // 5000 milliseconds
+	private static Handler mHandler = new Handler();;
+	private static int seekForwardTime = 5000; // 5000 milliseconds
+	private static int seekBackwardTime = 5000; // 5000 milliseconds
 
 	String name;
 	String url;
@@ -191,7 +191,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		return true;
 	}
 
-	public void playSong(String url) {
+	public static void playSong(String url) {
 
 		try {
 			if (url != null) {
@@ -227,14 +227,14 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	/**
 	 * Update timer on seekbar
 	 * */
-	public void updateProgressBar() {
+	public static void updateProgressBar() {
 		mHandler.postDelayed(mUpdateTimeTask, 100);
 	}
 
 	/**
 	 * Background Runnable thread
 	 * */
-	private Runnable mUpdateTimeTask = new Runnable() {
+	private static Runnable mUpdateTimeTask = new Runnable() {
 		public void run() {
 			long totalDuration = mediaPlayer.getDuration();
 			long currentDuration = mediaPlayer.getCurrentPosition();

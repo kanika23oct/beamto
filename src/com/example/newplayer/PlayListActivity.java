@@ -5,6 +5,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.res.AssetManager;
@@ -23,14 +27,15 @@ import android.widget.SimpleAdapter;
 public class PlayListActivity extends ListActivity {
 	public ArrayList<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();
 
+	
+	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.playlist);
 		ArrayList<HashMap<String, String>> songsListData = new ArrayList<HashMap<String, String>>();
-		LayoutInflater inflater = getLayoutInflater();
-		View convertView  = inflater.inflate(R.layout.playlist_item, null);
-		ImageButton albumPlayButton = (ImageButton)convertView.findViewById(R.id.btnAlbumPlay);
+		
 		
 		AlbumList plm = new AlbumList();
 		AssetManager am = this.getAssets();
@@ -49,15 +54,17 @@ public class PlayListActivity extends ListActivity {
 			songsListData.add(song);
 		}
 
-		ListAdapter adapter = new SimpleAdapter(this, songsListData,
-				R.layout.playlist_item, new String[] { "name" },
-				new int[] { R.id.albumTitle });
-
-		setListAdapter(adapter);
+	//	ListAdapter adapter = new SimpleAdapter(this, songsListData,
+	//			R.layout.playlist_item, new String[] { "name" },
+	//			new int[] { R.id.albumTitle });
+		ClickableListAdapter adapterClickable = new ClickableListAdapter(this, songsList);
+	//	setListAdapter(adapter);
+		
 		
 		
 		ListView lv = getListView();
-	    lv.setOnItemClickListener(new OnItemClickListener() {
+		lv.setAdapter( adapterClickable);
+		lv.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -73,13 +80,7 @@ public class PlayListActivity extends ListActivity {
 			}
 		});
 
-	    albumPlayButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				
-			}
-		});
+	    
 
 	}
 	

@@ -100,11 +100,6 @@ public class SongListActivity extends Activity {
 			items[i] = song.get(TAG_NAME);
 
 		}
-		/*
-		 * ListAdapter adapter = new SimpleAdapter(this, songList,
-		 * android.R.layout.simple_list_item_multiple_choice, new String[] {
-		 * "name" }, new int[] { R.id.songTitle });
-		 */
 		ArrayAdapter<String> adaptor = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_multiple_choice, items);
 
