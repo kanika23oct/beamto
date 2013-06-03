@@ -25,7 +25,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	private static ImageButton btnPrevious;
 	private static ImageButton btnPause;
 	private static ImageButton btnPlaylist;
-	private static TextView songTitleLabel;
+	public static TextView songTitleLabel;
 	private static ImageButton btnNext;
 	private static SeekBar songProgressBar;
 	private static TextView songCurrentDurationLabel;
