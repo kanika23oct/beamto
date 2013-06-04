@@ -30,7 +30,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class SongListActivity extends Activity {
+public class SongListActivity extends ListActivity {
 
 	int albumIndex = 0;
 	StringBuffer url = new StringBuffer("http://dev.beamto.us/albums/");
@@ -94,81 +94,14 @@ public class SongListActivity extends Activity {
 			}
 
 		}
-		String[] items = new String[songList.size()];
-		for (int i = 0; i < items.length; i++) {
-			HashMap<String, String> song = songList.get(i);
-			items[i] = song.get(TAG_NAME);
 
-		}
-		ArrayAdapter<String> adaptor = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_multiple_choice, items);
-
-		// setListAdapter(adapter);
-
-		final ListView lv = (ListView) findViewById(android.R.id.list);
-		lv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-		lv.setAdapter(adaptor);
-		final ArrayList<HashMap<String, String>> selectedSongList = new ArrayList<HashMap<String, String>>();
-		submitButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-
-				SparseBooleanArray checked = lv.getCheckedItemPositions();
-				for (int i = 0; i < checked.size(); i++) {
-					final int position = checked.keyAt(i);
-					System.out.println("Adding Selected Song");
-					Thread t = new Thread() {
-						public void run() {
-							HashMap<String, String> song = new HashMap<String, String>();
-							JSONParser jParser = new JSONParser();
-							try {
-								String jsonSongURL = "http://dev.beamto.us/songs/"
-										+ songList.get(position).get(TAG_ID)
-										+ ".json";
-								String jsonString = jParser
-										.readJsonFromUrl(jsonSongURL);
-								JSONObject jsonObject = new JSONObject(
-										jsonString);
-								String songUrl = jsonObject.getString("url");
-								System.out.println(songUrl);
-								song.put("songUrl", songUrl);
-								song.put("songName", songList.get(position)
-										.get(TAG_NAME));
-								song.put("albumName", albumName);
-								selectedSongList.add(song);
-								synchronized (this) {
-									this.notifyAll();
-								}
-							} catch (JSONException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
-					};
-					t.start();
-					try {
-						synchronized (t) {
-							t.wait();
-						}
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-				}
-				Intent in = new Intent(getApplicationContext(),
-						NewMediaPlayer.class);
-				in.putExtra("SelectedSongList", selectedSongList);
-				startActivityForResult(in, 0);
-				finish();
-			}
-		});
+		SongListAdapter songAdapter = new SongListAdapter(this, songList,
+				albumName);
+		ListView lv = getListView();
+		lv.setAdapter(songAdapter);
 
 		
+
 	}
 
 	public void onListItemClick(ListView parent, View v, int position, long id) {
