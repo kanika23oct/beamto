@@ -33,7 +33,7 @@ import org.json.JSONObject;
 public class SongListActivity extends ListActivity {
 
 	int albumIndex = 0;
-	StringBuffer url = new StringBuffer("http://dev.beamto.us/albums/");
+	StringBuffer url = new StringBuffer();
 	public ArrayList<HashMap<String, String>> songList = new ArrayList<HashMap<String, String>>();
 
 	private static final String TAG_ID = "id";
@@ -48,8 +48,9 @@ public class SongListActivity extends ListActivity {
 		setContentView(R.layout.songlist);
 		albumIndex = getIntent().getExtras().getInt("albumIndex");
 		albumName = getIntent().getExtras().getString("albumName");
+		url = new StringBuffer(getResources().getString(R.string.songsListURL));
 		url.append(albumIndex + "/songs.json");
-		submitButton = (Button) findViewById(R.id.button);
+		
 		final Thread thread = new Thread() {
 			public void run() {
 				JSONParser jParser = new JSONParser();
@@ -104,10 +105,6 @@ public class SongListActivity extends ListActivity {
 
 	}
 
-	public void onListItemClick(ListView parent, View v, int position, long id) {
-		Toast.makeText(this,
-				"You have selected " + songList.get(position).get("songName"),
-				Toast.LENGTH_SHORT).show();
-	}
+	
 
 }

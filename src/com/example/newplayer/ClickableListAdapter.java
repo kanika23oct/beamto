@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,13 +27,16 @@ public class ClickableListAdapter extends BaseAdapter {
 	private static final String TAG_NAME = "name";
 	private static final String SOURCE_URL = "source_url";
 	String albumName = "";
-	StringBuffer albumUrl = new StringBuffer("http://dev.beamto.us/albums/");
+	private static Resources resources;
+	StringBuffer albumUrl;
 
 	public ClickableListAdapter(Context context,
 			ArrayList<HashMap<String, String>> songList) {
 		inflater = LayoutInflater.from(context);
 		this.context = context;
 		this.songsList = songList;
+		resources = context.getResources(); 
+		albumUrl = new StringBuffer(resources.getString(R.string.songsListURL));
 	}
 
 	@Override
@@ -60,6 +64,8 @@ public class ClickableListAdapter extends BaseAdapter {
 		else
 			v = inflater.inflate(R.layout.playlist_item, parent, false);
 		
+		View playerView = inflater.inflate(R.layout.player, parent, false);
+		songTitleLabel = (TextView) playerView.findViewById(R.id.songTitle);
 		TextView itemAlbumName = (TextView) v.findViewById(R.id.albumTitle);
 		itemAlbumName.setText(song.get("name"));
 		ImageButton albumPlayButton = (ImageButton) v
@@ -100,7 +106,8 @@ public class ClickableListAdapter extends BaseAdapter {
 								System.out.println(songUrl);
 								song.put("songUrl", songUrl);
 								song.put(TAG_ID, id);
-								song.put(TAG_NAME, name);
+								song.put("songName", name);
+								song.put("albumName", albumName);
 								// song.put(SOURCE_URL, songUrl);
 								NewMediaPlayer.selectedSongs.add(song);
 								System.out.println("Adding songs");
@@ -127,7 +134,7 @@ public class ClickableListAdapter extends BaseAdapter {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					albumUrl = new StringBuffer("http://dev.beamto.us/albums/");
+					albumUrl = new StringBuffer(resources.getString(R.string.songsListURL));
 
 					if (!NewMediaPlayer.mediaPlayer.isPlaying()) {
 						HashMap<String, String> playingSong = NewMediaPlayer.selectedSongs
@@ -136,7 +143,7 @@ public class ClickableListAdapter extends BaseAdapter {
 						if (playingSong != null) {
 							System.out.println("** Playing the song for album");
 							String url = playingSong.get("songUrl");
-							String songName = playingSong.get(TAG_NAME);
+							String songName = playingSong.get("songName");
 							//albumName = playingSong.get("albumName");
 							 if (songName != null)
 							 NewMediaPlayer.songTitleLabel.setText(albumName + " - " +

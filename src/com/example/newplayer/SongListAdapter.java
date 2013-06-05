@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +22,8 @@ public class SongListAdapter extends BaseAdapter {
 	private LayoutInflater inflater;
 	private static final String TAG_ID = "id";
 	private static final String TAG_NAME = "name";
-	private static final String SOURCE_URL = "source_url";
 	private String albumName;
+	private static Resources resources;
 
 	public SongListAdapter(Context context,
 			ArrayList<HashMap<String, String>> songList, String albumName) {
@@ -30,6 +31,7 @@ public class SongListAdapter extends BaseAdapter {
 		this.context = context;
 		this.songsList = songList;
 		this.albumName = albumName;
+		resources = context.getResources();
 	}
 
 	@Override
@@ -70,7 +72,7 @@ public class SongListAdapter extends BaseAdapter {
 						HashMap<String, String> song = new HashMap<String, String>();
 						JSONParser jParser = new JSONParser();
 						try {
-							String jsonSongURL = "http://dev.beamto.us/songs/"
+							String jsonSongURL = resources.getString(R.string.songURL)
 									+ songs.get(TAG_ID)
 									+ ".json";
 							String jsonString = jParser
