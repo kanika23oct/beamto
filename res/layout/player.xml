@@ -51,6 +51,30 @@
         android:src="@drawable/adele"/>
     </LinearLayout>
 
+     <!-- Repeat / Shuffle buttons -->
+    <LinearLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+        <!-- Repeat Button -->
+        <ImageButton 
+            android:id="@+id/btnRepeat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/btn_repeat"
+            android:layout_marginRight="5dp"
+            android:background="@null"/>
+        
+        <!-- Shuffle Button -->        
+         <ImageButton 
+            android:id="@+id/btnShuffle" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/btn_shuffle"
+            android:layout_marginLeft="5dp"
+            android:background="@null"/>
+    </LinearLayout>
+    
     <!-- Progress Bar/Seek bar -->
 
     <SeekBar
@@ -64,6 +88,9 @@
         android:paddingRight="6dp"
         android:progressDrawable="@drawable/seekbar_progress"
         android:thumb="@drawable/seek_handler" />
+    
+    
+   
     
      <!-- Timer Display -->
     <LinearLayout 
