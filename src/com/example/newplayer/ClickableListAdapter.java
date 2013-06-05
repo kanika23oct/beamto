@@ -93,8 +93,6 @@ public class ClickableListAdapter extends BaseAdapter {
 								JSONObject songDetails = songs.getJSONObject(i);
 								String id = songDetails.getString(TAG_ID);
 								String name = songDetails.getString(TAG_NAME);
-								// String songUrl =
-								// songDetails.getString(SOURCE_URL);
 								String jsonSongURL = "http://dev.beamto.us/songs/"
 										+ id + ".json";
 								String jsonStringSong = jParser
@@ -108,7 +106,6 @@ public class ClickableListAdapter extends BaseAdapter {
 								song.put(TAG_ID, id);
 								song.put("songName", name);
 								song.put("albumName", albumName);
-								// song.put(SOURCE_URL, songUrl);
 								NewMediaPlayer.selectedSongs.add(song);
 								System.out.println("Adding songs");
 							}
@@ -116,10 +113,8 @@ public class ClickableListAdapter extends BaseAdapter {
 								this.notifyAll();
 							}
 						} catch (JSONException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 
@@ -131,7 +126,6 @@ public class ClickableListAdapter extends BaseAdapter {
 					try {
 						startAlbum.wait();
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					albumUrl = new StringBuffer(resources.getString(R.string.songsListURL));
@@ -144,7 +138,6 @@ public class ClickableListAdapter extends BaseAdapter {
 							System.out.println("** Playing the song for album");
 							String url = playingSong.get("songUrl");
 							String songName = playingSong.get("songName");
-							//albumName = playingSong.get("albumName");
 							 if (songName != null)
 							 NewMediaPlayer.songTitleLabel.setText(albumName + " - " +
 							 songName);

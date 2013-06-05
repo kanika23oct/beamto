@@ -44,7 +44,6 @@ public class PlayListActivity extends ListActivity {
 			is = am.open("beamtoNew.json");
 			this.songsList = plm.sampleSongList(is);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -54,11 +53,7 @@ public class PlayListActivity extends ListActivity {
 			songsListData.add(song);
 		}
 
-	//	ListAdapter adapter = new SimpleAdapter(this, songsListData,
-	//			R.layout.playlist_item, new String[] { "name" },
-	//			new int[] { R.id.albumTitle });
 		ClickableListAdapter adapterClickable = new ClickableListAdapter(this, songsList);
-	//	setListAdapter(adapter);
 		
 		
 		
