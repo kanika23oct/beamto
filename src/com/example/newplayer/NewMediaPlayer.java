@@ -3,6 +3,7 @@ package com.example.newplayer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer;
@@ -40,7 +41,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	private static int seekForwardTime = 5000; // 5000 milliseconds
 	private static int seekBackwardTime = 5000; // 5000 milliseconds
 	private boolean isShuffle = false;
-    private boolean isRepeat = false;
+	private boolean isRepeat = false;
 
 	String name;
 	String url;
@@ -189,24 +190,48 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 				}
 			}
 		});
-		
+
 		btnRepeat.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
-				 if(isRepeat){
-	                    isRepeat = false;
-	                    Toast.makeText(getApplicationContext(), "Repeat is OFF", Toast.LENGTH_SHORT).show();
-	                    btnRepeat.setImageResource(R.drawable.btn_repeat);
-	                }else{
-	                    // make repeat to true
-	                    isRepeat = true;
-	                    Toast.makeText(getApplicationContext(), "Repeat is ON", Toast.LENGTH_SHORT).show();
-	                    // make shuffle to false
-	                    isShuffle = false;
-	                    btnRepeat.setImageResource(R.drawable.btn_repeat_focused);
-	                    btnShuffle.setImageResource(R.drawable.btn_shuffle);
-	                }
+				if (isRepeat) {
+					isRepeat = false;
+					Toast.makeText(getApplicationContext(), "Repeat is OFF",
+							Toast.LENGTH_SHORT).show();
+					btnRepeat.setImageResource(R.drawable.btn_repeat);
+				} else {
+					// make repeat to true
+					isRepeat = true;
+					Toast.makeText(getApplicationContext(), "Repeat is ON",
+							Toast.LENGTH_SHORT).show();
+					// make shuffle to false
+					isShuffle = false;
+					btnRepeat.setImageResource(R.drawable.btn_repeat_focused);
+					btnShuffle.setImageResource(R.drawable.btn_shuffle);
+				}
+			}
+		});
+
+		btnShuffle.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				if (isShuffle) {
+					isShuffle = false;
+					Toast.makeText(getApplicationContext(), "Shuffle is OFF",
+							Toast.LENGTH_SHORT).show();
+					btnShuffle.setImageResource(R.drawable.btn_shuffle);
+				} else {
+					// make repeat to true
+					isShuffle = true;
+					Toast.makeText(getApplicationContext(), "Shuffle is ON",
+							Toast.LENGTH_SHORT).show();
+					// make shuffle to false
+					isRepeat = false;
+					btnShuffle.setImageResource(R.drawable.btn_shuffle_focused);
+					btnRepeat.setImageResource(R.drawable.btn_repeat);
+				}
 			}
 		});
 
@@ -323,15 +348,19 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	@Override
 	public void onCompletion(android.media.MediaPlayer arg0) {
 		HashMap<String, String> song = null;
-		
+
 		if (selectedSongs.size() >= 1) {
-			if(isRepeat){
+			if (isRepeat) {
 				song = selectedSongs.get(currentIndex);
-			}
-			else if (currentIndex < (selectedSongs.size() - 1)) {
+			} else if (isShuffle) {
+				// shuffle is on - play a random song
+				Random rand = new Random();
+				currentIndex = rand.nextInt((selectedSongs.size() - 1) - 0 + 1) + 0;
+				song = selectedSongs.get(currentIndex);
+			} else if (currentIndex < (selectedSongs.size() - 1)) {
 				currentIndex = currentIndex + 1;
 				song = selectedSongs.get(currentIndex);
-				
+
 			} else {
 				// play first song
 				song = selectedSongs.get(0);
