@@ -18,7 +18,6 @@ import android.util.Log;
 import org.json.*;
 
 public class AlbumList {
-	private static String url = "http://dev.beamto.us/albums.json?page=1";
 	private static final String TAG_ID = "id";
 	private static final String TAG_NAME = "name";
 	private static final String TAG_LABEL_NAME = "label_name";
@@ -26,14 +25,15 @@ public class AlbumList {
 
 	private ArrayList<HashMap<String, String>> albumList = new ArrayList<HashMap<String, String>>();
 
-	public ArrayList<HashMap<String, String>> songList() {
+	public ArrayList<HashMap<String, String>> songList(String url) {
 		try {
 			JSONParser jParser = new JSONParser();
-			String jsonString = jParser.readJsonFromUrl(url);
-			JSONArray json = new JSONArray(jsonString);
-			for (int i = 0; i < json.length(); i++) {
+			String jsonString = jParser.readJsonFromUrl(url.toString());
+			JSONObject jsonObject = new JSONObject(jsonString);
+			JSONArray songs = jsonObject.getJSONArray("data");
+			for (int i = 0; i < songs.length(); i++) {
 				HashMap<String, String> album = new HashMap<String, String>();
-				JSONObject albumDetails = json.getJSONObject(i);
+				JSONObject albumDetails = songs.getJSONObject(i);
 				String id = albumDetails.getString(TAG_ID);
 				String name = albumDetails.getString(TAG_NAME);
 				String labelName = albumDetails.getString(TAG_LABEL_NAME);
