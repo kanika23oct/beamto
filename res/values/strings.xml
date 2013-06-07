@@ -7,5 +7,6 @@
     <string name="submit">Submit</string>
     <string name="songsListURL">http://dev.beamto.us/albums/</string>
     <string name="songURL">http://dev.beamto.us/songs/</string>
+     <string name="albumsURL">http://10.216.92.183:8000/api/v1/getAlbums.json</string>
 
 </resources>
