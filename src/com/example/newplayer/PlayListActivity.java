@@ -25,7 +25,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 public class PlayListActivity extends ListActivity {
-	public ArrayList<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();
+	public  ArrayList<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();
 
 	
 	
@@ -37,15 +37,35 @@ public class PlayListActivity extends ListActivity {
 		ArrayList<HashMap<String, String>> songsListData = new ArrayList<HashMap<String, String>>();
 		
 		
-		AlbumList plm = new AlbumList();
-		AssetManager am = this.getAssets();
+		final AssetManager am = this.getAssets();
 		InputStream is;
-		try {
-			is = am.open("beamtoNew.json");
-			this.songsList = plm.sampleSongList(is);
-		} catch (IOException e) {
-			e.printStackTrace();
+		final Thread threadAlbums = new Thread() {
+			public void run() {
+			/*	String url = getResources().getString(R.string.albumsURL);
+				songsList = new AlbumList().songList(url);*/
+				
+				try {
+					songsList = new AlbumList().sampleSongList(am.open("beamtoNew.json"));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				synchronized (this) {
+					this.notifyAll();
+				}
+			}
+		};
+		synchronized (threadAlbums) {
+			threadAlbums.start();
+			try {
+				threadAlbums.wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
+	
 
 		for (int i = 0; i < songsList.size(); i++) {
 			HashMap<String, String> song = songsList.get(i);
