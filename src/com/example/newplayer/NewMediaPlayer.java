@@ -1,9 +1,13 @@
 package com.example.newplayer;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+
+import org.json.JSONException;
 
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer;
@@ -11,8 +15,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.Menu;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +28,7 @@ import android.view.View;
 public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		SeekBar.OnSeekBarChangeListener {
 	public static MediaPlayer mediaPlayer = new MediaPlayer();
+	public static ImageView artistImage;
 	private static ImageButton btnPlay;
 	private static ImageButton btnForward;
 	private static ImageButton btnBackward;
@@ -46,8 +54,8 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	String name;
 	String url;
 	String albumName;
-	int currentIndex;
-
+	static int currentIndex;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -64,10 +72,12 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		songTotalDurationLabel = (TextView) findViewById(R.id.songTotalDurationLabel);
 		btnShuffle = (ImageButton) findViewById(R.id.btnShuffle);
 		btnRepeat = (ImageButton) findViewById(R.id.btnRepeat);
+		artistImage = (ImageView) findViewById(R.id.songThumbnail);
 
 		utils = new Utilities();
 
 		mediaPlayer.pause();
+
 		// Listeners
 		songProgressBar.setOnSeekBarChangeListener(this); // Important
 		mediaPlayer.setOnCompletionListener(this);
@@ -101,10 +111,11 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			@Override
 			public void onClick(View arg0) {
 				if (selectedSongs.size() > 1) {
-					if (currentIndex == (selectedSongs.size() - 1))
+					if (currentIndex == (selectedSongs.size() - 1)) {
 						currentIndex = 0;
-					else
+					} else {
 						currentIndex = currentIndex + 1;
+					}
 					HashMap<String, String> song = selectedSongs
 							.get(currentIndex);
 					url = song.get("songUrl");
@@ -145,6 +156,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			@Override
 			public void onClick(View arg0) {
 				if (selectedSongs.size() > 1) {
+					currentIndex = 0;
 					HashMap<String, String> song = selectedSongs.get(0);
 					url = song.get("songUrl");
 					name = song.get("songName");
@@ -162,9 +174,10 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			@Override
 			public void onClick(View arg0) {
 				if (selectedSongs.size() > 1) {
-					int size = selectedSongs.size();
 					HashMap<String, String> song = selectedSongs
 							.get(selectedSongs.size() - 1);
+					currentIndex = selectedSongs.size() - 1;
+
 					url = song.get("songUrl");
 					name = song.get("songName");
 					albumName = song.get("albumName");
@@ -247,11 +260,13 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 
 		try {
 			if (url != null) {
+				HashMap<String, String> song = selectedSongs.get(currentIndex);
+				String imageURL = song.get("coverart_small");
+				AlbumList.LoadImageFromWebOperations(imageURL);
 				mediaPlayer.reset();
 				mediaPlayer.setDataSource(url);
 				mediaPlayer.prepare();
 				mediaPlayer.start();
-
 				// Changing Button Image to pause image
 				btnPlay.setImageResource(R.drawable.btn_pause);
 				// set Progress bar values
@@ -260,6 +275,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 
 				// Updating progress bar
 				updateProgressBar();
+
 			}
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
@@ -348,7 +364,6 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	@Override
 	public void onCompletion(android.media.MediaPlayer arg0) {
 		HashMap<String, String> song = null;
-
 		if (selectedSongs.size() >= 1) {
 			if (isRepeat) {
 				song = selectedSongs.get(currentIndex);

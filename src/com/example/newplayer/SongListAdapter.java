@@ -63,13 +63,13 @@ public class SongListAdapter extends BaseAdapter {
 		ImageButton songPlayButton = (ImageButton) v
 				.findViewById(R.id.btnSongPlay);
 		songPlayButton.setOnClickListener(new View.OnClickListener() {
-
+			final HashMap<String, String> song = new HashMap<String, String>();	
 			@Override
 			public void onClick(View view) {
 				
 				Thread t = new Thread() {
 					public void run() {
-						HashMap<String, String> song = new HashMap<String, String>();
+						
 						JSONParser jParser = new JSONParser();
 						try {
 							String jsonSongURL = resources.getString(R.string.songURL)
@@ -84,7 +84,8 @@ public class SongListAdapter extends BaseAdapter {
 							song.put("songUrl", songUrl);
 							song.put("songName", songs.get(TAG_NAME));
 							song.put("albumName", albumName);
-							NewMediaPlayer.selectedSongs.add(song);
+							song.put("coverart_small", songs.get("AlbumImage"));
+						//	NewMediaPlayer.selectedSongs.add(song);
 							synchronized (this) {
 								this.notifyAll();
 							}
@@ -106,9 +107,9 @@ public class SongListAdapter extends BaseAdapter {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				NewMediaPlayer.selectedSongs.add(song);
 				if (!NewMediaPlayer.mediaPlayer.isPlaying()) {
-					HashMap<String, String> playingSong = NewMediaPlayer.selectedSongs
-							.get(0);
+					HashMap<String, String> playingSong = song;
 					System.out.println("% Adding the song for album");
 					if (playingSong != null) {
 						System.out.println("%% Playing the song for album");

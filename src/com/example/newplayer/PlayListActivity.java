@@ -41,15 +41,15 @@ public class PlayListActivity extends ListActivity {
 		InputStream is;
 		final Thread threadAlbums = new Thread() {
 			public void run() {
-			/*	String url = getResources().getString(R.string.albumsURL);
-				songsList = new AlbumList().songList(url);*/
+				String url = getResources().getString(R.string.albumsURL);
+				songsList = new AlbumList().songList(url);
 				
-				try {
+				/*	try {
 					songsList = new AlbumList().sampleSongList(am.open("beamtoNew.json"));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
+				}*/
 				synchronized (this) {
 					this.notifyAll();
 				}
@@ -67,11 +67,6 @@ public class PlayListActivity extends ListActivity {
 		}
 	
 
-		for (int i = 0; i < songsList.size(); i++) {
-			HashMap<String, String> song = songsList.get(i);
-
-			songsListData.add(song);
-		}
 
 		ClickableListAdapter adapterClickable = new ClickableListAdapter(this, songsList);
 		
@@ -91,6 +86,7 @@ public class PlayListActivity extends ListActivity {
 						SongListActivity.class);
 				in.putExtra("albumIndex", songIndex);
 				in.putExtra("albumName", albumName);
+				in.putExtra("AlbumImage", song.get("coverart_small"));
 				startActivityForResult(in, 0);
 			}
 		});

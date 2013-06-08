@@ -4,8 +4,10 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -13,6 +15,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import org.json.*;
@@ -51,6 +56,44 @@ public class AlbumList {
 			e.printStackTrace();
 		}
 		return albumList;
+	}
+	
+	public static void LoadImageFromWebOperations(String url) {
+		 final String image = url;
+		final Thread startAlbum = new Thread() {
+			public void run() {
+				InputStream in;
+				try {
+				
+					in = new java.net.URL(image).openStream();
+					final Bitmap mIcon11 = BitmapFactory.decodeStream(in);
+					NewMediaPlayer.artistImage.post(new Runnable() {
+			                public void run() {
+			                	NewMediaPlayer.artistImage.setImageBitmap(mIcon11);
+			                }
+		            });
+
+					synchronized (this) {
+						this.notifyAll();
+					}
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		};
+
+		synchronized (startAlbum) {
+			startAlbum.start();
+			try {
+				startAlbum.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public ArrayList<HashMap<String, String>> sampleSongList(InputStream is) {

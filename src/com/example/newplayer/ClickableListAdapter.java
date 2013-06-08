@@ -26,16 +26,18 @@ public class ClickableListAdapter extends BaseAdapter {
 	private static final String TAG_ID = "id";
 	private static final String TAG_NAME = "name";
 	private static final String SOURCE_URL = "source_url";
+	private static final String TAG_ALBUM_IMAGE = "coverart_small";
 	String albumName = "";
 	private static Resources resources;
 	StringBuffer albumUrl;
+	private  String imageURL="";
 
 	public ClickableListAdapter(Context context,
 			ArrayList<HashMap<String, String>> songList) {
 		inflater = LayoutInflater.from(context);
 		this.context = context;
 		this.songsList = songList;
-		resources = context.getResources(); 
+		resources = context.getResources();
 		albumUrl = new StringBuffer(resources.getString(R.string.songsListURL));
 	}
 
@@ -57,6 +59,8 @@ public class ClickableListAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		final HashMap<String, String> song = songsList.get(position);
+		
+		
 		// songTitleLabel = (TextView) playerView .findViewById(R.id.songTitle);
 		View v = null;
 		if (convertView != null)
@@ -78,7 +82,8 @@ public class ClickableListAdapter extends BaseAdapter {
 				int albumIndex = Integer.parseInt(song.get("id"));
 				albumName = (song.get("name"));
 				albumUrl.append(albumIndex + "/songs.json");
-
+				imageURL = song.get(TAG_ALBUM_IMAGE);
+				System.out.println("@@@@@@@@@ "+imageURL);
 				final Thread startAlbum = new Thread() {
 					public void run() {
 						JSONParser jParser = new JSONParser();
@@ -106,6 +111,8 @@ public class ClickableListAdapter extends BaseAdapter {
 								song.put(TAG_ID, id);
 								song.put("songName", name);
 								song.put("albumName", albumName);
+								System.out.println("###### "+ imageURL );
+								song.put(TAG_ALBUM_IMAGE, imageURL);
 								NewMediaPlayer.selectedSongs.add(song);
 								System.out.println("Adding songs");
 							}
@@ -128,6 +135,8 @@ public class ClickableListAdapter extends BaseAdapter {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
+				//	NewMediaPlayer.artistImage.setImageDrawable(AlbumList.LoadImageFromWebOperations("http://s3.amazonaws.com/beamtous-staging-assets/bumpfoot/allel-lost-world-ep-bump183/coverart_small.jpg"));
+					
 					albumUrl = new StringBuffer(resources.getString(R.string.songsListURL));
 
 					if (!NewMediaPlayer.mediaPlayer.isPlaying()) {
@@ -138,9 +147,11 @@ public class ClickableListAdapter extends BaseAdapter {
 							System.out.println("** Playing the song for album");
 							String url = playingSong.get("songUrl");
 							String songName = playingSong.get("songName");
+							//AlbumList.LoadImageFromWebOperations(playingSong.get(TAG_ALBUM_IMAGE));
 							 if (songName != null)
 							 NewMediaPlayer.songTitleLabel.setText(albumName + " - " +
 							 songName);
+							
 							NewMediaPlayer.playSong(url);
 						}
 					}
@@ -149,5 +160,4 @@ public class ClickableListAdapter extends BaseAdapter {
 		});
 		return v;
 	}
-
 }

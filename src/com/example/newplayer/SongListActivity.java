@@ -40,6 +40,7 @@ public class SongListActivity extends ListActivity {
 	private static final String TAG_NAME = "name";
 	private static final String SOURCE_URL = "source_url";
 	private String albumName = "";
+	private String albumImageURL = "";
 	Button submitButton;
 
 	@Override
@@ -48,6 +49,7 @@ public class SongListActivity extends ListActivity {
 		setContentView(R.layout.songlist);
 		albumIndex = getIntent().getExtras().getInt("albumIndex");
 		albumName = getIntent().getExtras().getString("albumName");
+		albumImageURL = getIntent().getExtras().getString("AlbumImage");
 		url = new StringBuffer(getResources().getString(R.string.songsListURL));
 		url.append(albumIndex + "/songs.json");
 		
@@ -67,6 +69,7 @@ public class SongListActivity extends ListActivity {
 						// String songUrl = songDetails.getString(SOURCE_URL);
 						song.put(TAG_ID, id);
 						song.put(TAG_NAME, name);
+						song.put("AlbumImage", albumImageURL);
 						// song.put(SOURCE_URL, songUrl);
 						songList.add(song);
 						System.out.println("Test");
