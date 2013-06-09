@@ -41,15 +41,15 @@ public class PlayListActivity extends ListActivity {
 		InputStream is;
 		final Thread threadAlbums = new Thread() {
 			public void run() {
-				String url = getResources().getString(R.string.albumsURL);
-				songsList = new AlbumList().songList(url);
+			//	String url = getResources().getString(R.string.albumsURL);
+			//	songsList = new AlbumList().songList(url);
 				
-				/*	try {
+					try {
 					songsList = new AlbumList().sampleSongList(am.open("beamtoNew.json"));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}*/
+				}
 				synchronized (this) {
 					this.notifyAll();
 				}
