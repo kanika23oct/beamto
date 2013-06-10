@@ -25,27 +25,24 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 public class PlayListActivity extends ListActivity {
-	public  ArrayList<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();
-
-	
-	
+	public ArrayList<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.playlist);
 		ArrayList<HashMap<String, String>> songsListData = new ArrayList<HashMap<String, String>>();
-		
-		
+
 		final AssetManager am = this.getAssets();
 		InputStream is;
 		final Thread threadAlbums = new Thread() {
 			public void run() {
-			//	String url = getResources().getString(R.string.albumsURL);
-			//	songsList = new AlbumList().songList(url);
-				
-					try {
-					songsList = new AlbumList().sampleSongList(am.open("beamtoNew.json"));
+				// String url = getResources().getString(R.string.albumsURL);
+				// songsList = new AlbumList().songList(url);
+
+				try {
+					songsList = new AlbumList().sampleSongList(am
+							.open("beamtoNew.json"));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -65,15 +62,12 @@ public class PlayListActivity extends ListActivity {
 			}
 
 		}
-	
 
+		ClickableListAdapter adapterClickable = new ClickableListAdapter(this,
+				songsList);
 
-		ClickableListAdapter adapterClickable = new ClickableListAdapter(this, songsList);
-		
-		
-		
 		ListView lv = getListView();
-		lv.setAdapter( adapterClickable);
+		lv.setAdapter(adapterClickable);
 		lv.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -91,9 +85,16 @@ public class PlayListActivity extends ListActivity {
 			}
 		});
 
-	    
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		ClickableListAdapter adapterClickable = new ClickableListAdapter(this,
+				songsList);
+
+		ListView lv = getListView();
+		lv.setAdapter(adapterClickable);
 
 	}
-	
-	
 }
