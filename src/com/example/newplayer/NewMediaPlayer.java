@@ -55,7 +55,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	String url;
 	String albumName;
 	static int currentIndex;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -194,9 +194,22 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			@Override
 			public void onClick(View arg0) {
 				if (!mediaPlayer.isPlaying()) {
-					mediaPlayer.start();
+					// mediaPlayer.start();
 					// Changing button image to pause button
-					btnPlay.setImageResource(R.drawable.btn_pause);
+					if (selectedSongs.size() > 0) {
+						HashMap<String, String> song = selectedSongs
+								.get(currentIndex);
+
+						url = song.get("songUrl");
+						name = song.get("songName");
+						albumName = song.get("albumName");
+						String imageURL = song.get("coverart_small");
+						AlbumList.LoadImageFromWebOperations(imageURL);
+						if (name != null)
+							songTitleLabel.setText(albumName + " - " + name);
+						mediaPlayer.start();
+						btnPlay.setImageResource(R.drawable.btn_pause);
+					}
 				} else {
 					mediaPlayer.pause();
 					btnPlay.setImageResource(R.drawable.btn_play);
@@ -359,6 +372,18 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 
 		// update timer progress again
 		updateProgressBar();
+	}
+
+	@Override
+	public void onBackPressed() {
+		mediaPlayer.pause();
+		this.finish();
+		return;
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
 	}
 
 	@Override
