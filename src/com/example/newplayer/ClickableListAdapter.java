@@ -1,6 +1,8 @@
 package com.example.newplayer;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -10,11 +12,14 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ClickableListAdapter extends BaseAdapter {
@@ -55,6 +60,36 @@ public class ClickableListAdapter extends BaseAdapter {
 	public long getItemId(int position) {
 		return position;
 	}
+	
+/*	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+        final HashMap<String, String> song = songsList.get(position);
+        imageURL = song.get(TAG_ALBUM_IMAGE);
+		View v = null;
+		final ImageView imageView = new ImageView(context);	
+		final Thread startAlbum = new Thread() {
+			public void run() {
+			
+				imageView.setImageBitmap(AlbumList.LoadImagetoGridView(imageURL));
+				synchronized (this) {
+					this.notifyAll();
+				}
+					}
+				};
+
+				synchronized (startAlbum) {
+					startAlbum.start();
+					try {
+						startAlbum.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}	
+				imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+		        imageView.setLayoutParams(new GridView.LayoutParams(200, 200));
+		        
+	  return imageView;	
+	}*/
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
@@ -106,6 +141,11 @@ public class ClickableListAdapter extends BaseAdapter {
 										jsonStringSong);
 								String songUrl = jsonObjectSong
 										.getString("url");
+								
+								if(songUrl.startsWith("https://"))
+								{
+									songUrl = songUrl.replaceFirst("https://", "http://");
+								}
 								System.out.println(songUrl);
 								song.put("songUrl", songUrl);
 								song.put(TAG_ID, id);
