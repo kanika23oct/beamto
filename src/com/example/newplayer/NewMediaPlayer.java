@@ -13,6 +13,8 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.StrictMode;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -25,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.view.View;
 
+@SuppressLint("NewApi")
 public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		SeekBar.OnSeekBarChangeListener {
 	public static MediaPlayer mediaPlayer = new MediaPlayer();
@@ -58,6 +61,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.player);
 		btnPlay = (ImageButton) findViewById(R.id.btnPlay);

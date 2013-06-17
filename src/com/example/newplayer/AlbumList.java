@@ -96,6 +96,23 @@ public class AlbumList {
 		}
 	}
 
+	public static Bitmap LoadImagetoGridView(String url) {
+		  String image = url;
+		 Bitmap mIcon11 = null;
+					InputStream in;
+					try {
+						in = new java.net.URL(image).openStream();
+						mIcon11 = BitmapFactory.decodeStream(in);
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	 	return mIcon11;			
+	}
+	
 	public ArrayList<HashMap<String, String>> sampleSongList(InputStream is) {
 		try {
 
