@@ -63,29 +63,29 @@ public class SongListAdapter extends BaseAdapter {
 		ImageButton songPlayButton = (ImageButton) v
 				.findViewById(R.id.btnSongPlay);
 		songPlayButton.setOnClickListener(new View.OnClickListener() {
-			final HashMap<String, String> song = new HashMap<String, String>();	
+			final HashMap<String, String> song = new HashMap<String, String>();
+
 			@Override
 			public void onClick(View view) {
-				
+
 				Thread t = new Thread() {
 					public void run() {
-						
+
 						JSONParser jParser = new JSONParser();
 						try {
-							String jsonSongURL = resources.getString(R.string.songURL)
-									+ songs.get(TAG_ID)
-									+ ".json";
+							String jsonSongURL = resources
+									.getString(R.string.songURL)
+									+ songs.get(TAG_ID) + ".json";
 							String jsonString = jParser
 									.readJsonFromUrl(jsonSongURL);
-							JSONObject jsonObject = new JSONObject(
-									jsonString);
+							JSONObject jsonObject = new JSONObject(jsonString);
 							String songUrl = jsonObject.getString("url");
 							System.out.println(songUrl);
 							song.put("songUrl", songUrl);
 							song.put("songName", songs.get(TAG_NAME));
 							song.put("albumName", albumName);
 							song.put("coverart_small", songs.get("AlbumImage"));
-						//	NewMediaPlayer.selectedSongs.add(song);
+							// NewMediaPlayer.selectedSongs.add(song);
 							synchronized (this) {
 								this.notifyAll();
 							}
@@ -115,15 +115,18 @@ public class SongListAdapter extends BaseAdapter {
 						System.out.println("%% Playing the song for album");
 						String url = playingSong.get("songUrl");
 						String songName = playingSong.get("songName");
-						//albumName = playingSong.get("albumName");
-						 if (songName != null)
-						 NewMediaPlayer.songTitleLabel.setText(albumName + " - " +
-						 songName);
+						// albumName = playingSong.get("albumName");
+						if (songName != null) {
+							NewMediaPlayer.songTitleLabel.setText(albumName
+									+ " - " + songName);
+							NewMediaPlayer.songTitle.setText(albumName
+									+ " - " + songName);
+						}
 						NewMediaPlayer.playSong(url);
 					}
 				}
 			}
-			
+
 		});
 
 		return v;

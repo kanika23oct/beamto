@@ -47,7 +47,7 @@ public class ClickableListAdapter extends BaseAdapter {
 		this.context = context;
 		this.songsList = songList;
 		resources = context.getResources();
-		albumUrl = new StringBuffer(resources.getString(R.string.songsListURL));
+		//albumUrl = new StringBuffer(resources.getString(R.string.songsListURL));
 	}
 
 	public void addToList(HashMap<String, String> song) {
@@ -102,14 +102,16 @@ public class ClickableListAdapter extends BaseAdapter {
 		imageView.setOnClickListener(new View.OnClickListener() {
 			// @Override
 			public void onClick(View v) {
+				albumUrl = new StringBuffer(resources.getString(R.string.songsListURL));
 				int albumIndex = Integer.parseInt(song.get("id"));
 				albumName = (song.get("name"));
 				albumUrl.append(albumIndex + "/songs.json");
 				imageURL = song.get(TAG_ALBUM_IMAGE);
-				SongsList albumList = new SongsList(imageURL, albumUrl,albumName);
+				SongsList albumList = new SongsList(imageURL, albumUrl,
+						albumName);
 				Thread threadAlbumList = new Thread(albumList);
 				threadAlbumList.start();
-				
+
 				synchronized (albumList) {
 					try {
 						albumList.wait();
@@ -125,33 +127,33 @@ public class ClickableListAdapter extends BaseAdapter {
 						String url = playingSong.get("songUrl");
 						String songName = playingSong.get("songName");
 						if (songName != null)
-							NewMediaPlayer.songTitleLabel.setText(albumName
+							{
+							 NewMediaPlayer.songTitleLabel.setText(albumName
 									+ " - " + songName);
+							 NewMediaPlayer.songTitle.setText(albumName+"-"+songName);
+							}
 						NewMediaPlayer.playSong(url);
 					}
 				}
 			}
 		});
-
+		
 		TextView itemAlbumName = (TextView) v.findViewById(R.id.icon_text);
 		itemAlbumName.setText(song.get("name"));
 		itemAlbumName.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				 HashMap<String, String> song = songsList.get(position);
-                 int songIndex = Integer.parseInt(song.get("id"));
-                 String albumName = (song.get("name"));
-                 Intent in = new Intent(context,
-                                 SongListActivity.class);
-                 in.putExtra("albumIndex", songIndex);
-                 in.putExtra("albumName", albumName);
-                 in.putExtra("AlbumImage", song.get("coverart_small"));
-                context.startActivity(in);
+				HashMap<String, String> song = songsList.get(position);
+				int songIndex = Integer.parseInt(song.get("id"));
+				String albumName = (song.get("name"));
+				Intent in = new Intent(context, SongListActivity.class);
+				in.putExtra("albumIndex", songIndex);
+				in.putExtra("albumName", albumName);
+				in.putExtra("AlbumImage", song.get("coverart_small"));
+				context.startActivity(in);
 			}
 		});
-	  
-		
+
 		return v;
 	}
 
-	
 }

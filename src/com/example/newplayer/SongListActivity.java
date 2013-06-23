@@ -47,7 +47,7 @@ public class SongListActivity extends ListActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.songlist);
 		albumIndex = getIntent().getExtras().getInt("albumIndex");
@@ -55,7 +55,7 @@ public class SongListActivity extends ListActivity {
 		albumImageURL = getIntent().getExtras().getString("AlbumImage");
 		url = new StringBuffer(getResources().getString(R.string.songsListURL));
 		url.append(albumIndex + "/songs.json");
-		
+
 		final Thread thread = new Thread() {
 			public void run() {
 				JSONParser jParser = new JSONParser();
@@ -107,10 +107,6 @@ public class SongListActivity extends ListActivity {
 		ListView lv = getListView();
 		lv.setAdapter(songAdapter);
 
-		
-
 	}
-
-	
 
 }

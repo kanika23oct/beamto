@@ -20,11 +20,12 @@ public class SongsList implements Runnable {
 	StringBuffer albumUrl;
 	private String imageURL = "";
 
-	public SongsList(String imageURL,StringBuffer albumURL,String albumName){
+	public SongsList(String imageURL, StringBuffer albumURL, String albumName) {
 		this.imageURL = imageURL;
 		this.albumUrl = albumURL;
 		this.albumName = albumName;
 	}
+
 	@Override
 	public void run() {
 		JSONParser jParser = new JSONParser();
@@ -55,7 +56,7 @@ public class SongsList implements Runnable {
 				NewMediaPlayer.selectedSongs.add(song);
 				System.out.println("Adding songs");
 				synchronized (this) {
-				this.notifyAll();
+					this.notifyAll();
 				}
 			}
 		} catch (JSONException e) {

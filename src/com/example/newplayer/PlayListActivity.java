@@ -27,6 +27,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
+import android.widget.SlidingDrawer;
 import android.widget.TextView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,9 @@ import android.widget.SimpleAdapter;
 public class PlayListActivity extends Activity implements OnScrollListener {
 	AssetManager am;
 	ArrayList<HashMap<String, String>> songsList;
+	public static ImageButton btnPlayList;
+	public static TextView songTitle;
+	private static SlidingDrawer slidingDrawer;
 	int mVisibleThreashold = 6;
 	boolean mLoading = false;
 	boolean mLastPage = false;
@@ -47,7 +51,9 @@ public class PlayListActivity extends Activity implements OnScrollListener {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.grid_layout);
-		String url = getResources().getString(R.string.albumsURL);
+		btnPlayList = (ImageButton) findViewById(R.id.playList);
+	//	songTitle = (TextView) findViewById(R.id.playListTitle);
+		slidingDrawer = (SlidingDrawer) findViewById(R.id.slidingDrawer1);
 		am = this.getAssets();
 		final Thread threadAlbums = new Thread() {
 			public void run() {
@@ -81,6 +87,7 @@ public class PlayListActivity extends Activity implements OnScrollListener {
 		GridView view = (GridView) findViewById(R.id.grid_view);
 		view.setAdapter(adaptor);
 		view.setOnScrollListener(this);
+		
 
 	}
 
@@ -90,13 +97,14 @@ public class PlayListActivity extends Activity implements OnScrollListener {
 		int lastInScreen = firstVisibleItem + visibleItemCount;
 		System.out.println(" %% FV " + firstVisibleItem);
 		System.out.println(" %% LS " + lastInScreen);
-		if (numberOfPages > 1) {
+		if (numberOfPages >= 1) {
 			mLastPage = true;
 		}
 		if (!mLastPage && !(mLoading) && (lastInScreen == totalItemCount)) {
 			// new LoadAlbumList().execute("beamtoNew.json");
 			numberOfPages++;
 			AddToList(lastInScreen + 1);
+			mLoading = false;
 		}
 	}
 

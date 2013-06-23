@@ -57,21 +57,21 @@ public class AlbumList {
 		}
 		return albumList;
 	}
-	
+
 	public static void LoadImageFromWebOperations(String url) {
-		 final String image = url;
+		final String image = url;
 		final Thread startAlbum = new Thread() {
 			public void run() {
 				InputStream in;
 				try {
-				
+
 					in = new java.net.URL(image).openStream();
 					final Bitmap mIcon11 = BitmapFactory.decodeStream(in);
 					NewMediaPlayer.artistImage.post(new Runnable() {
-			                public void run() {
-			                	NewMediaPlayer.artistImage.setImageBitmap(mIcon11);
-			                }
-		            });
+						public void run() {
+							NewMediaPlayer.artistImage.setImageBitmap(mIcon11);
+						}
+					});
 
 					synchronized (this) {
 						this.notifyAll();
@@ -97,22 +97,22 @@ public class AlbumList {
 	}
 
 	public static Bitmap LoadImagetoGridView(String url) {
-		  String image = url;
-		 Bitmap mIcon11 = null;
-					InputStream in;
-					try {
-						in = new java.net.URL(image).openStream();
-						mIcon11 = BitmapFactory.decodeStream(in);
-					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-	 	return mIcon11;			
+		String image = url;
+		Bitmap mIcon11 = null;
+		InputStream in;
+		try {
+			in = new java.net.URL(image).openStream();
+			mIcon11 = BitmapFactory.decodeStream(in);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return mIcon11;
 	}
-	
+
 	public ArrayList<HashMap<String, String>> sampleSongList(InputStream is) {
 		try {
 
@@ -130,13 +130,12 @@ public class AlbumList {
 				HashMap<String, String> album = new HashMap<String, String>();
 				JSONObject albumDetails = json.getJSONObject(i);
 
-				/*String id = songDetails.getString("id");
-				String name = songDetails.getString("title");
-				String artist = songDetails.getString("artist");
-				song.put("id", id);
-				song.put(TAG_NAME, name);
-				song.put(TAG_LABEL_NAME, artist);
-				songsList.add(song);*/
+				/* String id = songDetails.getString("id"); String name =
+				  songDetails.getString("title"); String artist =
+				  songDetails.getString("artist"); song.put("id", id);
+				 song.put(TAG_NAME, name); song.put(TAG_LABEL_NAME, artist);
+				 songsList.add(song);*/
+				
 
 				String id = albumDetails.getString(TAG_ID);
 				String name = albumDetails.getString(TAG_NAME);
