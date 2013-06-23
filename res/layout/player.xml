@@ -6,8 +6,8 @@
 
     <GridView
         android:id="@+id/grid_view_albums"
-        android:layout_width="fill_parent"
-        android:layout_height="450dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:columnWidth="150dp"
         android:gravity="center"
         android:horizontalSpacing="10dp"
@@ -86,14 +86,7 @@
                     android:textSize="16dp"
                     android:textStyle="bold" />
 
-                <!-- Playlist button -->
-
-                <ImageButton
-                    android:id="@+id/btnPlaylist"
-                    android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
-                    android:background="@null"
-                    android:src="@drawable/btn_playlist" />
+              
             </LinearLayout>
 
             <!-- Song Thumbnail Image -->
