@@ -17,19 +17,28 @@ import android.os.StrictMode;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.view.Menu;
+import android.widget.AbsListView;
+import android.widget.GridView;
+import android.widget.RelativeLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.SlidingDrawer;
+import android.widget.SlidingDrawer.OnDrawerCloseListener;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.view.View;
 
 @SuppressLint("NewApi")
 public class NewMediaPlayer extends Activity implements OnCompletionListener,
-		SeekBar.OnSeekBarChangeListener {
+		SeekBar.OnSeekBarChangeListener, OnScrollListener {
 	public static MediaPlayer mediaPlayer = new MediaPlayer();
 	public static ImageView artistImage;
 	private static ImageButton btnPlay;
@@ -46,6 +55,17 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	private static TextView songCurrentDurationLabel;
 	private static TextView songTotalDurationLabel;
 	private static Utilities utils;
+	AssetManager am;
+	ArrayList<HashMap<String, String>> songsList;
+	public static ImageButton btnPlayList;
+	public static TextView songTitle;
+	private static SlidingDrawer slidingDrawer;
+	int mVisibleThreashold = 6;
+	boolean mLoading = false;
+	boolean mLastPage = false;
+	ClickableListAdapter adaptor;
+	int numberOfPages = 1;
+
 	public static ArrayList<HashMap<String, String>> selectedSongs = new ArrayList<HashMap<String, String>>();
 	// Handler to update UI timer, progress bar etc,.
 	private static Handler mHandler = new Handler();;
@@ -61,7 +81,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		 
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.player);
 		btnPlay = (ImageButton) findViewById(R.id.btnPlay);
@@ -77,6 +97,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		btnShuffle = (ImageButton) findViewById(R.id.btnShuffle);
 		btnRepeat = (ImageButton) findViewById(R.id.btnRepeat);
 		artistImage = (ImageView) findViewById(R.id.songThumbnail);
+		final RelativeLayout layout = (RelativeLayout) findViewById(R.id.buttonPlayList);
 
 		utils = new Utilities();
 
@@ -99,14 +120,95 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			playSong(url);
 		}
 
+		btnPlayList = (ImageButton) findViewById(R.id.playList);
+		songTitle = (TextView) findViewById(R.id.playListTitle);
+		slidingDrawer = (SlidingDrawer) findViewById(R.id.slidingDrawer1);
+
+		am = this.getAssets();
+		final Thread threadAlbums = new Thread() {
+			public void run() {
+				// String url = getResources().getString(R.string.albumsURL);
+				// songsList = new AlbumList().songList(url);
+
+				try {
+					songsList = new AlbumList().sampleSongList(am
+							.open("beamtoNew.json"));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				synchronized (this) {
+					this.notifyAll();
+				}
+			}
+		};
+		synchronized (threadAlbums) {
+			threadAlbums.start();
+			try {
+				threadAlbums.wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+
+		adaptor = new ClickableListAdapter(this, songsList);
+		final GridView view = (GridView) findViewById(R.id.grid_view_albums);
+		view.setAdapter(adaptor);
+		view.setOnScrollListener(this);
+		slidingDrawer.setOnDrawerOpenListener(new OnDrawerOpenListener() {
+
+			@Override
+			public void onDrawerOpened() {
+			btnPlayList.setVisibility(View.INVISIBLE);
+			songTitle .setVisibility(View.INVISIBLE);
+			view.setVisibility(View.INVISIBLE);
+			layout.setBackgroundColor(Color.WHITE);
+			
+			}
+		});
+
+		slidingDrawer.setOnDrawerCloseListener(new OnDrawerCloseListener(){
+
+			@Override
+			public void onDrawerClosed() {
+				btnPlayList.setVisibility(View.VISIBLE);
+				songTitle .setVisibility(View.INVISIBLE);
+				view.setVisibility(View.VISIBLE);
+				layout.setBackgroundColor(Color.rgb(211, 211, 211));
+			}
+			
+		});
+
 		btnPlaylist.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
 
-				Intent i = new Intent(getApplicationContext(),
-						PlayListActivity.class);
-				startActivityForResult(i, 100);
+				if (!mediaPlayer.isPlaying()) {
+					// mediaPlayer.start();
+					// Changing button image to pause button
+					if (selectedSongs.size() > 0) {
+						HashMap<String, String> song = selectedSongs
+								.get(currentIndex);
+
+						url = song.get("songUrl");
+						name = song.get("songName");
+						albumName = song.get("albumName");
+						String imageURL = song.get("coverart_small");
+						AlbumList.LoadImageFromWebOperations(imageURL);
+						if (name != null)
+							songTitleLabel.setText(albumName + " - " + name);
+						mediaPlayer.start();
+						btnPlay.setImageResource(R.drawable.btn_pause);
+						btnPlaylist.setImageResource(R.drawable.btn_stop);
+					}
+				} else {
+					mediaPlayer.pause();
+					btnPlay.setImageResource(R.drawable.btn_play);
+					btnPlaylist.setImageResource(R.drawable.btn_start);
+				}
 			}
 		});
 
@@ -213,10 +315,12 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 							songTitleLabel.setText(albumName + " - " + name);
 						mediaPlayer.start();
 						btnPlay.setImageResource(R.drawable.btn_pause);
+						btnPlaylist.setImageResource(R.drawable.btn_stop);
 					}
 				} else {
 					mediaPlayer.pause();
 					btnPlay.setImageResource(R.drawable.btn_play);
+					btnPlaylist.setImageResource(R.drawable.btn_start);
 				}
 			}
 		});
@@ -286,12 +390,14 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 				mediaPlayer.start();
 				// Changing Button Image to pause image
 				btnPlay.setImageResource(R.drawable.btn_pause);
+				btnPlayList.setImageResource(R.drawable.btn_stop);
 				// set Progress bar values
 				songProgressBar.setProgress(0);
 				songProgressBar.setMax(100);
 
 				// Updating progress bar
 				updateProgressBar();
+				
 
 			}
 		} catch (IllegalArgumentException e) {
@@ -388,6 +494,46 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	public void onScroll(AbsListView view, int firstVisibleItem,
+			int visibleItemCount, int totalItemCount) {
+		int lastInScreen = firstVisibleItem + visibleItemCount;
+		System.out.println(" %% FV " + firstVisibleItem);
+		System.out.println(" %% LS " + lastInScreen);
+		if (numberOfPages >= 1) {
+			mLastPage = true;
+		}
+		if (!mLastPage && !(mLoading) && (lastInScreen == totalItemCount)) {
+			// new LoadAlbumList().execute("beamtoNew.json");
+			numberOfPages++;
+			AddToList(lastInScreen + 1);
+			mLoading = false;
+		}
+	}
+
+	public void AddToList(int lastInScreen) {
+
+		mLoading = true;
+		ArrayList<HashMap<String, String>> newList = null;
+		try {
+			newList = new AlbumList().sampleSongList(am.open("beamtoNew.json"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		for (int i = 0; i < newList.size(); i++) {
+			adaptor.addToList(newList.get(i));
+		}
+		adaptor.notifyDataSetChanged();
+		mLoading = false;
+	}
+
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
