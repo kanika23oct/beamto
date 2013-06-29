@@ -35,7 +35,7 @@ public class AlbumList {
 			JSONParser jParser = new JSONParser();
 			String jsonString = jParser.readJsonFromUrl(url.toString());
 			JSONObject jsonObject = new JSONObject(jsonString);
-			JSONArray songs = jsonObject.getJSONArray("data");
+			JSONArray songs = jsonObject.getJSONArray("albums");
 			for (int i = 0; i < songs.length(); i++) {
 				HashMap<String, String> album = new HashMap<String, String>();
 				JSONObject albumDetails = songs.getJSONObject(i);
