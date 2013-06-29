@@ -9,6 +9,7 @@ import java.io.UnsupportedEncodingException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
@@ -41,10 +42,14 @@ public class JSONParser {
 	}
 
 	public String readJsonFromUrl(String url) throws IOException, JSONException {
-		InputStream is = new URL(url).openStream();
+		//InputStream is = new URL(url).openStream();
+		 HttpClient httpclient = new DefaultHttpClient();
+		 HttpPost httppost = new HttpPost(url);
+		 HttpResponse response = httpclient.execute(httppost);
+		 is =  response .getEntity().getContent();
+		
 		try {
-			BufferedReader rd = new BufferedReader(new InputStreamReader(is,
-					Charset.forName("UTF-8")));
+			BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 			String jsonText = readAll(rd);
 			JSONObject json = new JSONObject(jsonText);
 			return json.toString();
