@@ -103,12 +103,12 @@ public class ClickableListAdapter extends BaseAdapter {
 			// @Override
 			public void onClick(View v) {
 				albumUrl = new StringBuffer(resources.getString(R.string.songsListURL));
-				int albumIndex = Integer.parseInt(song.get("id"));
+				String albumIndex = song.get("id");
 				albumName = (song.get("name"));
-				albumUrl.append(albumIndex + "/songs.json");
+			//	albumUrl.append(albumIndex + "/songs.json");
 				imageURL = song.get(TAG_ALBUM_IMAGE);
 				SongsList albumList = new SongsList(imageURL, albumUrl,
-						albumName);
+						albumName,albumIndex,resources);
 				Thread threadAlbumList = new Thread(albumList);
 				threadAlbumList.start();
 
@@ -143,7 +143,7 @@ public class ClickableListAdapter extends BaseAdapter {
 		itemAlbumName.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				HashMap<String, String> song = songsList.get(position);
-				int songIndex = Integer.parseInt(song.get("id"));
+				String songIndex = song.get("id");
 				String albumName = (song.get("name"));
 				Intent in = new Intent(context, SongListActivity.class);
 				in.putExtra("albumIndex", songIndex);

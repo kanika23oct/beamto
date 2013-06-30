@@ -8,16 +8,26 @@ import java.io.UnsupportedEncodingException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+
+
 import java.net.URL;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.util.Log;
 
@@ -45,6 +55,26 @@ public class JSONParser {
 		//InputStream is = new URL(url).openStream();
 		 HttpClient httpclient = new DefaultHttpClient();
 		 HttpPost httppost = new HttpPost(url);
+		 HttpResponse response = httpclient.execute(httppost);
+		 is =  response .getEntity().getContent();
+		
+		try {
+			BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+			String jsonText = readAll(rd);
+			JSONObject json = new JSONObject(jsonText);
+			return json.toString();
+		} finally {
+			is.close();
+		}
+	}
+	
+	public String readJsonFromUrl(String url,String parameter,String id) throws IOException, JSONException {
+		 HttpClient httpclient = new DefaultHttpClient();
+		 HttpPost httppost = new HttpPost(url);
+	//	 StringEntity entity = new StringEntity(parameter+"="+id);
+		 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+	        nameValuePairs.add(new BasicNameValuePair(parameter, id));
+		 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
 		 HttpResponse response = httpclient.execute(httppost);
 		 is =  response .getEntity().getContent();
 		
