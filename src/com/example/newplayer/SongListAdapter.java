@@ -74,10 +74,10 @@ public class SongListAdapter extends BaseAdapter {
 						JSONParser jParser = new JSONParser();
 						try {
 							String jsonSongURL = resources
-									.getString(R.string.songURL)
-									+ songs.get(TAG_ID) + ".json";
+									.getString(R.string.songURL);
+							//		+ songs.get(TAG_ID) + ".json";
 							String jsonString = jParser
-									.readJsonFromUrl(jsonSongURL);
+									.readJsonFromUrl(jsonSongURL,TAG_ID,songs.get(TAG_ID) );
 							JSONObject jsonObject = new JSONObject(jsonString);
 							String songUrl = jsonObject.getString("url");
 							System.out.println(songUrl);
