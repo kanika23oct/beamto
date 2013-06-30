@@ -34,8 +34,8 @@ import org.json.JSONObject;
 
 public class SongListActivity extends ListActivity {
 
-	int albumIndex = 0;
-	StringBuffer url = new StringBuffer();
+	String albumIndex = "";
+	String url = "";
 	public ArrayList<HashMap<String, String>> songList = new ArrayList<HashMap<String, String>>();
 
 	private static final String TAG_ID = "id";
@@ -44,24 +44,25 @@ public class SongListActivity extends ListActivity {
 	private String albumName = "";
 	private String albumImageURL = "";
 	Button submitButton;
+	private String parameter = "album_id";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.songlist);
-		albumIndex = getIntent().getExtras().getInt("albumIndex");
+		albumIndex = getIntent().getExtras().getString("albumIndex");
 		albumName = getIntent().getExtras().getString("albumName");
 		albumImageURL = getIntent().getExtras().getString("AlbumImage");
-		url = new StringBuffer(getResources().getString(R.string.songsListURL));
-		url.append(albumIndex + "/songs.json");
-
+		url = getResources().getString(R.string.songsListURL);
+		//url.append(albumIndex + "/songs.json");
+		
 		final Thread thread = new Thread() {
 			public void run() {
 				JSONParser jParser = new JSONParser();
 
 				try {
-					String jsonString = jParser.readJsonFromUrl(url.toString());
+					String jsonString = jParser.readJsonFromUrl(url,parameter,albumIndex);
 					JSONObject jsonObject = new JSONObject(jsonString);
 					JSONArray songs = jsonObject.getJSONArray("songs");
 					for (int i = 0; i < songs.length(); i++) {
