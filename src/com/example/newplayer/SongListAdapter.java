@@ -75,7 +75,6 @@ public class SongListAdapter extends BaseAdapter {
 						try {
 							String jsonSongURL = resources
 									.getString(R.string.songURL);
-							//		+ songs.get(TAG_ID) + ".json";
 							String jsonString = jParser
 									.readJsonFromUrl(jsonSongURL,TAG_ID,songs.get(TAG_ID) );
 							JSONObject jsonObject = new JSONObject(jsonString);
@@ -85,16 +84,13 @@ public class SongListAdapter extends BaseAdapter {
 							song.put("songName", songs.get(TAG_NAME));
 							song.put("albumName", albumName);
 							song.put("coverart_small", songs.get("AlbumImage"));
-							// NewMediaPlayer.selectedSongs.add(song);
 							synchronized (this) {
 								this.notifyAll();
 							}
 						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+								e.printStackTrace();
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+						e.printStackTrace();
 						}
 					}
 				};
@@ -104,19 +100,15 @@ public class SongListAdapter extends BaseAdapter {
 						t.wait();
 					}
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				NewMediaPlayer.selectedSongs.add(song);
 				if (!NewMediaPlayer.mediaPlayer.isPlaying()) {
 					HashMap<String, String> playingSong = song;
-					System.out.println("% Adding the song for album");
 					if (playingSong != null) {
-						System.out.println("%% Playing the song for album");
 						String url = playingSong.get("songUrl");
 						String songName = playingSong.get("songName");
-						// albumName = playingSong.get("albumName");
-						if (songName != null) {
+					if (songName != null) {
 							NewMediaPlayer.songTitleLabel.setText(albumName
 									+ " - " + songName);
 							NewMediaPlayer.songTitle.setText(albumName

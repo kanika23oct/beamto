@@ -43,8 +43,6 @@ public class SongsList implements Runnable {
 				JSONObject songDetails = songs.getJSONObject(i);
 				String id = songDetails.getString(TAG_ID);
 				String name = songDetails.getString(TAG_NAME);
-				//String jsonSongURL = "http://dev.beamto.us/songs/" + id
-				//		+ ".json";
 				String jsonSongUrl = resources.getString(R.string.songURL);
 				String jsonStringSong = jParser.readJsonFromUrl(jsonSongUrl.toString(),parameterSong,id);
 				JSONObject jsonObjectSong = new JSONObject(jsonStringSong);
@@ -60,7 +58,6 @@ public class SongsList implements Runnable {
 				song.put("albumName", albumName);
 				song.put(TAG_ALBUM_IMAGE, imageURL);
 				NewMediaPlayer.selectedSongs.add(song);
-				System.out.println("Adding songs");
 				synchronized (this) {
 					this.notifyAll();
 				}

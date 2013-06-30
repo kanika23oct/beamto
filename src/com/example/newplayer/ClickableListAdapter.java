@@ -47,7 +47,6 @@ public class ClickableListAdapter extends BaseAdapter {
 		this.context = context;
 		this.songsList = songList;
 		resources = context.getResources();
-		//albumUrl = new StringBuffer(resources.getString(R.string.songsListURL));
 	}
 
 	public void addToList(HashMap<String, String> song) {
@@ -105,7 +104,6 @@ public class ClickableListAdapter extends BaseAdapter {
 				albumUrl = new StringBuffer(resources.getString(R.string.songsListURL));
 				String albumIndex = song.get("id");
 				albumName = (song.get("name"));
-			//	albumUrl.append(albumIndex + "/songs.json");
 				imageURL = song.get(TAG_ALBUM_IMAGE);
 				SongsList albumList = new SongsList(imageURL, albumUrl,
 						albumName,albumIndex,resources);
@@ -123,7 +121,6 @@ public class ClickableListAdapter extends BaseAdapter {
 					HashMap<String, String> playingSong = NewMediaPlayer.selectedSongs
 							.get(0);
 					if (playingSong != null) {
-						System.out.println("** Playing the song for album");
 						String url = playingSong.get("songUrl");
 						String songName = playingSong.get("songName");
 						if (songName != null)
