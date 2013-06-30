@@ -19,18 +19,23 @@ public class SongsList implements Runnable {
 	private static Resources resources;
 	StringBuffer albumUrl;
 	private String imageURL = "";
+	private String parameter = "album_id";
+	private String parameterSong = "id";
+	private String albumIndex = "";
 
-	public SongsList(String imageURL, StringBuffer albumURL, String albumName) {
+	public SongsList(String imageURL, StringBuffer albumURL, String albumName,String albumIndex,Resources resources) {
 		this.imageURL = imageURL;
 		this.albumUrl = albumURL;
 		this.albumName = albumName;
+		this.albumIndex = albumIndex;
+		this.resources = resources;
 	}
 
 	@Override
 	public void run() {
 		JSONParser jParser = new JSONParser();
 		try {
-			String jsonString = jParser.readJsonFromUrl(albumUrl.toString());
+			String jsonString = jParser.readJsonFromUrl(albumUrl.toString(),parameter,albumIndex);
 			JSONObject jsonObject = new JSONObject(jsonString);
 			JSONArray songs = jsonObject.getJSONArray("songs");
 			for (int i = 0; i < songs.length(); i++) {
@@ -38,9 +43,10 @@ public class SongsList implements Runnable {
 				JSONObject songDetails = songs.getJSONObject(i);
 				String id = songDetails.getString(TAG_ID);
 				String name = songDetails.getString(TAG_NAME);
-				String jsonSongURL = "http://dev.beamto.us/songs/" + id
-						+ ".json";
-				String jsonStringSong = jParser.readJsonFromUrl(jsonSongURL);
+				//String jsonSongURL = "http://dev.beamto.us/songs/" + id
+				//		+ ".json";
+				String jsonSongUrl = resources.getString(R.string.songURL);
+				String jsonStringSong = jParser.readJsonFromUrl(jsonSongUrl.toString(),parameterSong,id);
 				JSONObject jsonObjectSong = new JSONObject(jsonStringSong);
 				String songUrl = jsonObjectSong.getString("url");
 
