@@ -1,25 +1,17 @@
 package com.example.newplayer;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
-
-import org.json.JSONException;
 
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.StrictMode;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Intent;
 import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.view.Menu;
 import android.widget.AbsListView;
@@ -45,8 +37,6 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	private static ImageButton btnForward;
 	private static ImageButton btnBackward;
 	private static ImageButton btnPrevious;
-	private static ImageButton btnPause;
-	//private static ImageButton btnPlaylist;
 	public static TextView songTitleLabel;
 	private static ImageButton btnNext;
 	private static ImageButton btnShuffle;
@@ -123,21 +113,11 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			playSong(url);
 		}
 
-		
-
 		am = this.getAssets();
 		final Thread threadAlbums = new Thread() {
 			public void run() {
-				 String url = getResources().getString(R.string.albumsURL);
-				 songsList = new AlbumList().songList(url);
-
-			/*	try {
-					songsList = new AlbumList().sampleSongList(am
-							.open("beamtoNew.json"));
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}*/
+				String url = getResources().getString(R.string.albumsURL);
+				songsList = new AlbumList().songList(url);
 				synchronized (this) {
 					this.notifyAll();
 				}
@@ -534,15 +514,11 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 
 		mLoading = true;
 		ArrayList<HashMap<String, String>> newList = null;
-		try {
-			newList = new AlbumList().sampleSongList(am.open("beamtoNew.json"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		for (int i = 0; i < newList.size(); i++) {
-			adaptor.addToList(newList.get(i));
-		}
+
+		/*
+		 * for (int i = 0; i < newList.size(); i++) {
+		 * adaptor.addToList(newList.get(i)); }
+		 */
 		adaptor.notifyDataSetChanged();
 		mLoading = false;
 	}

@@ -1,28 +1,15 @@
 package com.example.newplayer;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,7 +18,6 @@ public class ClickableListAdapter extends BaseAdapter {
 	private Context context;
 	private LayoutInflater inflater;
 	List<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();
-	private static TextView songTitleLabel;
 	String albumName = "";
 	private static Resources resources;
 	StringBuffer albumUrl;
