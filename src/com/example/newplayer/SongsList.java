@@ -11,16 +11,10 @@ import android.content.res.Resources;
 
 public class SongsList implements Runnable {
 
-	private static final String TAG_ID = "id";
-	private static final String TAG_NAME = "name";
-	private static final String SOURCE_URL = "source_url";
-	private static final String TAG_ALBUM_IMAGE = "coverart_small";
 	String albumName = "";
 	private static Resources resources;
 	StringBuffer albumUrl;
 	private String imageURL = "";
-	private String parameter = "album_id";
-	private String parameterSong = "id";
 	private String albumIndex = "";
 
 	public SongsList(String imageURL, StringBuffer albumURL, String albumName,String albumIndex,Resources resources) {
@@ -35,16 +29,16 @@ public class SongsList implements Runnable {
 	public void run() {
 		JSONParser jParser = new JSONParser();
 		try {
-			String jsonString = jParser.readJsonFromUrl(albumUrl.toString(),parameter,albumIndex);
+			String jsonString = jParser.readJsonFromUrl(albumUrl.toString(),VariablesList.ALBUM_JSON_PARAMETER,albumIndex);
 			JSONObject jsonObject = new JSONObject(jsonString);
 			JSONArray songs = jsonObject.getJSONArray("songs");
 			for (int i = 0; i < songs.length(); i++) {
 				HashMap<String, String> song = new HashMap<String, String>();
 				JSONObject songDetails = songs.getJSONObject(i);
-				String id = songDetails.getString(TAG_ID);
-				String name = songDetails.getString(TAG_NAME);
+				String id = songDetails.getString(VariablesList.TAG_ID);
+				String name = songDetails.getString(VariablesList.TAG_NAME);
 				String jsonSongUrl = resources.getString(R.string.songURL);
-				String jsonStringSong = jParser.readJsonFromUrl(jsonSongUrl.toString(),parameterSong,id);
+				String jsonStringSong = jParser.readJsonFromUrl(jsonSongUrl.toString(),VariablesList.TAG_ID,id);
 				JSONObject jsonObjectSong = new JSONObject(jsonStringSong);
 				String songUrl = jsonObjectSong.getString("url");
 
@@ -53,10 +47,10 @@ public class SongsList implements Runnable {
 				}
 				System.out.println(songUrl);
 				song.put("songUrl", songUrl);
-				song.put(TAG_ID, id);
+				song.put(VariablesList.TAG_ID, id);
 				song.put("songName", name);
 				song.put("albumName", albumName);
-				song.put(TAG_ALBUM_IMAGE, imageURL);
+				song.put(VariablesList.TAG_ALBUM_IMAGE, imageURL);
 				NewMediaPlayer.selectedSongs.add(song);
 				synchronized (this) {
 					this.notifyAll();
