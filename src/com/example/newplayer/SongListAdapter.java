@@ -20,8 +20,6 @@ public class SongListAdapter extends BaseAdapter {
 	ArrayList<HashMap<String, String>> songsList;
 	private Context context;
 	private LayoutInflater inflater;
-	private static final String TAG_ID = "id";
-	private static final String TAG_NAME = "name";
 	private String albumName;
 	private static Resources resources;
 
@@ -59,7 +57,7 @@ public class SongListAdapter extends BaseAdapter {
 			v = inflater.inflate(R.layout.songlist_item, parent, false);
 
 		TextView itemSongName = (TextView) v.findViewById(R.id.songTitle);
-		itemSongName.setText(songs.get("name"));
+		itemSongName.setText(songs.get(VariablesList.TAG_NAME));
 		ImageButton songPlayButton = (ImageButton) v
 				.findViewById(R.id.btnSongPlay);
 		songPlayButton.setOnClickListener(new View.OnClickListener() {
@@ -76,12 +74,12 @@ public class SongListAdapter extends BaseAdapter {
 							String jsonSongURL = resources
 									.getString(R.string.songURL);
 							String jsonString = jParser
-									.readJsonFromUrl(jsonSongURL,TAG_ID,songs.get(TAG_ID) );
+									.readJsonFromUrl(jsonSongURL,VariablesList.TAG_ID,songs.get(VariablesList.TAG_ID) );
 							JSONObject jsonObject = new JSONObject(jsonString);
 							String songUrl = jsonObject.getString("url");
 							System.out.println(songUrl);
 							song.put("songUrl", songUrl);
-							song.put("songName", songs.get(TAG_NAME));
+							song.put("songName", songs.get(VariablesList.TAG_NAME));
 							song.put("albumName", albumName);
 							song.put("coverart_small", songs.get("AlbumImage"));
 							synchronized (this) {
