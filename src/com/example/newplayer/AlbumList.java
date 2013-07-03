@@ -39,14 +39,14 @@ public class AlbumList {
 			for (int i = 0; i < songs.length(); i++) {
 				HashMap<String, String> album = new HashMap<String, String>();
 				JSONObject albumDetails = songs.getJSONObject(i);
-				String id = albumDetails.getString(TAG_ID);
-				String name = albumDetails.getString(TAG_NAME);
-				String labelName = albumDetails.getString(TAG_LABEL_NAME);
-				String albumImage = albumDetails.getString(TAG_ALBUM_IMAGE);
-				album.put(TAG_ID, id);
-				album.put(TAG_NAME, name);
-				album.put(TAG_LABEL_NAME, labelName);
-				album.put(TAG_ALBUM_IMAGE, albumImage);
+				String id = albumDetails.getString(VariablesList.TAG_ID);
+				String name = albumDetails.getString(VariablesList.TAG_NAME);
+				String labelName = albumDetails.getString(VariablesList.TAG_LABEL_NAME);
+				String albumImage = albumDetails.getString(VariablesList.TAG_ALBUM_IMAGE);
+				album.put(VariablesList.TAG_ID, id);
+				album.put(VariablesList.TAG_NAME, name);
+				album.put(VariablesList.TAG_LABEL_NAME, labelName);
+				album.put(VariablesList.TAG_ALBUM_IMAGE, albumImage);
 				albumList.add(album);
 			}
 
@@ -137,14 +137,14 @@ public class AlbumList {
 				 songsList.add(song);*/
 				
 
-				String id = albumDetails.getString(TAG_ID);
-				String name = albumDetails.getString(TAG_NAME);
-				String labelName = albumDetails.getString(TAG_LABEL_NAME);
-				String albumImage = albumDetails.getString(TAG_ALBUM_IMAGE);
-				album.put(TAG_ID, id);
-				album.put(TAG_NAME, name);
-				album.put(TAG_LABEL_NAME, labelName);
-				album.put(TAG_ALBUM_IMAGE, albumImage);
+				String id = albumDetails.getString(VariablesList.TAG_ID);
+				String name = albumDetails.getString(VariablesList.TAG_NAME);
+				String labelName = albumDetails.getString(VariablesList.TAG_LABEL_NAME);
+				String albumImage = albumDetails.getString(VariablesList.TAG_ALBUM_IMAGE);
+				album.put(VariablesList.TAG_ID, id);
+				album.put(VariablesList.TAG_NAME, name);
+				album.put(VariablesList.TAG_LABEL_NAME, labelName);
+				album.put(VariablesList.TAG_ALBUM_IMAGE, albumImage);
 				albumList.add(album);
 
 			}

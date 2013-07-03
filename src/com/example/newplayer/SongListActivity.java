@@ -38,9 +38,6 @@ public class SongListActivity extends ListActivity {
 	String url = "";
 	public ArrayList<HashMap<String, String>> songList = new ArrayList<HashMap<String, String>>();
 
-	private static final String TAG_ID = "id";
-	private static final String TAG_NAME = "name";
-	private static final String SOURCE_URL = "source_url";
 	private String albumName = "";
 	private String albumImageURL = "";
 	Button submitButton;
@@ -68,11 +65,11 @@ public class SongListActivity extends ListActivity {
 					for (int i = 0; i < songs.length(); i++) {
 						HashMap<String, String> song = new HashMap<String, String>();
 						JSONObject songDetails = songs.getJSONObject(i);
-						String id = songDetails.getString(TAG_ID);
-						String name = songDetails.getString(TAG_NAME);
+						String id = songDetails.getString(VariablesList.TAG_ID);
+						String name = songDetails.getString(VariablesList.TAG_NAME);
 						// String songUrl = songDetails.getString(SOURCE_URL);
-						song.put(TAG_ID, id);
-						song.put(TAG_NAME, name);
+						song.put(VariablesList.TAG_ID, id);
+						song.put(VariablesList.TAG_NAME, name);
 						song.put("AlbumImage", albumImageURL);
 						// song.put(SOURCE_URL, songUrl);
 						songList.add(song);

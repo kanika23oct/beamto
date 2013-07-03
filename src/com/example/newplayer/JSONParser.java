@@ -34,7 +34,6 @@ import android.util.Log;
 public class JSONParser {
 
 	static InputStream is = null;
-	// static JSONArray jObj = null;
 	static String json = "";
 
 	// constructor
@@ -52,7 +51,6 @@ public class JSONParser {
 	}
 
 	public String readJsonFromUrl(String url) throws IOException, JSONException {
-		//InputStream is = new URL(url).openStream();
 		 HttpClient httpclient = new DefaultHttpClient();
 		 HttpPost httppost = new HttpPost(url);
 		 HttpResponse response = httpclient.execute(httppost);
@@ -71,7 +69,6 @@ public class JSONParser {
 	public String readJsonFromUrl(String url,String parameter,String id) throws IOException, JSONException {
 		 HttpClient httpclient = new DefaultHttpClient();
 		 HttpPost httppost = new HttpPost(url);
-	//	 StringEntity entity = new StringEntity(parameter+"="+id);
 		 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 	        nameValuePairs.add(new BasicNameValuePair(parameter, id));
 		 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));

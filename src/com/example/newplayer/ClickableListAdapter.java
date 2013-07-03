@@ -32,10 +32,6 @@ public class ClickableListAdapter extends BaseAdapter {
 	private LayoutInflater inflater;
 	List<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();
 	private static TextView songTitleLabel;
-	private static final String TAG_ID = "id";
-	private static final String TAG_NAME = "name";
-	private static final String SOURCE_URL = "source_url";
-	private static final String TAG_ALBUM_IMAGE = "coverart_small";
 	String albumName = "";
 	private static Resources resources;
 	StringBuffer albumUrl;
@@ -71,7 +67,7 @@ public class ClickableListAdapter extends BaseAdapter {
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		final HashMap<String, String> song = songsList.get(position);
-		imageURL = song.get(TAG_ALBUM_IMAGE);
+		imageURL = song.get(VariablesList.TAG_ALBUM_IMAGE);
 		View v = null;
 		if (convertView != null)
 			v = convertView;
@@ -104,7 +100,7 @@ public class ClickableListAdapter extends BaseAdapter {
 				albumUrl = new StringBuffer(resources.getString(R.string.songsListURL));
 				String albumIndex = song.get("id");
 				albumName = (song.get("name"));
-				imageURL = song.get(TAG_ALBUM_IMAGE);
+				imageURL = song.get(VariablesList.TAG_ALBUM_IMAGE);
 				SongsList albumList = new SongsList(imageURL, albumUrl,
 						albumName,albumIndex,resources);
 				Thread threadAlbumList = new Thread(albumList);
@@ -145,7 +141,7 @@ public class ClickableListAdapter extends BaseAdapter {
 				Intent in = new Intent(context, SongListActivity.class);
 				in.putExtra("albumIndex", songIndex);
 				in.putExtra("albumName", albumName);
-				in.putExtra("AlbumImage", song.get("coverart_small"));
+				in.putExtra("AlbumImage", song.get(VariablesList.TAG_ALBUM_IMAGE));
 				context.startActivity(in);
 			}
 		});
