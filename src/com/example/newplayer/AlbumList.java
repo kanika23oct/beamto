@@ -15,12 +15,12 @@ public class AlbumList {
 	
 	private ArrayList<HashMap<String, String>> albumList = new ArrayList<HashMap<String, String>>();
 
-	public ArrayList<HashMap<String, String>> songList(String url) {
+	public ArrayList<HashMap<String, String>> songList(String url,String parameter,String value) {
 		try {
 			JSONParser jParser = new JSONParser();
-			String jsonString = jParser.readJsonFromUrl(url.toString());
+			String jsonString = jParser.readJsonFromUrl(url.toString(),parameter,value);
 			JSONObject jsonObject = new JSONObject(jsonString);
-			JSONArray songs = jsonObject.getJSONArray("albums");
+			JSONArray songs = jsonObject.getJSONArray(VariablesList.JSON_ALBUM_OBJECT);
 			for (int i = 0; i < songs.length(); i++) {
 				HashMap<String, String> album = new HashMap<String, String>();
 				JSONObject albumDetails = songs.getJSONObject(i);
@@ -35,8 +35,7 @@ public class AlbumList {
 				albumList.add(album);
 			}
 
-			Log.i("AlbumListActivity", "Size of album list " + albumList.size());
-
+		
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
