@@ -40,7 +40,7 @@ public class SongListActivity extends ListActivity {
 				try {
 					String jsonString = jParser.readJsonFromUrl(url,VariablesList.ALBUM_JSON_PARAMETER,albumIndex);
 					JSONObject jsonObject = new JSONObject(jsonString);
-					JSONArray songs = jsonObject.getJSONArray("songs");
+					JSONArray songs = jsonObject.getJSONArray(VariablesList.JSON_SONG_OBJECT );
 					for (int i = 0; i < songs.length(); i++) {
 						HashMap<String, String> song = new HashMap<String, String>();
 						JSONObject songDetails = songs.getJSONObject(i);
