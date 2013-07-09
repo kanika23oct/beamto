@@ -13,6 +13,9 @@ public class VariablesList {
 	public static final String SONG_URL_PARAMETER = "songUrl";
 	public static final String ALBUM_NAME_PARAMETER = "albumName";
 	public static final String URL = "url";
+	public static final String JSON_ALBUM_OBJECT = "albums";
+	public static final String JSON_SONG_OBJECT = "songs";
+	public static final String JSON_PAGE_OBJECT = "page";
 
 
 }
