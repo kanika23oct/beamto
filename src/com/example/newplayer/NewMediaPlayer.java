@@ -13,6 +13,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.res.AssetManager;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.Menu;
 import android.widget.AbsListView;
 import android.widget.GridView;
@@ -46,14 +47,15 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	private static TextView songTotalDurationLabel;
 	private static Utilities utils;
 	AssetManager am;
-	ArrayList<HashMap<String, String>> songsList;
+	private static ArrayList<HashMap<String, String>> songsList ;
+	private static ArrayList<HashMap<String, String>> newList;
 	public static ImageButton btnPlayList;
 	public static TextView songTitle;
 	private static SlidingDrawer slidingDrawer;
 	int mVisibleThreashold = 6;
 	boolean mLoading = false;
-	boolean mLastPage = false;
-	ClickableListAdapter adaptor;
+	static boolean mLastPage = false;
+	static ClickableListAdapter adaptor;
 	int numberOfPages = 1;
 
 	public static ArrayList<HashMap<String, String>> selectedSongs = new ArrayList<HashMap<String, String>>();
@@ -114,19 +116,14 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		}
 
 		am = this.getAssets();
-		final Thread threadAlbums = new Thread() {
-			public void run() {
-				String url = getResources().getString(R.string.albumsURL);
-				songsList = new AlbumList().songList(url);
-				synchronized (this) {
-					this.notifyAll();
-				}
-			}
-		};
-		synchronized (threadAlbums) {
-			threadAlbums.start();
+		LoadAlbumPage albumPage = new LoadAlbumPage(getResources().getString(
+				R.string.albumsURL), "1");
+		Thread threadAlbum = new Thread(albumPage);
+		threadAlbum.start();
+		synchronized (albumPage) {
+
 			try {
-				threadAlbums.wait();
+				albumPage.wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -375,6 +372,19 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		return true;
 	}
 
+	public static void setSongList(
+			ArrayList<HashMap<String, String>> setSongsList) {
+		songsList = setSongsList;
+	}
+
+	public static void setNewList(ArrayList<HashMap<String, String>> setNewList) {
+		newList = setNewList;
+	}
+	
+	public static void setLastPage(boolean lastPage) {
+		mLastPage = lastPage;
+	}
+
 	public static void playSong(String url) {
 
 		try {
@@ -499,28 +509,43 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		int lastInScreen = firstVisibleItem + visibleItemCount;
 		System.out.println(" %% FV " + firstVisibleItem);
 		System.out.println(" %% LS " + lastInScreen);
-		if (numberOfPages >= 1) {
+
+	/*	if (numberOfPages >= 2) {
 			mLastPage = true;
-		}
+		}*/
 		if (!mLastPage && !(mLoading) && (lastInScreen == totalItemCount)) {
-			// new LoadAlbumList().execute("beamtoNew.json");
 			numberOfPages++;
-			AddToList(lastInScreen + 1);
+			AddToList(numberOfPages);
 			mLoading = false;
 		}
 	}
 
-	public void AddToList(int lastInScreen) {
-
+	public void AddToList(int numberOfPages) {
+		System.out.println("***** Page :" + numberOfPages);
 		mLoading = true;
-		ArrayList<HashMap<String, String>> newList = null;
+		final String pages = "" + numberOfPages;
+		LoadAlbumPage albumPage = new LoadAlbumPage(getResources().getString(
+				R.string.albumsURL), pages);
+		Thread threadAlbums = new Thread(albumPage);
+		threadAlbums.start();
+		synchronized (albumPage) {
+			try {
+				albumPage.wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
-		/*
-		 * for (int i = 0; i < newList.size(); i++) {
-		 * adaptor.addToList(newList.get(i)); }
-		 */
+		}
+
 		adaptor.notifyDataSetChanged();
 		mLoading = false;
+	}
+
+	public static void appendToAdaptor() {
+		for (int i = 0; i < newList.size(); i++) {
+			adaptor.addToList(newList.get(i));
+		}
 	}
 
 	@Override
