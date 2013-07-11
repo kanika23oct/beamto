@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.util.Log;
@@ -50,6 +52,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	private static ArrayList<HashMap<String, String>> songsList ;
 	private static ArrayList<HashMap<String, String>> newList;
 	public static ImageButton btnPlayList;
+	private static ImageButton currentPlayList;
 	public static TextView songTitle;
 	private static SlidingDrawer slidingDrawer;
 	int mVisibleThreashold = 6;
@@ -93,6 +96,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		songTitle = (TextView) findViewById(R.id.playListTitle);
 		slidingDrawer = (SlidingDrawer) findViewById(R.id.slidingDrawer1);
 		final RelativeLayout layout = (RelativeLayout) findViewById(R.id.buttonPlayList);
+		currentPlayList = (ImageButton) findViewById(R.id.currentPlayList);
 
 		utils = new Utilities();
 
@@ -163,6 +167,19 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			}
 
 		});
+		
+		final Context context = this;
+		currentPlayList.setOnClickListener(new View.OnClickListener() {
+  
+			@Override
+			public void onClick(View arg0) {
+				System.out.println("***** Hello");
+				Intent in = new Intent(context,PlayList.class);
+				context.startActivity(in);
+			}
+		});
+
+		
 
 		btnPlayList.setOnClickListener(new View.OnClickListener() {
 
@@ -510,9 +527,6 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		System.out.println(" %% FV " + firstVisibleItem);
 		System.out.println(" %% LS " + lastInScreen);
 
-	/*	if (numberOfPages >= 2) {
-			mLastPage = true;
-		}*/
 		if (!mLastPage && !(mLoading) && (lastInScreen == totalItemCount)) {
 			numberOfPages++;
 			AddToList(numberOfPages);
