@@ -47,7 +47,7 @@ public class PlayListAdaptor extends BaseAdapter {
 		else
 			v = inflater.inflate(R.layout.playlist_item, parent, false);
 		
-		final String songName = songs.get("songName");
+		final String songName = songs.get(VariablesList.SONG_NAME_PARAMETER);
 		
 		TextView itemSongName = (TextView) v.findViewById(R.id.albumTitle);
 		itemSongName.setText(songName);
@@ -55,8 +55,8 @@ public class PlayListAdaptor extends BaseAdapter {
 
 			@Override
 			public void onClick(View v) {
-				String albumName = songs.get("albumName");
-				String url = songs.get("songUrl");
+				String albumName = songs.get(VariablesList.ALBUM_NAME_PARAMETER);
+				String url = songs.get(VariablesList.SONG_URL_PARAMETER);
 				NewMediaPlayer.playSong(url);
 				NewMediaPlayer.songTitleLabel.setText(albumName
 						+ " - " + songName);

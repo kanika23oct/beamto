@@ -46,10 +46,10 @@ public class SongsList implements Runnable {
 					songUrl = songUrl.replaceFirst("https://", "http://");
 				}
 				System.out.println(songUrl);
-				song.put("songUrl", songUrl);
+				song.put(VariablesList.SONG_URL_PARAMETER, songUrl);
 				song.put(VariablesList.TAG_ID, id);
-				song.put("songName", name);
-				song.put("albumName", albumName);
+				song.put(VariablesList.SONG_NAME_PARAMETER, name);
+				song.put(VariablesList.ALBUM_NAME_PARAMETER, albumName);
 				song.put(VariablesList.TAG_ALBUM_IMAGE, imageURL);
 				NewMediaPlayer.selectedSongs.add(song);
 				synchronized (this) {
