@@ -49,7 +49,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	private static TextView songTotalDurationLabel;
 	private static Utilities utils;
 	AssetManager am;
-	private static ArrayList<HashMap<String, String>> songsList ;
+	private static ArrayList<HashMap<String, String>> songsList;
 	private static ArrayList<HashMap<String, String>> newList;
 	public static ImageButton btnPlayList;
 	private static ImageButton currentPlayList;
@@ -167,19 +167,17 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			}
 
 		});
-		
+
 		final Context context = this;
 		currentPlayList.setOnClickListener(new View.OnClickListener() {
-  
+
 			@Override
 			public void onClick(View arg0) {
 				System.out.println("***** Hello");
-				Intent in = new Intent(context,PlayList.class);
+				Intent in = new Intent(context, PlayList.class);
 				context.startActivity(in);
 			}
 		});
-
-		
 
 		btnPlayList.setOnClickListener(new View.OnClickListener() {
 
@@ -397,7 +395,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	public static void setNewList(ArrayList<HashMap<String, String>> setNewList) {
 		newList = setNewList;
 	}
-	
+
 	public static void setLastPage(boolean lastPage) {
 		mLastPage = lastPage;
 	}
@@ -492,7 +490,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	}
 
 	/**
-	 * When user stops moving the progress hanlder
+	 * When user stops moving the progress handler
 	 * */
 	@Override
 	public void onStopTrackingTouch(SeekBar seekBar) {
@@ -510,8 +508,13 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 
 	@Override
 	public void onBackPressed() {
-		mediaPlayer.pause();
-		this.finish();
+		if (slidingDrawer.isOpened())
+			slidingDrawer.close();
+		else {
+			mediaPlayer.pause();
+			this.finish();
+
+		}
 		return;
 	}
 
