@@ -527,10 +527,11 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	public void onScroll(AbsListView view, int firstVisibleItem,
 			int visibleItemCount, int totalItemCount) {
 		int lastInScreen = firstVisibleItem + visibleItemCount;
+		System.out.println("**** total count :"+totalItemCount);
 		System.out.println(" %% FV " + firstVisibleItem);
 		System.out.println(" %% LS " + lastInScreen);
 
-		if (!mLastPage && !(mLoading) && (lastInScreen == totalItemCount)) {
+		if (!mLastPage && !(mLoading) && ((totalItemCount-lastInScreen)<=10)) {
 			numberOfPages++;
 			AddToList(numberOfPages);
 			mLoading = false;
@@ -545,16 +546,6 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 				R.string.albumsURL), pages);
 		Thread threadAlbums = new Thread(albumPage);
 		threadAlbums.start();
-		synchronized (albumPage) {
-			try {
-				albumPage.wait();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		}
-
 		adaptor.notifyDataSetChanged();
 		mLoading = false;
 	}
