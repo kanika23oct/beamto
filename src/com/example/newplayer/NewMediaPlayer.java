@@ -101,6 +101,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		utils = new Utilities();
 
 		mediaPlayer.pause();
+		btnPlayList.setVisibility(View.INVISIBLE);
 
 		// Listeners
 		songProgressBar.setOnSeekBarChangeListener(this); // Important
@@ -417,7 +418,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 				// set Progress bar values
 				songProgressBar.setProgress(0);
 				songProgressBar.setMax(100);
-
+				btnPlayList.setVisibility(View.VISIBLE);
 				// Updating progress bar
 				updateProgressBar();
 
