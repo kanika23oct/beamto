@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -12,6 +14,12 @@ import android.util.Log;
 import org.json.*;
 
 public class AlbumList {
+	
+	String albumUrl ;
+	
+	public AlbumList(String albumUrl){
+		this.albumUrl=albumUrl;
+	}
 	
 	private ArrayList<HashMap<String, String>> albumList = new ArrayList<HashMap<String, String>>();
 
@@ -28,6 +36,9 @@ public class AlbumList {
 				String name = albumDetails.getString(VariablesList.TAG_NAME);
 				String labelName = albumDetails.getString(VariablesList.TAG_LABEL_NAME);
 				String albumImage = albumDetails.getString(VariablesList.TAG_ALBUM_IMAGE);
+				String songJsonString = jParser.readJsonFromUrl(albumUrl.toString(),VariablesList.ALBUM_JSON_PARAMETER,id);
+				JSONObject songjsonObject = new JSONObject(songJsonString);
+				NewMediaPlayer.albumJsonString.put(id+";"+name,songjsonObject.getJSONArray(VariablesList.JSON_SONG_OBJECT));
 				album.put(VariablesList.TAG_ID, id);
 				album.put(VariablesList.TAG_NAME, name);
 				album.put(VariablesList.TAG_LABEL_NAME, labelName);
