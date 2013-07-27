@@ -6,25 +6,28 @@ import java.util.HashMap;
 public class LoadAlbumPage implements Runnable {
 	String url = "";
 	String pageNumber = "";
+	String albumUrl = "";
 
-	public LoadAlbumPage(String url, String pageNumber) {
+	public LoadAlbumPage(String url, String pageNumber,String albumUrl) {
 		this.url = url;
 		this.pageNumber = pageNumber;
+		this.albumUrl = albumUrl;
 	}
 
 	@Override
 	public void run() {
+		
 		ArrayList<HashMap<String, String>> list;
 		if (pageNumber.equals("1")) {
-		list = new AlbumList().songList(url,
+		list = new AlbumList(albumUrl).songList(url,
 				VariablesList.JSON_PAGE_OBJECT, pageNumber);
 		  
 			NewMediaPlayer.setSongList(list);
 		} else {
-			list = new AlbumList().songList(url,
+			list = new AlbumList(albumUrl).songList(url,
 					VariablesList.JSON_PAGE_OBJECT, pageNumber);
 			
-			NewMediaPlayer.setNewList(new AlbumList().songList(url,
+			NewMediaPlayer.setNewList(new AlbumList(albumUrl).songList(url,
 					VariablesList.JSON_PAGE_OBJECT, pageNumber));
 			NewMediaPlayer.appendToAdaptor();
 		}
