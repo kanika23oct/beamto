@@ -5,12 +5,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import org.json.JSONArray;
+
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
@@ -19,6 +23,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.widget.AbsListView;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -28,6 +33,7 @@ import android.widget.SlidingDrawer.OnDrawerCloseListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AbsListView.OnScrollListener;
+
 import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.view.View;
 
@@ -47,6 +53,8 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	private static SeekBar songProgressBar;
 	private static TextView songCurrentDurationLabel;
 	private static TextView songTotalDurationLabel;
+	public static ProgressBar progressBar;
+	 ProgressDialog progDialog;
 	private static Utilities utils;
 	AssetManager am;
 	private static ArrayList<HashMap<String, String>> songsList;
@@ -62,6 +70,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	int numberOfPages = 1;
 
 	public static ArrayList<HashMap<String, String>> selectedSongs = new ArrayList<HashMap<String, String>>();
+	public static HashMap<String,JSONArray> albumJsonString = new HashMap<String,JSONArray>();
 	// Handler to update UI timer, progress bar etc,.
 	private static Handler mHandler = new Handler();;
 	private static int seekForwardTime = 5000; // 5000 milliseconds
@@ -74,6 +83,9 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	String albumName;
 	static int currentIndex;
 
+	
+	
+	
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -97,9 +109,12 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		slidingDrawer = (SlidingDrawer) findViewById(R.id.slidingDrawer1);
 		final RelativeLayout layout = (RelativeLayout) findViewById(R.id.buttonPlayList);
 		currentPlayList = (ImageButton) findViewById(R.id.currentPlayList);
-
+		 showDialog(0);
+		
 		utils = new Utilities();
 
+		
+		
 		mediaPlayer.pause();
 		btnPlayList.setVisibility(View.INVISIBLE);
 
@@ -121,13 +136,20 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		}
 
 		am = this.getAssets();
+		
+		
+		
+		
+		
 		LoadAlbumPage albumPage = new LoadAlbumPage(getResources().getString(
-				R.string.albumsURL), "1");
+				R.string.albumsURL), "1",getString(R.string.songsListURL));
 		Thread threadAlbum = new Thread(albumPage);
 		threadAlbum.start();
 		synchronized (albumPage) {
 
 			try {
+				
+				
 				albumPage.wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -135,11 +157,13 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			}
 
 		}
-
-		adaptor = new ClickableListAdapter(this, songsList);
+        adaptor = new ClickableListAdapter(this, songsList);
 		final GridView view = (GridView) findViewById(R.id.grid_view_albums);
 		view.setAdapter(adaptor);
 		view.setOnScrollListener(this);
+		progDialog.dismiss();
+		
+		
 		slidingDrawer.setOnDrawerOpenListener(new OnDrawerOpenListener() {
 
 			@Override
@@ -533,22 +557,30 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		System.out.println(" %% LS " + lastInScreen);
 
 		if (!mLastPage && !(mLoading) && ((totalItemCount-lastInScreen)<=10)) {
+			 showDialog(0);
 			numberOfPages++;
 			AddToList(numberOfPages);
 			mLoading = false;
+			progDialog.dismiss();
 		}
 	}
 
-	public void AddToList(int numberOfPages) {
+	public void AddToList(int numberOfPages)  {
+
+		
+	  
+		
 		System.out.println("***** Page :" + numberOfPages);
 		mLoading = true;
 		final String pages = "" + numberOfPages;
 		LoadAlbumPage albumPage = new LoadAlbumPage(getResources().getString(
-				R.string.albumsURL), pages);
+				R.string.albumsURL), pages,getString(R.string.songsListURL));
 		Thread threadAlbums = new Thread(albumPage);
 		threadAlbums.start();
 		adaptor.notifyDataSetChanged();
 		mLoading = false;
+		
+		
 	}
 
 	public static void appendToAdaptor() {
@@ -595,4 +627,22 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		}
 	}
 
+	// Method to create a progress bar dialog of either spinner or horizontal type
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch(id) {
+        case 0:                      // Spinner
+            progDialog = new ProgressDialog(this);
+            progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDialog.setMessage("Loading...");
+            return progDialog;
+        case 1:                      // Horizontal
+        	 progDialog = new ProgressDialog(this);
+             progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+             progDialog.setMessage("Loading...");
+            return progDialog;
+        default:
+            return null;
+        }
+    }
 }
