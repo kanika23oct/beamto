@@ -54,7 +54,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	private static TextView songCurrentDurationLabel;
 	private static TextView songTotalDurationLabel;
 	public static ProgressBar progressBar;
-	 ProgressDialog progDialog;
+	ProgressDialog progDialog;
 	private static Utilities utils;
 	AssetManager am;
 	private static ArrayList<HashMap<String, String>> songsList;
@@ -70,7 +70,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	int numberOfPages = 1;
 
 	public static ArrayList<HashMap<String, String>> selectedSongs = new ArrayList<HashMap<String, String>>();
-	public static HashMap<String,JSONArray> albumJsonString = new HashMap<String,JSONArray>();
+	public static HashMap<String, JSONArray> albumJsonString = new HashMap<String, JSONArray>();
 	// Handler to update UI timer, progress bar etc,.
 	private static Handler mHandler = new Handler();;
 	private static int seekForwardTime = 5000; // 5000 milliseconds
@@ -83,9 +83,6 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	String albumName;
 	static int currentIndex;
 
-	
-	
-	
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -105,16 +102,15 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		btnRepeat = (ImageButton) findViewById(R.id.btnRepeat);
 		artistImage = (ImageView) findViewById(R.id.songThumbnail);
 		btnPlayList = (ImageButton) findViewById(R.id.playList);
-		songTitle = (TextView) findViewById(R.id.playListTitle);
+		songTitle = (TextView) findViewById(R.id.songTitle);
 		slidingDrawer = (SlidingDrawer) findViewById(R.id.slidingDrawer1);
 		final RelativeLayout layout = (RelativeLayout) findViewById(R.id.buttonPlayList);
 		currentPlayList = (ImageButton) findViewById(R.id.currentPlayList);
-		 showDialog(0);
-		
+		currentPlayList.setVisibility(View.INVISIBLE);
+		showDialog(0);
+
 		utils = new Utilities();
 
-		
-		
 		mediaPlayer.pause();
 		btnPlayList.setVisibility(View.INVISIBLE);
 
@@ -136,20 +132,15 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		}
 
 		am = this.getAssets();
-		
-		
-		
-		
-		
+
 		LoadAlbumPage albumPage = new LoadAlbumPage(getResources().getString(
-				R.string.albumsURL), "1",getString(R.string.songsListURL));
+				R.string.albumsURL), "1", getString(R.string.songsListURL));
 		Thread threadAlbum = new Thread(albumPage);
 		threadAlbum.start();
 		synchronized (albumPage) {
 
 			try {
-				
-				
+
 				albumPage.wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -157,21 +148,22 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			}
 
 		}
-        adaptor = new ClickableListAdapter(this, songsList);
+		adaptor = new ClickableListAdapter(this, songsList);
 		final GridView view = (GridView) findViewById(R.id.grid_view_albums);
 		view.setAdapter(adaptor);
 		view.setOnScrollListener(this);
 		progDialog.dismiss();
-		
-		
+
 		slidingDrawer.setOnDrawerOpenListener(new OnDrawerOpenListener() {
 
 			@Override
 			public void onDrawerOpened() {
 				btnPlayList.setVisibility(View.INVISIBLE);
 				songTitle.setVisibility(View.INVISIBLE);
+				songTitleLabel.setVisibility(View.VISIBLE);
+				currentPlayList.setVisibility(View.VISIBLE);
 				view.setVisibility(View.INVISIBLE);
-				layout.setBackgroundColor(Color.WHITE);
+				layout.setBackgroundResource(R.layout.bg_player_header);
 
 			}
 		});
@@ -180,9 +172,13 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 
 			@Override
 			public void onDrawerClosed() {
-				btnPlayList.setVisibility(View.VISIBLE);
+				if (selectedSongs.size() > 0) {
+					btnPlayList.setVisibility(View.VISIBLE);
+				}
 				songTitle.setVisibility(View.VISIBLE);
 				view.setVisibility(View.VISIBLE);
+				songTitleLabel.setVisibility(View.INVISIBLE);
+				currentPlayList.setVisibility(View.INVISIBLE);
 				layout.setBackgroundColor(Color.rgb(211, 211, 211));
 				if (mediaPlayer.isPlaying()) {
 					btnPlayList.setImageResource(R.drawable.btn_stop);
@@ -552,12 +548,13 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	public void onScroll(AbsListView view, int firstVisibleItem,
 			int visibleItemCount, int totalItemCount) {
 		int lastInScreen = firstVisibleItem + visibleItemCount;
-		System.out.println("**** total count :"+totalItemCount);
+		System.out.println("**** total count :" + totalItemCount);
 		System.out.println(" %% FV " + firstVisibleItem);
 		System.out.println(" %% LS " + lastInScreen);
 
-		if (!mLastPage && !(mLoading) && ((totalItemCount-lastInScreen)<=10)) {
-			 showDialog(0);
+		if (!mLastPage && !(mLoading)
+				&& ((totalItemCount - lastInScreen) <= 10)) {
+			showDialog(0);
 			numberOfPages++;
 			AddToList(numberOfPages);
 			mLoading = false;
@@ -565,22 +562,18 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		}
 	}
 
-	public void AddToList(int numberOfPages)  {
+	public void AddToList(int numberOfPages) {
 
-		
-	  
-		
 		System.out.println("***** Page :" + numberOfPages);
 		mLoading = true;
 		final String pages = "" + numberOfPages;
 		LoadAlbumPage albumPage = new LoadAlbumPage(getResources().getString(
-				R.string.albumsURL), pages,getString(R.string.songsListURL));
+				R.string.albumsURL), pages, getString(R.string.songsListURL));
 		Thread threadAlbums = new Thread(albumPage);
 		threadAlbums.start();
 		adaptor.notifyDataSetChanged();
 		mLoading = false;
-		
-		
+
 	}
 
 	public static void appendToAdaptor() {
@@ -627,22 +620,23 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		}
 	}
 
-	// Method to create a progress bar dialog of either spinner or horizontal type
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        switch(id) {
-        case 0:                      // Spinner
-            progDialog = new ProgressDialog(this);
-            progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progDialog.setMessage("Loading...");
-            return progDialog;
-        case 1:                      // Horizontal
-        	 progDialog = new ProgressDialog(this);
-             progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-             progDialog.setMessage("Loading...");
-            return progDialog;
-        default:
-            return null;
-        }
-    }
+	// Method to create a progress bar dialog of either spinner or horizontal
+	// type
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+		case 0: // Spinner
+			progDialog = new ProgressDialog(this);
+			progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			progDialog.setMessage("Loading...");
+			return progDialog;
+		case 1: // Horizontal
+			progDialog = new ProgressDialog(this);
+			progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			progDialog.setMessage("Loading...");
+			return progDialog;
+		default:
+			return null;
+		}
+	}
 }
