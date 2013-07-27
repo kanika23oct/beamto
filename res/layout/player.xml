@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
+       
     <GridView
         android:id="@+id/grid_view_albums"
         android:layout_width="match_parent"
@@ -14,6 +14,8 @@
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
         android:verticalSpacing="30dp" >
+    
+        
     </GridView>
 
     <SlidingDrawer
@@ -32,19 +34,19 @@
             android:layout_height="57dp"
             android:background="#d3d3d3" >
 
-            <TextView
-                android:id="@+id/playListTitle"
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_toLeftOf="@+id/playList"
-                android:layout_weight="0.43"
-                android:focusable="false"
-                android:padding="10dp"
-                android:text="      "
-                android:textSize="16dp"
-                android:color="#33B5E5" />
-
+             <TextView
+                    android:id="@+id/songTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:paddingLeft="10dp"
+                    android:text="  "
+                    android:textColor="#04b3d2"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+             
+          
             <ImageButton
                 android:id="@+id/playList"
                 android:layout_width="wrap_content"
@@ -52,6 +54,14 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 android:src="@drawable/play_button_2" />
+             <ImageButton
+                    android:id="@+id/currentPlayList"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                     android:layout_alignParentRight="true"
+                    android:layout_marginRight="5dp"
+                    android:background="@null"
+                    android:src="@drawable/btn_playlist" />
 
         </RelativeLayout>
         
@@ -65,7 +75,7 @@
 
             <!-- Player Header -->
 
-            <LinearLayout
+         <!--      <LinearLayout
                 android:id="@+id/player_header_bg"
                 android:layout_width="fill_parent"
                 android:layout_height="60dip"
@@ -74,19 +84,8 @@
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp" >
 
-                <!-- Song Title -->
-
-                <TextView
-                    android:id="@+id/songTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="1"
-                    android:paddingLeft="10dp"
-                    android:text="  "
-                    android:textColor="#04b3d2"
-                    android:textSize="16dp"
-                    android:textStyle="bold" />
+              
+               
 
                  <ImageButton
                     android:id="@+id/currentPlayList"
@@ -96,14 +95,15 @@
                     android:background="@null"
                     android:src="@drawable/btn_playlist" />
               
-            </LinearLayout>
+            </LinearLayout>   --> 
+            
 
             <!-- Song Thumbnail Image -->
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/player_header_bg"
+                android:layout_below="@+id/buttonPlayList"
                 android:gravity="center"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp" >
@@ -195,7 +195,7 @@
             <LinearLayout
                 android:id="@+id/player_footer_bg"
                 android:layout_width="fill_parent"
-                android:layout_height="46dp"
+                android:layout_height="103dp"
                 android:background="@layout/bg_player_footer"
                 android:gravity="center" >
 
