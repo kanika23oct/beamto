@@ -56,18 +56,17 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	public static ProgressBar progressBar;
 	ProgressDialog progDialog;
 	private static Utilities utils;
-	AssetManager am;
-	private static ArrayList<HashMap<String, String>> songsList;
+	private static ArrayList<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();
 	private static ArrayList<HashMap<String, String>> newList;
 	public static ImageButton btnPlayList;
 	private static ImageButton currentPlayList;
 	public static TextView songTitle;
 	private static SlidingDrawer slidingDrawer;
 	int mVisibleThreashold = 6;
-	boolean mLoading = false;
+	static boolean mLoading = false;
 	static boolean mLastPage = false;
 	static ClickableListAdapter adaptor;
-	int numberOfPages = 1;
+	static int numberOfPages = 1;
 
 	public static ArrayList<HashMap<String, String>> selectedSongs = new ArrayList<HashMap<String, String>>();
 	public static HashMap<String, JSONArray> albumJsonString = new HashMap<String, JSONArray>();
@@ -77,6 +76,8 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	private static int seekBackwardTime = 5000; // 5000 milliseconds
 	private boolean isShuffle = false;
 	private boolean isRepeat = false;
+	public static String albumURL;
+	public static String songURL;
 
 	String name;
 	String url;
@@ -107,6 +108,8 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		final RelativeLayout layout = (RelativeLayout) findViewById(R.id.buttonPlayList);
 		currentPlayList = (ImageButton) findViewById(R.id.currentPlayList);
 		currentPlayList.setVisibility(View.INVISIBLE);
+	
+		
 		showDialog(0);
 
 		utils = new Utilities();
@@ -131,36 +134,27 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			playSong(url);
 		}
 
-		am = this.getAssets();
+	
 
-		LoadAlbumPage albumPage = new LoadAlbumPage(getResources().getString(
-				R.string.albumsURL), "1", getString(R.string.songsListURL));
-		Thread threadAlbum = new Thread(albumPage);
-		threadAlbum.start();
-		synchronized (albumPage) {
-
-			try {
-
-				albumPage.wait();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		}
 		adaptor = new ClickableListAdapter(this, songsList);
 		final GridView view = (GridView) findViewById(R.id.grid_view_albums);
 		view.setAdapter(adaptor);
 		view.setOnScrollListener(this);
+    //    view.setSmoothScrollbarEnabled(true);
+        albumURL = getResources().getString(R.string.albumsURL);
+        songURL = getString(R.string.songsListURL);
+       if(numberOfPages == 1) {
+    	   mLoading = true; 
+    	  new LoadAlbumPage().execute(albumURL, "1", songURL);
+       
+       }
+        
 		progDialog.dismiss();
-
 		slidingDrawer.setOnDrawerOpenListener(new OnDrawerOpenListener() {
 
 			@Override
 			public void onDrawerOpened() {
 				btnPlayList.setVisibility(View.INVISIBLE);
-				songTitle.setVisibility(View.INVISIBLE);
-				songTitleLabel.setVisibility(View.VISIBLE);
 				currentPlayList.setVisibility(View.VISIBLE);
 				view.setVisibility(View.INVISIBLE);
 				layout.setBackgroundResource(R.layout.bg_player_header);
@@ -174,10 +168,9 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			public void onDrawerClosed() {
 				if (selectedSongs.size() > 0) {
 					btnPlayList.setVisibility(View.VISIBLE);
+
 				}
-				songTitle.setVisibility(View.VISIBLE);
 				view.setVisibility(View.VISIBLE);
-				songTitleLabel.setVisibility(View.INVISIBLE);
 				currentPlayList.setVisibility(View.INVISIBLE);
 				layout.setBackgroundColor(Color.rgb(211, 211, 211));
 				if (mediaPlayer.isPlaying()) {
@@ -206,7 +199,6 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			public void onClick(View arg0) {
 
 				if (!mediaPlayer.isPlaying()) {
-					// mediaPlayer.start();
 					// Changing button image to pause button
 					if (selectedSongs.size() > 0) {
 						HashMap<String, String> song = selectedSongs
@@ -408,6 +400,10 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		return true;
 	}
 
+	public static ClickableListAdapter getClickableListAdapter() {
+		return adaptor;
+	}
+
 	public static void setSongList(
 			ArrayList<HashMap<String, String>> setSongsList) {
 		songsList = setSongsList;
@@ -419,6 +415,13 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 
 	public static void setLastPage(boolean lastPage) {
 		mLastPage = lastPage;
+	}
+	
+	public static void setLoading(boolean loading) {
+		mLoading = loading;
+		if(mLoading == false){
+		//	onCreateDialog(1);
+		}
 	}
 
 	public static void playSong(String url) {
@@ -434,11 +437,14 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 				mediaPlayer.start();
 				// Changing Button Image to pause image
 				btnPlay.setImageResource(R.drawable.btn_pause);
-				btnPlayList.setImageResource(R.drawable.btn_stop);
+
 				// set Progress bar values
 				songProgressBar.setProgress(0);
 				songProgressBar.setMax(100);
-				btnPlayList.setVisibility(View.VISIBLE);
+				if (!slidingDrawer.isOpened()) {
+					btnPlayList.setImageResource(R.drawable.btn_stop);
+					btnPlayList.setVisibility(View.VISIBLE);
+				}
 				// Updating progress bar
 				updateProgressBar();
 
@@ -533,46 +539,22 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			slidingDrawer.close();
 		else {
 			mediaPlayer.pause();
+			adaptor.clearImage();
+			System.gc();
+			
 			this.finish();
 
 		}
 		return;
 	}
 
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-	}
+	
 
-	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem,
-			int visibleItemCount, int totalItemCount) {
-		int lastInScreen = firstVisibleItem + visibleItemCount;
-		System.out.println("**** total count :" + totalItemCount);
-		System.out.println(" %% FV " + firstVisibleItem);
-		System.out.println(" %% LS " + lastInScreen);
+	public static void AddToList(int numberOfPages) {
 
-		if (!mLastPage && !(mLoading)
-				&& ((totalItemCount - lastInScreen) <= 10)) {
-			showDialog(0);
-			numberOfPages++;
-			AddToList(numberOfPages);
-			mLoading = false;
-			progDialog.dismiss();
-		}
-	}
-
-	public void AddToList(int numberOfPages) {
-
-		System.out.println("***** Page :" + numberOfPages);
-		mLoading = true;
-		final String pages = "" + numberOfPages;
-		LoadAlbumPage albumPage = new LoadAlbumPage(getResources().getString(
-				R.string.albumsURL), pages, getString(R.string.songsListURL));
-		Thread threadAlbums = new Thread(albumPage);
-		threadAlbums.start();
-		adaptor.notifyDataSetChanged();
-		mLoading = false;
+		System.out.println("%%%%%%%% Page: "+numberOfPages);
+		String page = ""+numberOfPages;
+		 new LoadAlbumPage().execute(albumURL, page, songURL);
 
 	}
 
@@ -622,21 +604,25 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 
 	// Method to create a progress bar dialog of either spinner or horizontal
 	// type
-	@Override
+	
+	
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
 		case 0: // Spinner
 			progDialog = new ProgressDialog(this);
 			progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			progDialog.setMessage("Loading...");
+			progDialog.setMessage("Loading...Please wait");
 			return progDialog;
 		case 1: // Horizontal
-			progDialog = new ProgressDialog(this);
-			progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			progDialog.setMessage("Loading...");
-			return progDialog;
+			progDialog.dismiss();
 		default:
 			return null;
 		}
+	}
+
+	@Override
+	public void onScroll(AbsListView arg0, int arg1, int arg2, int arg3) {
+		// TODO Auto-generated method stub
+		
 	}
 }
