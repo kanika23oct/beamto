@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import com.example.newplayer.R;
 
 import android.app.ListActivity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ListView;
@@ -24,7 +25,8 @@ public class SongListActivity extends ListActivity {
 	private String albumName = "";
 	private String albumImageURL = "";
 	Button submitButton;
-	
+	SongListAdapter songAdapter;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -34,52 +36,52 @@ public class SongListActivity extends ListActivity {
 		albumName = getIntent().getExtras().getString("albumName");
 		albumImageURL = getIntent().getExtras().getString("AlbumImage");
 		url = getResources().getString(R.string.songsListURL);
-		
-		final Thread thread = new Thread() {
-			public void run() {
-				JSONParser jParser = new JSONParser();
-
-				try {
-					String jsonString = jParser.readJsonFromUrl(url,VariablesList.ALBUM_JSON_PARAMETER,albumIndex);
-					JSONObject jsonObject = new JSONObject(jsonString);
-					JSONArray songs = jsonObject.getJSONArray(VariablesList.JSON_SONG_OBJECT );
-					for (int i = 0; i < songs.length(); i++) {
-						HashMap<String, String> song = new HashMap<String, String>();
-						JSONObject songDetails = songs.getJSONObject(i);
-						String id = songDetails.getString(VariablesList.TAG_ID);
-						String name = songDetails.getString(VariablesList.TAG_NAME);
-						song.put(VariablesList.TAG_ID, id);
-						song.put(VariablesList.TAG_NAME, name);
-						song.put("AlbumImage", albumImageURL);
-						songList.add(song);
-					}
-					synchronized (this) {
-						this.notifyAll();
-					}
-				} catch (JSONException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-			}
-
-		};
-		synchronized (thread) {
-			thread.start();
-			try {
-				thread.wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-
-		}
-
-		SongListAdapter songAdapter = new SongListAdapter(this, songList,
+		songAdapter = new SongListAdapter(this, songList,
 				albumName);
 		ListView lv = getListView();
 		lv.setAdapter(songAdapter);
+      new LoadSongs().execute(url,albumIndex);
 
 	}
 
+	private class LoadSongs extends
+			AsyncTask<String, Void, ArrayList<HashMap<String, String>>> {
+
+		@Override
+		protected ArrayList<HashMap<String, String>> doInBackground(
+				String... params) {
+			String url = params[0];
+			String albumIndex = params[1];
+			JSONParser jParser = new JSONParser();
+			try {
+				String jsonString = jParser.readJsonFromUrl(url,
+						VariablesList.ALBUM_JSON_PARAMETER, albumIndex);
+				JSONObject jsonObject = new JSONObject(jsonString);
+				JSONArray songs = jsonObject
+						.getJSONArray(VariablesList.JSON_SONG_OBJECT);
+				for (int i = 0; i < songs.length(); i++) {
+					HashMap<String, String> song = new HashMap<String, String>();
+					JSONObject songDetails = songs.getJSONObject(i);
+					String id = songDetails.getString(VariablesList.TAG_ID);
+					String name = songDetails.getString(VariablesList.TAG_NAME);
+					song.put(VariablesList.TAG_ID, id);
+					song.put(VariablesList.TAG_NAME, name);
+					song.put("AlbumImage", albumImageURL);
+					songList.add(song);
+				}
+
+			} catch (JSONException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			return songList;
+		}
+
+		@Override
+		public void onPostExecute(ArrayList<HashMap<String, String>> result) {
+			songAdapter.notifyDataSetChanged();
+		}
+	}
 }
