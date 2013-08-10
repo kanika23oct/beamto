@@ -3,6 +3,7 @@ package com.example.beamto;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 public class LoadAlbumPage extends
@@ -11,6 +12,7 @@ AsyncTask<String, Void, ArrayList<HashMap<String, String>>> {
 	String pageNumber = "";
 	ArrayList<HashMap<String, String>> list;
 	String albumUrl = "";
+	NewMediaPlayer instance;
 
 	@Override
 	protected ArrayList<HashMap<String, String>> doInBackground(
@@ -18,7 +20,7 @@ AsyncTask<String, Void, ArrayList<HashMap<String, String>>> {
 		this.url = params[0];
 		this.pageNumber = params[1];
 		this.albumUrl = params[2];
-
+		NewMediaPlayer instance = NewMediaPlayer.getActivity();
 		if (pageNumber.equals("1")) {
 			list = new AlbumList(albumUrl).songList(url,
 					VariablesList.JSON_PAGE_OBJECT, pageNumber);
@@ -36,8 +38,7 @@ AsyncTask<String, Void, ArrayList<HashMap<String, String>>> {
 			System.out.println("***** Albums Finish");
 			NewMediaPlayer.setLastPage(true);
 		}
-        
-		NewMediaPlayer.setLoading(false);
+		instance.setLoading(false);
 		return list;
 
 	}
@@ -47,6 +48,8 @@ AsyncTask<String, Void, ArrayList<HashMap<String, String>>> {
 		ClickableListAdapter adapter = NewMediaPlayer.getClickableListAdapter();
 		adapter.notifyDataSetChanged();
 		NewMediaPlayer.numberOfPages++;
+		
+		
 		if (!NewMediaPlayer.mLastPage) {
 			NewMediaPlayer.AddToList(NewMediaPlayer.numberOfPages);
 		}
