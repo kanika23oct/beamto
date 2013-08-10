@@ -56,7 +56,8 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	private static TextView songCurrentDurationLabel;
 	private static TextView songTotalDurationLabel;
 	public static ProgressBar progressBar;
-	ProgressDialog progDialog;
+	private static Activity activity;
+	static ProgressDialog progDialog;
 	private static Utilities utils;
 	private static ArrayList<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();
 	private static ArrayList<HashMap<String, String>> newList;
@@ -92,6 +93,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.player);
+		activity = this;
 		btnPlay = (ImageButton) findViewById(R.id.btnPlay);
 		btnForward = (ImageButton) findViewById(R.id.btnForward);
 		btnBackward = (ImageButton) findViewById(R.id.btnBackward);
@@ -112,8 +114,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		currentPlayList.setVisibility(View.INVISIBLE);
 	
 		
-		showDialog(0);
-
+		
 		utils = new Utilities();
 
 		mediaPlayer.pause();
@@ -147,11 +148,11 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
         songURL = getString(R.string.songsListURL);
        if(numberOfPages == 1) {
     	   mLoading = true; 
+    	  showDialog(0);
     	  new LoadAlbumPage().execute(albumURL, "1", songURL);
        
        }
         
-		progDialog.dismiss();
 		slidingDrawer.setOnDrawerOpenListener(new OnDrawerOpenListener() {
 
 			@Override
@@ -419,10 +420,10 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		mLastPage = lastPage;
 	}
 	
-	public static void setLoading(boolean loading) {
+	public void setLoading(boolean loading) {
 		mLoading = loading;
 		if(mLoading == false){
-		//	onCreateDialog(1);
+			progDialog.dismiss();
 		}
 	}
 
@@ -560,6 +561,10 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 
 	}
 
+	public static NewMediaPlayer getActivity(){
+		return (NewMediaPlayer) activity;
+	}
+	
 	public static void appendToAdaptor() {
 		for (int i = 0; i < newList.size(); i++) {
 			adaptor.addToList(newList.get(i));
@@ -611,12 +616,11 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
 		case 0: // Spinner
-			progDialog = new ProgressDialog(this);
+			progDialog = new ProgressDialog(activity);
 			progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 			progDialog.setMessage("Loading...Please wait");
+			progDialog.setCancelable(true);
 			return progDialog;
-		case 1: // Horizontal
-			progDialog.dismiss();
 		default:
 			return null;
 		}
