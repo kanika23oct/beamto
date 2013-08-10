@@ -3,42 +3,53 @@ package com.example.newplayer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class LoadAlbumPage implements Runnable {
+import android.os.AsyncTask;
+
+public class LoadAlbumPage extends
+AsyncTask<String, Void, ArrayList<HashMap<String, String>>> {
 	String url = "";
 	String pageNumber = "";
+	ArrayList<HashMap<String, String>> list;
 	String albumUrl = "";
 
-	public LoadAlbumPage(String url, String pageNumber,String albumUrl) {
-		this.url = url;
-		this.pageNumber = pageNumber;
-		this.albumUrl = albumUrl;
-	}
-
 	@Override
-	public void run() {
-		
-		ArrayList<HashMap<String, String>> list;
+	protected ArrayList<HashMap<String, String>> doInBackground(
+			String... params) {
+		this.url = params[0];
+		this.pageNumber = params[1];
+		this.albumUrl = params[2];
+
 		if (pageNumber.equals("1")) {
-		list = new AlbumList(albumUrl).songList(url,
-				VariablesList.JSON_PAGE_OBJECT, pageNumber);
-		  
-			NewMediaPlayer.setSongList(list);
+			list = new AlbumList(albumUrl).songList(url,
+					VariablesList.JSON_PAGE_OBJECT, pageNumber);
+
+			// NewMediaPlayer.setSongList(list);
 		} else {
 			list = new AlbumList(albumUrl).songList(url,
 					VariablesList.JSON_PAGE_OBJECT, pageNumber);
-			
-			NewMediaPlayer.setNewList(new AlbumList(albumUrl).songList(url,
-					VariablesList.JSON_PAGE_OBJECT, pageNumber));
-			NewMediaPlayer.appendToAdaptor();
+
 		}
-		if(list.size() ==0){
+		NewMediaPlayer.setNewList(list);
+		NewMediaPlayer.appendToAdaptor();
+
+		if (list.size() == 0) {
 			System.out.println("***** Albums Finish");
 			NewMediaPlayer.setLastPage(true);
 		}
-		synchronized (this) {
-			this.notifyAll();
-		}
+        
+		NewMediaPlayer.setLoading(false);
+		return list;
 
+	}
+
+	@Override
+	public void onPostExecute(ArrayList<HashMap<String, String>> result) {
+		ClickableListAdapter adapter = NewMediaPlayer.getClickableListAdapter();
+		adapter.notifyDataSetChanged();
+		NewMediaPlayer.numberOfPages++;
+		if (!NewMediaPlayer.mLastPage) {
+			NewMediaPlayer.AddToList(NewMediaPlayer.numberOfPages);
+		}
 	}
 
 }
