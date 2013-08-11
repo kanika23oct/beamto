@@ -134,9 +134,11 @@ public class ClickableListAdapter extends BaseAdapter {
 							NewMediaPlayer.songTitleLabel.setText(albumName
 									+ " - " + songName);
 							NewMediaPlayer.songTitle.setText(albumName + "-"
+						
 									+ songName);
 						}
 						NewMediaPlayer.playSong(url);
+					
 					}
 				}
 			}
