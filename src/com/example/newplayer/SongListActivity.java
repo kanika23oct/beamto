@@ -1,0 +1,83 @@
+package com.example.newplayer;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.app.ListActivity;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.ListView;
+
+public class SongListActivity extends ListActivity {
+
+	String albumIndex = "";
+	String url = "";
+	public ArrayList<HashMap<String, String>> songList = new ArrayList<HashMap<String, String>>();
+
+	private String albumName = "";
+	private String albumImageURL = "";
+	Button submitButton;
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.songlist);
+		albumIndex = getIntent().getExtras().getString("albumIndex");
+		albumName = getIntent().getExtras().getString("albumName");
+		albumImageURL = getIntent().getExtras().getString("AlbumImage");
+		url = getResources().getString(R.string.songsListURL);
+		
+		final Thread thread = new Thread() {
+			public void run() {
+				JSONParser jParser = new JSONParser();
+
+				try {
+					String jsonString = jParser.readJsonFromUrl(url,VariablesList.ALBUM_JSON_PARAMETER,albumIndex);
+					JSONObject jsonObject = new JSONObject(jsonString);
+					JSONArray songs = jsonObject.getJSONArray(VariablesList.JSON_SONG_OBJECT );
+					for (int i = 0; i < songs.length(); i++) {
+						HashMap<String, String> song = new HashMap<String, String>();
+						JSONObject songDetails = songs.getJSONObject(i);
+						String id = songDetails.getString(VariablesList.TAG_ID);
+						String name = songDetails.getString(VariablesList.TAG_NAME);
+						song.put(VariablesList.TAG_ID, id);
+						song.put(VariablesList.TAG_NAME, name);
+						song.put("AlbumImage", albumImageURL);
+						songList.add(song);
+					}
+					synchronized (this) {
+						this.notifyAll();
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+			}
+
+		};
+		synchronized (thread) {
+			thread.start();
+			try {
+				thread.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+		SongListAdapter songAdapter = new SongListAdapter(this, songList,
+				albumName);
+		ListView lv = getListView();
+		lv.setAdapter(songAdapter);
+
+	}
+
+}
