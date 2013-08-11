@@ -10,7 +10,9 @@ import org.json.JSONObject;
 
 import com.example.newplayer.R;
 
+import android.app.Dialog;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.Button;
@@ -26,7 +28,9 @@ public class SongListActivity extends ListActivity {
 	private String albumImageURL = "";
 	Button submitButton;
 	SongListAdapter songAdapter;
+	private ProgressDialog progressDialog;
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -40,10 +44,23 @@ public class SongListActivity extends ListActivity {
 				albumName);
 		ListView lv = getListView();
 		lv.setAdapter(songAdapter);
+		showDialog(0);
       new LoadSongs().execute(url,albumIndex);
 
 	}
 
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+		case 0: // Spinner
+			progressDialog = new ProgressDialog(this);
+			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			progressDialog.setMessage("Loading...Please wait");
+			progressDialog.setCancelable(true);
+			return progressDialog;
+		default:
+			return null;
+		}
+	}
 	private class LoadSongs extends
 			AsyncTask<String, Void, ArrayList<HashMap<String, String>>> {
 
@@ -81,6 +98,7 @@ public class SongListActivity extends ListActivity {
 
 		@Override
 		public void onPostExecute(ArrayList<HashMap<String, String>> result) {
+			progressDialog.dismiss();
 			songAdapter.notifyDataSetChanged();
 		}
 	}
