@@ -23,6 +23,8 @@ import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MotionEvent;
+import android.view.View.OnClickListener;
 import android.widget.AbsListView;
 import android.widget.GridView;
 import android.widget.ProgressBar;
@@ -41,7 +43,7 @@ import android.view.View;
 
 @SuppressLint("NewApi")
 public class NewMediaPlayer extends Activity implements OnCompletionListener,
-		SeekBar.OnSeekBarChangeListener, OnScrollListener {
+		SeekBar.OnSeekBarChangeListener, OnScrollListener,OnClickListener {
 	public static MediaPlayer mediaPlayer = new MediaPlayer();
 	public static ImageView artistImage;
 	private static ImageButton btnPlay;
@@ -147,8 +149,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
         albumURL = getResources().getString(R.string.albumsURL);
         songURL = getString(R.string.songsListURL);
        if(numberOfPages == 1) {
-    	   mLoading = true; 
-    	  showDialog(0);
+    	   setLoading(true);
     	  new LoadAlbumPage().execute(albumURL, "1", songURL);
        
        }
@@ -186,6 +187,9 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		});
 
 		final Context context = this;
+		currentPlayList.setClickable(true);
+		currentPlayList.setOnClickListener(this);
+		
 		currentPlayList.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -397,6 +401,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 
 	}
 
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.media_player, menu);
@@ -420,10 +425,14 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		mLastPage = lastPage;
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void setLoading(boolean loading) {
 		mLoading = loading;
 		if(mLoading == false){
 			progDialog.dismiss();
+		}
+		else if(mLoading == true){
+			showDialog(0);
 		}
 	}
 
@@ -631,4 +640,22 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		// TODO Auto-generated method stub
 		
 	}
+
+	
+	
+
+	@Override
+	public void onClick(View v) {
+		switch(v.getId()){
+		case R.id.currentPlayList:
+			System.out.println("***** Hello");
+			Intent in = new Intent(this, PlayList.class);
+			startActivity(in);
+		  
+		}
+		
+	}
+
+	 
+
 }
