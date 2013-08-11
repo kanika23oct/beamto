@@ -48,8 +48,6 @@ AsyncTask<String, Void, ArrayList<HashMap<String, String>>> {
 		ClickableListAdapter adapter = NewMediaPlayer.getClickableListAdapter();
 		adapter.notifyDataSetChanged();
 		NewMediaPlayer.numberOfPages++;
-		
-		
 		if (!NewMediaPlayer.mLastPage) {
 			NewMediaPlayer.AddToList(NewMediaPlayer.numberOfPages);
 		}
