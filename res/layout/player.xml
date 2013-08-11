@@ -18,13 +18,14 @@
         
     </GridView>
 
-    <SlidingDrawer
+    <com.example.beamto.ClickableSlidingDrawer
         android:id="@+id/slidingDrawer1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:content="@+id/content"
+        android:allowSingleTap="false"
         android:handle="@+id/buttonPlayList" 
         >
 
@@ -52,6 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                android:clickable="true"
                 android:layout_alignParentTop="true"
                 android:src="@drawable/play_button_2" />
              <ImageButton
@@ -61,6 +63,7 @@
                      android:layout_alignParentRight="true"
                     android:layout_marginRight="5dp"
                     android:background="@null"
+                    android:clickable="true"
                     android:src="@drawable/btn_playlist" />
 
         </RelativeLayout>
@@ -246,6 +249,6 @@
             </LinearLayout>
 
         </LinearLayout>
-    </SlidingDrawer>
+    </com.example.beamto.ClickableSlidingDrawer>
 
 </RelativeLayout>
