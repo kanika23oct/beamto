@@ -1,5 +1,6 @@
 package com.example.beamto;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -8,51 +9,75 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SlidingDrawer;
 
+@SuppressLint("NewApi")
+@SuppressWarnings("deprecation")
 public class ClickableSlidingDrawer extends SlidingDrawer {
+
+	private static final String TAG_CLICK_INTERCEPTED = "click_intercepted";
 
     private ViewGroup mHandleLayout;
     private final Rect mHitRect = new Rect();
 
-    public ClickableSlidingDrawer(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
-
-    public ClickableSlidingDrawer(Context context, AttributeSet attrs) {
+    public ClickableSlidingDrawer(Context context, AttributeSet attrs)
+    {
         super(context, attrs);
     }
 
-
+    public ClickableSlidingDrawer(Context context, AttributeSet attrs, int defStyle)
+    {
+        super(context, attrs, defStyle);
+    }
 
     @Override
-    protected void onFinishInflate() {
+    protected void onFinishInflate()
+    {
         super.onFinishInflate();
 
         View handle = getHandle();
 
-        if (handle instanceof ViewGroup) {
+        if (handle instanceof ViewGroup)
+        {
             mHandleLayout = (ViewGroup) handle;
         }
     }
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent event) {
-        if (mHandleLayout != null) {
-            int childCount = mHandleLayout.getChildCount();
-            int handleClickX = (int)(event.getX() - mHandleLayout.getX());
-            int handleClickY = (int)(event.getY() - mHandleLayout.getY());
+    public boolean onInterceptTouchEvent(MotionEvent event)
+    {
+        if (mHandleLayout != null)
+        {
+            int clickX = (int) (event.getX() - mHandleLayout.getLeft());
+            int clickY = (int) (event.getY() - mHandleLayout.getTop());
 
-            Rect hitRect = mHitRect;
-
-            for (int i=0;i<childCount;i++) {
-                View childView = mHandleLayout.getChildAt(i);
-                childView.getHitRect(hitRect);
-
-                if (hitRect.contains(handleClickX, handleClickY)) {
-                    return false;
-                }
+            if (isAnyClickableChildHit(mHandleLayout, clickX, clickY))
+            {
+                return false;
             }
         }
-
         return super.onInterceptTouchEvent(event);
+    }
+
+    private boolean isAnyClickableChildHit(ViewGroup viewGroup, int clickX, int clickY)
+    {
+        for (int i = 0; i < viewGroup.getChildCount(); i++)
+        {
+            View childView = viewGroup.getChildAt(i);
+
+            if (TAG_CLICK_INTERCEPTED.equals(childView.getTag()))
+            {
+                childView.getHitRect(mHitRect);
+
+                if (mHitRect.contains(clickX, clickY))
+                {
+                    return true;
+                }
+            }
+
+            if (childView instanceof ViewGroup && isAnyClickableChildHit((ViewGroup) childView, clickX, clickY))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
