@@ -19,6 +19,7 @@
     </GridView>
 
     <com.example.beamto.ClickableSlidingDrawer
+   
         android:id="@+id/slidingDrawer1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -54,6 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:clickable="true"
+                android:tag="click_intercepted"
                 android:layout_alignParentTop="true"
                 android:src="@drawable/play_button_2" />
              <ImageButton
@@ -63,6 +65,7 @@
                      android:layout_alignParentRight="true"
                     android:layout_marginRight="5dp"
                     android:background="@null"
+                    android:tag="click_intercepted"
                     android:clickable="true"
                     android:src="@drawable/btn_playlist" />
 
