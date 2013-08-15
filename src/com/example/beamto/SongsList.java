@@ -1,17 +1,19 @@
 package com.example.beamto;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.newplayer.R;
+import com.example.beamto.R;
 
 import android.content.res.Resources;
+import android.os.AsyncTask;
 
-public class SongsList implements Runnable {
+public class SongsList extends AsyncTask<String, Void, Boolean> {
 
 	String albumName = "";
 	private static Resources resources;
@@ -19,26 +21,30 @@ public class SongsList implements Runnable {
 	private String imageURL = "";
 	private String albumIndex = "";
 
-	public SongsList(String imageURL, StringBuffer albumURL, String albumName,String albumIndex,Resources resources) {
-		this.imageURL = imageURL;
-		this.albumUrl = albumURL;
-		this.albumName = albumName;
-		this.albumIndex = albumIndex;
+	public SongsList(Resources resources) {
 		this.resources = resources;
 	}
 
 	@Override
-	public void run() {
+	public Boolean doInBackground(String... params) {
 		JSONParser jParser = new JSONParser();
+		boolean playSongs = false;
 		try {
-			JSONArray songs = NewMediaPlayer.albumJsonString.get(albumIndex+";"+albumName);
+
+			this.imageURL = params[0];
+			this.albumUrl = new StringBuffer(params[1]);
+			this.albumName = params[2];
+			this.albumIndex = params[3];
+			JSONArray songs = NewMediaPlayer.albumJsonString.get(albumIndex
+					+ ";" + albumName);
 			for (int i = 0; i < songs.length(); i++) {
 				HashMap<String, String> song = new HashMap<String, String>();
 				JSONObject songDetails = songs.getJSONObject(i);
 				String id = songDetails.getString(VariablesList.TAG_ID);
 				String name = songDetails.getString(VariablesList.TAG_NAME);
 				String jsonSongUrl = resources.getString(R.string.songURL);
-				String jsonStringSong = jParser.readJsonFromUrl(jsonSongUrl.toString(),VariablesList.TAG_ID,id);
+				String jsonStringSong = jParser.readJsonFromUrl(
+						jsonSongUrl.toString(), VariablesList.TAG_ID, id);
 				JSONObject jsonObjectSong = new JSONObject(jsonStringSong);
 				String songUrl = jsonObjectSong.getString("url");
 
@@ -52,14 +58,40 @@ public class SongsList implements Runnable {
 				song.put(VariablesList.ALBUM_NAME_PARAMETER, albumName);
 				song.put(VariablesList.TAG_ALBUM_IMAGE, imageURL);
 				NewMediaPlayer.selectedSongs.add(song);
-				synchronized (this) {
-					this.notifyAll();
-				}
 			}
+
+			if (NewMediaPlayer.selectedSongs.size() > 0)
+				playSongs = true;
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		return playSongs;
+	}
+
+	@Override
+	public void onPostExecute(Boolean result) {
+
+		if (result == true) {
+			if (!NewMediaPlayer.mediaPlayer.isPlaying()) {
+				HashMap<String, String> playingSong = NewMediaPlayer.selectedSongs
+						.get(0);
+				if (playingSong != null) {
+					String url = playingSong.get("songUrl");
+					String songName = playingSong.get("songName");
+					if (songName != null) {
+						NewMediaPlayer.songTitleLabel.setText(albumName + " - "
+								+ songName);
+						NewMediaPlayer.songTitle.setText(albumName + "-"
+
+						+ songName);
+					}
+					NewMediaPlayer.playSong(url);
+
+				}
+			}
 		}
 
 	}
