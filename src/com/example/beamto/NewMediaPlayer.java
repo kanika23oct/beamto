@@ -148,11 +148,13 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
     //    view.setSmoothScrollbarEnabled(true);
         albumURL = getResources().getString(R.string.albumsURL);
         songURL = getString(R.string.songsListURL);
+      if(songsList.size() == 0){
        if(numberOfPages == 1) {
     	   setLoading(true);
     	  new LoadAlbumPage().execute(albumURL, "1", songURL);
        
        }
+      }
         
 		slidingDrawer.setOnDrawerOpenListener(new OnDrawerOpenListener() {
 
@@ -557,14 +559,16 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		else {
 			mediaPlayer.pause();
 			System.gc();
-			
+			clearData();
 			this.finish();
 
 		}
 		return;
 	}
 
-	
+	private void clearData(){
+		selectedSongs.clear();
+	}
 
 	public static void AddToList(int numberOfPages) {
 
