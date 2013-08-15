@@ -7,7 +7,7 @@ import java.util.HashMap;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.newplayer.R;
+import com.example.beamto.R;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -75,22 +75,24 @@ public class SongListAdapter extends BaseAdapter {
 						try {
 							String jsonSongURL = resources
 									.getString(R.string.songURL);
-							String jsonString = jParser
-									.readJsonFromUrl(jsonSongURL,VariablesList.TAG_ID,songs.get(VariablesList.TAG_ID) );
+							String jsonString = jParser.readJsonFromUrl(
+									jsonSongURL, VariablesList.TAG_ID,
+									songs.get(VariablesList.TAG_ID));
 							JSONObject jsonObject = new JSONObject(jsonString);
 							String songUrl = jsonObject.getString("url");
 							System.out.println(songUrl);
 							song.put("songUrl", songUrl);
-							song.put("songName", songs.get(VariablesList.TAG_NAME));
+							song.put("songName",
+									songs.get(VariablesList.TAG_NAME));
 							song.put("albumName", albumName);
 							song.put("coverart_small", songs.get("AlbumImage"));
 							synchronized (this) {
 								this.notifyAll();
 							}
 						} catch (JSONException e) {
-								e.printStackTrace();
+							e.printStackTrace();
 						} catch (IOException e) {
-						e.printStackTrace();
+							e.printStackTrace();
 						}
 					}
 				};
@@ -108,11 +110,11 @@ public class SongListAdapter extends BaseAdapter {
 					if (playingSong != null) {
 						String url = playingSong.get("songUrl");
 						String songName = playingSong.get("songName");
-					if (songName != null) {
+						if (songName != null) {
 							NewMediaPlayer.songTitleLabel.setText(albumName
 									+ " - " + songName);
-							NewMediaPlayer.songTitle.setText(albumName
-									+ " - " + songName);
+							NewMediaPlayer.songTitle.setText(albumName + " - "
+									+ songName);
 						}
 						NewMediaPlayer.playSong(url);
 					}
