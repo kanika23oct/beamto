@@ -7,7 +7,7 @@ import java.util.Random;
 
 import org.json.JSONArray;
 
-import com.example.newplayer.R;
+import com.example.beamto.R;
 
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer;
@@ -166,6 +166,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			}
 		});
 
+		
 		slidingDrawer.setOnDrawerCloseListener(new OnDrawerCloseListener() {
 
 			@Override
@@ -185,6 +186,9 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			}
 
 		});
+		
+		
+		
 
 		final Context context = this;
 		currentPlayList.setClickable(true);
@@ -432,7 +436,8 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			progDialog.dismiss();
 		}
 		else if(mLoading == true){
-			showDialog(0);
+		//	 if(!progDialog.i)
+			   showDialog(0);
 		}
 	}
 
@@ -442,11 +447,11 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			if (url != null) {
 				HashMap<String, String> song = selectedSongs.get(currentIndex);
 				String imageURL = song.get("coverart_small");
-				AlbumList.LoadImageFromWebOperations(imageURL);
 				mediaPlayer.reset();
 				mediaPlayer.setDataSource(url);
 				mediaPlayer.prepare();
 				mediaPlayer.start();
+				AlbumList.LoadImageFromWebOperations(imageURL);
 				// Changing Button Image to pause image
 				btnPlay.setImageResource(R.drawable.btn_pause);
 
@@ -564,7 +569,6 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 
 	public static void AddToList(int numberOfPages) {
 
-		System.out.println("%%%%%%%% Page: "+numberOfPages);
 		String page = ""+numberOfPages;
 		 new LoadAlbumPage().execute(albumURL, page, songURL);
 
@@ -636,11 +640,20 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	}
 
 	@Override
-	public void onScroll(AbsListView arg0, int arg1, int arg2, int arg3) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onScroll(AbsListView view, int firstVisibleItem,
+ 			int visibleItemCount, int totalItemCount) {
 
+		int lastInScreen = firstVisibleItem + visibleItemCount;
+	   
+ 		if (!mLastPage && !(mLoading) && (totalItemCount == lastInScreen) && lastInScreen > 0) {
+			 showDialog(0);
+			numberOfPages++;
+ 			AddToList(numberOfPages);
+ 	//		mLoading = false;
+ 		}
+ 	}
+
+ 
 	
 	
 
@@ -648,7 +661,6 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	public void onClick(View v) {
 		switch(v.getId()){
 		case R.id.currentPlayList:
-			System.out.println("***** Hello");
 			Intent in = new Intent(this, PlayList.class);
 			startActivity(in);
 		  
