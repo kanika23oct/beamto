@@ -556,7 +556,6 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			slidingDrawer.close();
 		else {
 			mediaPlayer.pause();
-			adaptor.clearImage();
 			System.gc();
 			
 			this.finish();

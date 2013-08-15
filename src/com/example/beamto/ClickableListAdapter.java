@@ -32,7 +32,6 @@ public class ClickableListAdapter extends BaseAdapter {
 	String albumUrl;
 	private String imageURL = "";
 	ImageView imageView;
-	public static HashMap<String, Bitmap> imageMap = new HashMap<String, Bitmap>();
 	DisplayImageOptions options;
 	ImageLoader imageLoader;
 
@@ -56,17 +55,7 @@ public class ClickableListAdapter extends BaseAdapter {
 		songsList.add(song);
 	}
 
-	public void setImage(String url, Bitmap image) {
-		imageMap.put(url, image);
-	}
-
-	public Bitmap getImage(String url) {
-		return imageMap.get(url);
-	}
-
-	public void clearImage() {
-		imageMap.clear();
-	}
+	
 
 	@Override
 	public int getCount() {
