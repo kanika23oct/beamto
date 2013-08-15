@@ -3,7 +3,7 @@ package com.example.beamto;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.example.newplayer.R;
+import com.example.beamto.R;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -48,21 +48,22 @@ public class PlayListAdaptor extends BaseAdapter {
 			v = convertView;
 		else
 			v = inflater.inflate(R.layout.playlist_item, parent, false);
-		
+
 		final String songName = songs.get(VariablesList.SONG_NAME_PARAMETER);
-		
+
 		TextView itemSongName = (TextView) v.findViewById(R.id.albumTitle);
 		itemSongName.setText(songName);
 		itemSongName.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				String albumName = songs.get(VariablesList.ALBUM_NAME_PARAMETER);
+				String albumName = songs
+						.get(VariablesList.ALBUM_NAME_PARAMETER);
 				String url = songs.get(VariablesList.SONG_URL_PARAMETER);
 				NewMediaPlayer.playSong(url);
-				NewMediaPlayer.songTitleLabel.setText(albumName
-						+ " - " + songName);
-				 NewMediaPlayer.songTitle.setText(albumName+"-"+songName);
+				NewMediaPlayer.songTitleLabel.setText(albumName + " - "
+						+ songName);
+				NewMediaPlayer.songTitle.setText(albumName + "-" + songName);
 			}
 		});
 		return v;
