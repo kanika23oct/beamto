@@ -8,7 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.newplayer.R;
+import com.example.beamto.R;
 
 import android.app.Dialog;
 import android.app.ListActivity;
@@ -40,12 +40,11 @@ public class SongListActivity extends ListActivity {
 		albumName = getIntent().getExtras().getString("albumName");
 		albumImageURL = getIntent().getExtras().getString("AlbumImage");
 		url = getResources().getString(R.string.songsListURL);
-		songAdapter = new SongListAdapter(this, songList,
-				albumName);
+		songAdapter = new SongListAdapter(this, songList, albumName);
 		ListView lv = getListView();
 		lv.setAdapter(songAdapter);
 		showDialog(0);
-      new LoadSongs().execute(url,albumIndex);
+		new LoadSongs().execute(url, albumIndex);
 
 	}
 
@@ -61,8 +60,9 @@ public class SongListActivity extends ListActivity {
 			return null;
 		}
 	}
+
 	private class LoadSongs extends
-			AsyncTask<String, Void, ArrayList<HashMap<String, String>>> {
+	AsyncTask<String, Void, ArrayList<HashMap<String, String>>> {
 
 		@Override
 		protected ArrayList<HashMap<String, String>> doInBackground(
