@@ -7,7 +7,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 public class LoadAlbumPage extends
-AsyncTask<String, Void, ArrayList<HashMap<String, String>>> {
+		AsyncTask<String, Void, ArrayList<HashMap<String, String>>> {
 	String url = "";
 	String pageNumber = "";
 	ArrayList<HashMap<String, String>> list;
@@ -17,28 +17,29 @@ AsyncTask<String, Void, ArrayList<HashMap<String, String>>> {
 	@Override
 	protected ArrayList<HashMap<String, String>> doInBackground(
 			String... params) {
+		NewMediaPlayer instance = NewMediaPlayer.getActivity();
+
 		this.url = params[0];
 		this.pageNumber = params[1];
 		this.albumUrl = params[2];
-		NewMediaPlayer instance = NewMediaPlayer.getActivity();
+
 		if (pageNumber.equals("1")) {
 			list = new AlbumList(albumUrl).songList(url,
 					VariablesList.JSON_PAGE_OBJECT, pageNumber);
-
-			// NewMediaPlayer.setSongList(list);
 		} else {
 			list = new AlbumList(albumUrl).songList(url,
 					VariablesList.JSON_PAGE_OBJECT, pageNumber);
 
 		}
-		NewMediaPlayer.setNewList(list);
-		NewMediaPlayer.appendToAdaptor();
-
 		if (list.size() == 0) {
-			System.out.println("***** Albums Finish");
 			NewMediaPlayer.setLastPage(true);
+			instance.setLoading(false);
+
+		} else {
+			NewMediaPlayer.setNewList(list);
+			NewMediaPlayer.appendToAdaptor();
+			instance.setLoading(false);
 		}
-		instance.setLoading(false);
 		return list;
 
 	}
@@ -47,10 +48,6 @@ AsyncTask<String, Void, ArrayList<HashMap<String, String>>> {
 	public void onPostExecute(ArrayList<HashMap<String, String>> result) {
 		ClickableListAdapter adapter = NewMediaPlayer.getClickableListAdapter();
 		adapter.notifyDataSetChanged();
-		NewMediaPlayer.numberOfPages++;
-		if (!NewMediaPlayer.mLastPage) {
-			NewMediaPlayer.AddToList(NewMediaPlayer.numberOfPages);
-		}
 	}
 
 }
