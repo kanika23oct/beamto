@@ -20,6 +20,7 @@ public class SongsList extends AsyncTask<String, Void, Boolean> {
 	StringBuffer albumUrl;
 	private String imageURL = "";
 	private String albumIndex = "";
+	NewMediaPlayer instance = null;
 
 	public SongsList(Resources resources) {
 		this.resources = resources;
@@ -28,6 +29,7 @@ public class SongsList extends AsyncTask<String, Void, Boolean> {
 	@Override
 	public Boolean doInBackground(String... params) {
 		JSONParser jParser = new JSONParser();
+		instance = NewMediaPlayer.getActivity();
 		boolean playSongs = false;
 		try {
 
@@ -57,10 +59,11 @@ public class SongsList extends AsyncTask<String, Void, Boolean> {
 				song.put(VariablesList.SONG_NAME_PARAMETER, name);
 				song.put(VariablesList.ALBUM_NAME_PARAMETER, albumName);
 				song.put(VariablesList.TAG_ALBUM_IMAGE, imageURL);
-				NewMediaPlayer.selectedSongs.add(song);
+				// NewMediaPlayer.selectedSongs.add(song);
+				instance.addToSelectedList(song);
 			}
 
-			if (NewMediaPlayer.selectedSongs.size() > 0)
+			if (instance.getSelectedSongList().size() > 0)
 				playSongs = true;
 
 		} catch (JSONException e) {
@@ -76,8 +79,8 @@ public class SongsList extends AsyncTask<String, Void, Boolean> {
 
 		if (result == true) {
 			if (!NewMediaPlayer.mediaPlayer.isPlaying()) {
-				HashMap<String, String> playingSong = NewMediaPlayer.selectedSongs
-						.get(0);
+				HashMap<String, String> playingSong = instance
+						.getSelectedSong(0);
 				if (playingSong != null) {
 					String url = playingSong.get("songUrl");
 					String songName = playingSong.get("songName");
@@ -88,7 +91,7 @@ public class SongsList extends AsyncTask<String, Void, Boolean> {
 
 						+ songName);
 					}
-					NewMediaPlayer.playSong(url);
+					instance.playSong(url);
 
 				}
 			}

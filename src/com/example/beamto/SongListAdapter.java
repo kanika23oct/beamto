@@ -52,6 +52,7 @@ public class SongListAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		final HashMap<String, String> songs = songsList.get(position);
+		final NewMediaPlayer instance = NewMediaPlayer.getActivity();
 		View v = null;
 		if (convertView != null)
 			v = convertView;
@@ -104,7 +105,8 @@ public class SongListAdapter extends BaseAdapter {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				NewMediaPlayer.selectedSongs.add(song);
+				instance.addToSelectedList(song);
+				//NewMediaPlayer.selectedSongs.add(song);
 				if (!NewMediaPlayer.mediaPlayer.isPlaying()) {
 					HashMap<String, String> playingSong = song;
 					if (playingSong != null) {
@@ -116,7 +118,7 @@ public class SongListAdapter extends BaseAdapter {
 							NewMediaPlayer.songTitle.setText(albumName + " - "
 									+ songName);
 						}
-						NewMediaPlayer.playSong(url);
+						instance.playSong(url);
 					}
 				}
 			}
