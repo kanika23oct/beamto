@@ -73,7 +73,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	static ClickableListAdapter adaptor;
 	static int numberOfPages = 1;
 
-	public static ArrayList<HashMap<String, String>> selectedSongs = new ArrayList<HashMap<String, String>>();
+	private ArrayList<HashMap<String, String>> selectedSongs = new ArrayList<HashMap<String, String>>();
 	public static HashMap<String, JSONArray> albumJsonString = new HashMap<String, JSONArray>();
 	// Handler to update UI timer, progress bar etc,.
 	private static Handler mHandler = new Handler();;
@@ -443,7 +443,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		}
 	}
 
-	public static void playSong(String url) {
+	public void playSong(String url) {
 
 		try {
 			if (url != null) {
@@ -576,6 +576,22 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		 new LoadAlbumPage().execute(albumURL, page, songURL);
 
 	}
+	
+	public void addToSelectedList(HashMap<String, String> song) {
+
+		selectedSongs.add(song);
+
+	}
+	
+	public HashMap<String, String> getSelectedSong(int position) {
+
+		return selectedSongs.get(position);
+    }
+	
+	public ArrayList<HashMap<String, String>> getSelectedSongList() {
+
+		return selectedSongs;
+    }
 
 	public static NewMediaPlayer getActivity(){
 		return (NewMediaPlayer) activity;
