@@ -43,6 +43,7 @@ public class PlayListAdaptor extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		final HashMap<String, String> songs = songsList.get(position);
+		final NewMediaPlayer instance = NewMediaPlayer.getActivity();
 		View v = null;
 		if (convertView != null)
 			v = convertView;
@@ -60,7 +61,7 @@ public class PlayListAdaptor extends BaseAdapter {
 				String albumName = songs
 						.get(VariablesList.ALBUM_NAME_PARAMETER);
 				String url = songs.get(VariablesList.SONG_URL_PARAMETER);
-				NewMediaPlayer.playSong(url);
+				instance.playSong(url);
 				NewMediaPlayer.songTitleLabel.setText(albumName + " - "
 						+ songName);
 				NewMediaPlayer.songTitle.setText(albumName + "-" + songName);
