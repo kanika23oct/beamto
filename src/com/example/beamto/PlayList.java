@@ -13,8 +13,9 @@ public class PlayList extends ListActivity {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.playlist);
+		NewMediaPlayer instance = NewMediaPlayer.getActivity();
 		PlayListAdaptor songListAdapter = new PlayListAdaptor(this,
-				NewMediaPlayer.selectedSongs);
+				instance.getSelectedSongList());
 		ListView lv = getListView();
 		lv.setAdapter(songListAdapter);
 
