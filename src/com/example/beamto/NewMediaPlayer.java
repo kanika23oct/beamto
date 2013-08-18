@@ -200,7 +200,6 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 
 			@Override
 			public void onClick(View arg0) {
-				System.out.println("***** Hello");
 				Intent in = new Intent(context, PlayList.class);
 				context.startActivity(in);
 			}
@@ -663,9 +662,9 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
  			int visibleItemCount, int totalItemCount) {
 
 		int lastInScreen = firstVisibleItem + visibleItemCount;
-	   
+	   System.out.println("***** "+ totalItemCount);
  		if (!mLastPage && !(mLoading) && (totalItemCount == lastInScreen) && lastInScreen > 0) {
-			 showDialog(0);
+ 			 setLoading(true);
 			numberOfPages++;
  			AddToList(numberOfPages);
  	//		mLoading = false;
