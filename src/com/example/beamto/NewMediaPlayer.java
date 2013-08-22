@@ -8,6 +8,9 @@ import java.util.Random;
 import org.json.JSONArray;
 
 import com.example.beamto.R;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer;
@@ -43,14 +46,14 @@ import android.view.View;
 
 @SuppressLint("NewApi")
 public class NewMediaPlayer extends Activity implements OnCompletionListener,
-		SeekBar.OnSeekBarChangeListener, OnScrollListener,OnClickListener {
+		SeekBar.OnSeekBarChangeListener, OnScrollListener, OnClickListener,
+		MediaPlayer.OnPreparedListener {
 	public static MediaPlayer mediaPlayer = new MediaPlayer();
 	public static ImageView artistImage;
 	private static ImageButton btnPlay;
 	private static ImageButton btnForward;
 	private static ImageButton btnBackward;
 	private static ImageButton btnPrevious;
-	public static TextView songTitleLabel;
 	private static ImageButton btnNext;
 	private static ImageButton btnShuffle;
 	private static ImageButton btnRepeat;
@@ -72,6 +75,9 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	static boolean mLastPage = false;
 	static ClickableListAdapter adaptor;
 	static int numberOfPages = 1;
+	DisplayImageOptions options;
+	ImageLoader imageLoader;
+	String currentSongName;
 
 	private ArrayList<HashMap<String, String>> selectedSongs = new ArrayList<HashMap<String, String>>();
 	public static HashMap<String, JSONArray> albumJsonString = new HashMap<String, JSONArray>();
@@ -96,10 +102,11 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.player);
 		activity = this;
+		mediaPlayer.setOnPreparedListener(this);
+
 		btnPlay = (ImageButton) findViewById(R.id.btnPlay);
 		btnForward = (ImageButton) findViewById(R.id.btnForward);
 		btnBackward = (ImageButton) findViewById(R.id.btnBackward);
-		songTitleLabel = (TextView) findViewById(R.id.songTitle);
 		btnPrevious = (ImageButton) findViewById(R.id.btnPrevious);
 		btnNext = (ImageButton) findViewById(R.id.btnNext);
 		songProgressBar = (SeekBar) findViewById(R.id.songProgressBar);
@@ -114,9 +121,14 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		final RelativeLayout layout = (RelativeLayout) findViewById(R.id.buttonPlayList);
 		currentPlayList = (ImageButton) findViewById(R.id.currentPlayList);
 		currentPlayList.setVisibility(View.INVISIBLE);
-	
-		
-		
+
+		imageLoader = ImageLoader.getInstance();
+		imageLoader.init(ImageLoaderConfiguration.createDefault(this));
+		options = new DisplayImageOptions.Builder()
+				.showStubImage(R.drawable.ic_launcher)
+				.showImageForEmptyUri(R.drawable.ic_launcher).cacheOnDisc()
+				.cacheInMemory().build();
+
 		utils = new Utilities();
 
 		mediaPlayer.pause();
@@ -135,27 +147,25 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			name = song.get("songName");
 			albumName = song.get("albumName");
 			if (name != null)
-				songTitleLabel.setText(albumName + " - " + name);
+				setCurrentSongName(albumName + " - " + name);
 			playSong(url);
 		}
-
-	
 
 		adaptor = new ClickableListAdapter(this, songsList);
 		final GridView view = (GridView) findViewById(R.id.grid_view_albums);
 		view.setAdapter(adaptor);
 		view.setOnScrollListener(this);
-    //    view.setSmoothScrollbarEnabled(true);
-        albumURL = getResources().getString(R.string.albumsURL);
-        songURL = getString(R.string.songsListURL);
-      if(songsList.size() == 0){
-       if(numberOfPages == 1) {
-    	   setLoading(true);
-    	  new LoadAlbumPage().execute(albumURL, "1", songURL);
-       
-       }
-      }
-        
+		// view.setSmoothScrollbarEnabled(true);
+		albumURL = getResources().getString(R.string.albumsURL);
+		songURL = getString(R.string.songsListURL);
+		if (songsList.size() == 0) {
+			if (numberOfPages == 1) {
+				setLoading(true);
+				new LoadAlbumPage().execute(albumURL, "1", songURL);
+
+			}
+		}
+
 		slidingDrawer.setOnDrawerOpenListener(new OnDrawerOpenListener() {
 
 			@Override
@@ -168,7 +178,6 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			}
 		});
 
-		
 		slidingDrawer.setOnDrawerCloseListener(new OnDrawerCloseListener() {
 
 			@Override
@@ -188,14 +197,11 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			}
 
 		});
-		
-		
-		
 
 		final Context context = this;
 		currentPlayList.setClickable(true);
 		currentPlayList.setOnClickListener(this);
-		
+
 		currentPlayList.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -220,14 +226,14 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 						name = song.get("songName");
 						albumName = song.get("albumName");
 						String imageURL = song.get("coverart_small");
-						AlbumList.LoadImageFromWebOperations(imageURL);
+						imageLoader
+								.displayImage(imageURL, artistImage, options);
 						if (name != null) {
-							songTitleLabel.setText(albumName + " - " + name);
-							songTitle.setText(albumName + " - " + name);
+							setCurrentSongName(albumName + " - " + name);
 						}
-						mediaPlayer.start();
-						btnPlay.setImageResource(R.drawable.btn_pause);
-						btnPlayList.setImageResource(R.drawable.btn_stop);
+						mediaPlayer.prepareAsync();
+						// btnPlay.setImageResource(R.drawable.btn_pause);
+						// btnPlayList.setImageResource(R.drawable.btn_stop);
 					}
 				} else {
 					mediaPlayer.pause();
@@ -253,8 +259,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 					name = song.get("songName");
 					albumName = song.get("albumName");
 					if (name != null) {
-						songTitleLabel.setText(albumName + " - " + name);
-						songTitle.setText(albumName + " - " + name);
+						setCurrentSongName(albumName + " - " + name);
 					}
 					playSong(url);
 
@@ -277,8 +282,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 					name = song.get("songName");
 					albumName = song.get("albumName");
 					if (name != null) {
-						songTitleLabel.setText(albumName + " - " + name);
-						songTitle.setText(albumName + " - " + name);
+						setCurrentSongName(albumName + " - " + name);
 					}
 					playSong(url);
 
@@ -297,8 +301,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 					name = song.get("songName");
 					albumName = song.get("albumName");
 					if (name != null) {
-						songTitleLabel.setText(albumName + " - " + name);
-						songTitle.setText(albumName + " - " + name);
+						setCurrentSongName(albumName + " - " + name);
 					}
 					playSong(url);
 
@@ -319,8 +322,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 					name = song.get("songName");
 					albumName = song.get("albumName");
 					if (name != null) {
-						songTitleLabel.setText(albumName + " - " + name);
-						songTitle.setText(albumName + " - " + name);
+						setCurrentSongName(albumName + " - " + name);
 					}
 					playSong(url);
 
@@ -343,14 +345,18 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 						name = song.get("songName");
 						albumName = song.get("albumName");
 						String imageURL = song.get("coverart_small");
-						AlbumList.LoadImageFromWebOperations(imageURL);
+						imageLoader
+								.displayImage(imageURL, artistImage, options);
 						if (name != null) {
-							songTitleLabel.setText(albumName + " - " + name);
-							songTitle.setText(albumName + " - " + name);
+							setCurrentSongName(albumName + " - " + name);
 						}
 						mediaPlayer.start();
 						btnPlay.setImageResource(R.drawable.btn_pause);
-						// btnPlayList.setImageResource(R.drawable.btn_stop);
+
+						btnPlayList.setImageResource(R.drawable.btn_stop);
+						if (slidingDrawer.isOpened()) {
+							btnPlayList.setVisibility(View.INVISIBLE);
+						}
 					}
 				} else {
 					mediaPlayer.pause();
@@ -406,7 +412,6 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 
 	}
 
-	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.media_player, menu);
@@ -426,45 +431,45 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		newList = setNewList;
 	}
 
+	public void setCurrentSongName(String songName) {
+		this.currentSongName = songName;
+	}
+
 	public static void setLastPage(boolean lastPage) {
 		mLastPage = lastPage;
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public void setLoading(boolean loading) {
 		mLoading = loading;
-		if(mLoading == false){
+		if (mLoading == false) {
 			progDialog.dismiss();
-		}
-		else if(mLoading == true){
-		//	 if(!progDialog.i)
-			   showDialog(0);
+		} else if (mLoading == true) {
+			// if(!progDialog.i)
+			showDialog(0);
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public void playSong(String url) {
 
 		try {
 			if (url != null) {
 				HashMap<String, String> song = selectedSongs.get(currentIndex);
 				String imageURL = song.get("coverart_small");
-				mediaPlayer.reset();
-				mediaPlayer.setDataSource(url);
-				mediaPlayer.prepare();
-				mediaPlayer.start();
-				AlbumList.LoadImageFromWebOperations(imageURL);
-				// Changing Button Image to pause image
-				btnPlay.setImageResource(R.drawable.btn_pause);
-
-				// set Progress bar values
-				songProgressBar.setProgress(0);
-				songProgressBar.setMax(100);
-				if (!slidingDrawer.isOpened()) {
-					btnPlayList.setImageResource(R.drawable.btn_stop);
+				songTitle.setText("");
+				if (slidingDrawer.isOpened()) {
+					btnPlayList.setVisibility(View.INVISIBLE);
+				}
+				else
+				{
 					btnPlayList.setVisibility(View.VISIBLE);
 				}
-				// Updating progress bar
-				updateProgressBar();
+
+				mediaPlayer.reset();
+				mediaPlayer.setDataSource(url);
+				mediaPlayer.prepareAsync();
+				imageLoader.displayImage(imageURL, artistImage, options);
 
 			}
 		} catch (IllegalArgumentException e) {
@@ -494,24 +499,26 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	 * */
 	private static Runnable mUpdateTimeTask = new Runnable() {
 		public void run() {
-			long totalDuration = mediaPlayer.getDuration();
-			long currentDuration = mediaPlayer.getCurrentPosition();
+			if (mediaPlayer.isPlaying()) {
+				long totalDuration = mediaPlayer.getDuration();
+				long currentDuration = mediaPlayer.getCurrentPosition();
 
-			// Displaying Total Duration time
-			songTotalDurationLabel.setText(""
-					+ utils.milliSecondsToTimer(totalDuration));
-			// Displaying time completed playing
-			songCurrentDurationLabel.setText(""
-					+ utils.milliSecondsToTimer(currentDuration));
+				// Displaying Total Duration time
+				songTotalDurationLabel.setText(""
+						+ utils.milliSecondsToTimer(totalDuration));
+				// Displaying time completed playing
+				songCurrentDurationLabel.setText(""
+						+ utils.milliSecondsToTimer(currentDuration));
 
-			// Updating progress bar
-			int progress = (int) (utils.getProgressPercentage(currentDuration,
-					totalDuration));
-			// Log.d("Progress", ""+progress);
-			songProgressBar.setProgress(progress);
+				// Updating progress bar
+				int progress = (int) (utils.getProgressPercentage(
+						currentDuration, totalDuration));
+				// Log.d("Progress", ""+progress);
+				songProgressBar.setProgress(progress);
 
-			// Running this thread after 100 milliseconds
-			mHandler.postDelayed(this, 100);
+				// Running this thread after 100 milliseconds
+				mHandler.postDelayed(this, 100);
+			}
 		}
 	};
 
@@ -565,37 +572,37 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		return;
 	}
 
-	private void clearData(){
+	private void clearData() {
 		selectedSongs.clear();
 	}
 
 	public static void AddToList(int numberOfPages) {
 
-		String page = ""+numberOfPages;
-		 new LoadAlbumPage().execute(albumURL, page, songURL);
+		String page = "" + numberOfPages;
+		new LoadAlbumPage().execute(albumURL, page, songURL);
 
 	}
-	
+
 	public void addToSelectedList(HashMap<String, String> song) {
 
 		selectedSongs.add(song);
 
 	}
-	
+
 	public HashMap<String, String> getSelectedSong(int position) {
 
 		return selectedSongs.get(position);
-    }
-	
+	}
+
 	public ArrayList<HashMap<String, String>> getSelectedSongList() {
 
 		return selectedSongs;
-    }
+	}
 
-	public static NewMediaPlayer getActivity(){
+	public static NewMediaPlayer getActivity() {
 		return (NewMediaPlayer) activity;
 	}
-	
+
 	public static void appendToAdaptor() {
 		for (int i = 0; i < newList.size(); i++) {
 			adaptor.addToList(newList.get(i));
@@ -634,7 +641,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 				name = song.get("songName");
 				albumName = song.get("albumName");
 				if (name != null)
-					songTitleLabel.setText(albumName + " - " + name);
+					setCurrentSongName(albumName + " - " + name);
 				playSong(url);
 			}
 		}
@@ -642,8 +649,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 
 	// Method to create a progress bar dialog of either spinner or horizontal
 	// type
-	
-	
+
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
 		case 0: // Spinner
@@ -659,33 +665,51 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem,
- 			int visibleItemCount, int totalItemCount) {
+			int visibleItemCount, int totalItemCount) {
 
 		int lastInScreen = firstVisibleItem + visibleItemCount;
-	   System.out.println("***** "+ totalItemCount);
- 		if (!mLastPage && !(mLoading) && (totalItemCount == lastInScreen) && lastInScreen > 0) {
- 			 setLoading(true);
+		System.out.println("***** " + totalItemCount);
+		if (!mLastPage && !(mLoading) && (totalItemCount == lastInScreen)
+				&& lastInScreen > 0) {
+			setLoading(true);
 			numberOfPages++;
- 			AddToList(numberOfPages);
- 	//		mLoading = false;
- 		}
- 	}
-
- 
-	
-	
+			AddToList(numberOfPages);
+			// mLoading = false;
+		}
+	}
 
 	@Override
 	public void onClick(View v) {
-		switch(v.getId()){
+		switch (v.getId()) {
 		case R.id.currentPlayList:
 			Intent in = new Intent(this, PlayList.class);
 			startActivity(in);
-		  
+
 		}
-		
+
 	}
 
-	 
+	@Override
+	public void onPrepared(MediaPlayer mediaPlayer) {
+		mediaPlayer.start();
+		songTitle.setVisibility(View.VISIBLE);
+		btnPlay.setImageResource(R.drawable.btn_pause);
+		songProgressBar.setProgress(0);
+		songProgressBar.setMax(100);
+		songTitle.setText(currentSongName);
+		btnPlayList.setImageResource(R.drawable.btn_stop);
+		if (slidingDrawer.isOpened()) {
+			btnPlayList.setVisibility(View.INVISIBLE);
+		}
+		else
+		{
+			btnPlayList.setVisibility(View.VISIBLE);
+		}
+
+		// Updating progress bar
+
+		updateProgressBar();
+
+	}
 
 }
