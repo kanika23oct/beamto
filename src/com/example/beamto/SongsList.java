@@ -12,6 +12,7 @@ import com.example.beamto.R;
 
 import android.content.res.Resources;
 import android.os.AsyncTask;
+import android.view.View;
 
 public class SongsList extends AsyncTask<String, Void, Boolean> {
 
@@ -85,11 +86,7 @@ public class SongsList extends AsyncTask<String, Void, Boolean> {
 					String url = playingSong.get("songUrl");
 					String songName = playingSong.get("songName");
 					if (songName != null) {
-						NewMediaPlayer.songTitleLabel.setText(albumName + " - "
-								+ songName);
-						NewMediaPlayer.songTitle.setText(albumName + "-"
-
-						+ songName);
+						instance.setCurrentSongName(albumName + "-"+ songName);
 					}
 					instance.playSong(url);
 
