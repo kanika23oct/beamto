@@ -61,10 +61,9 @@ public class PlayListAdaptor extends BaseAdapter {
 				String albumName = songs
 						.get(VariablesList.ALBUM_NAME_PARAMETER);
 				String url = songs.get(VariablesList.SONG_URL_PARAMETER);
+				instance.setCurrentSongName(albumName + "-" + songName);
 				instance.playSong(url);
-				NewMediaPlayer.songTitleLabel.setText(albumName + " - "
-						+ songName);
-				NewMediaPlayer.songTitle.setText(albumName + "-" + songName);
+				
 			}
 		});
 		return v;
