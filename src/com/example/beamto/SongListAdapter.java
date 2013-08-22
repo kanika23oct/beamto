@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -11,6 +12,7 @@ import com.example.beamto.R;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +26,8 @@ public class SongListAdapter extends BaseAdapter {
 	private LayoutInflater inflater;
 	private String albumName;
 	private static Resources resources;
+	HashMap<String, String> songs;
+	NewMediaPlayer instance;
 
 	public SongListAdapter(Context context,
 			ArrayList<HashMap<String, String>> songList, String albumName) {
@@ -51,8 +55,8 @@ public class SongListAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		final HashMap<String, String> songs = songsList.get(position);
-		final NewMediaPlayer instance = NewMediaPlayer.getActivity();
+		songs = songsList.get(position);
+		instance = NewMediaPlayer.getActivity();
 		View v = null;
 		if (convertView != null)
 			v = convertView;
@@ -61,71 +65,70 @@ public class SongListAdapter extends BaseAdapter {
 
 		TextView itemSongName = (TextView) v.findViewById(R.id.songTitle);
 		itemSongName.setText(songs.get(VariablesList.TAG_NAME));
-		ImageButton songPlayButton = (ImageButton) v
-				.findViewById(R.id.btnSongPlay);
-		songPlayButton.setOnClickListener(new View.OnClickListener() {
-			final HashMap<String, String> song = new HashMap<String, String>();
-
+		itemSongName.setOnClickListener(new View.OnClickListener() {
+		
 			@Override
 			public void onClick(View view) {
 
-				Thread t = new Thread() {
-					public void run() {
+				String jsonSongURL = resources.getString(R.string.songURL);
+				new PlaySong().execute(jsonSongURL);
 
-						JSONParser jParser = new JSONParser();
-						try {
-							String jsonSongURL = resources
-									.getString(R.string.songURL);
-							String jsonString = jParser.readJsonFromUrl(
-									jsonSongURL, VariablesList.TAG_ID,
-									songs.get(VariablesList.TAG_ID));
-							JSONObject jsonObject = new JSONObject(jsonString);
-							String songUrl = jsonObject.getString("url");
-							System.out.println(songUrl);
-							song.put("songUrl", songUrl);
-							song.put("songName",
-									songs.get(VariablesList.TAG_NAME));
-							song.put("albumName", albumName);
-							song.put("coverart_small", songs.get("AlbumImage"));
-							synchronized (this) {
-								this.notifyAll();
-							}
-						} catch (JSONException e) {
-							e.printStackTrace();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				};
-				t.start();
-				try {
-					synchronized (t) {
-						t.wait();
-					}
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				instance.addToSelectedList(song);
-				//NewMediaPlayer.selectedSongs.add(song);
-				if (!NewMediaPlayer.mediaPlayer.isPlaying()) {
-					HashMap<String, String> playingSong = song;
-					if (playingSong != null) {
-						String url = playingSong.get("songUrl");
-						String songName = playingSong.get("songName");
-						if (songName != null) {
-							NewMediaPlayer.songTitleLabel.setText(albumName
-									+ " - " + songName);
-							NewMediaPlayer.songTitle.setText(albumName + " - "
-									+ songName);
-						}
-						instance.playSong(url);
-					}
-				}
 			}
 
 		});
 
 		return v;
+	}
+
+	private class PlaySong extends
+			AsyncTask<String, Void, HashMap<String, String>> {
+
+		final HashMap<String, String> song = new HashMap<String, String>();
+
+		@Override
+		protected HashMap<String, String> doInBackground(String... params) {
+			JSONParser jParser = new JSONParser();
+			try {
+				String jsonString = jParser.readJsonFromUrl(params[0],
+						VariablesList.TAG_ID, songs.get(VariablesList.TAG_ID));
+				JSONObject jsonObject = new JSONObject(jsonString);
+				String songUrl = jsonObject.getString("url");
+				System.out.println(songUrl);
+				if (songUrl.startsWith("https://")) {
+					songUrl = songUrl.replaceFirst("https://", "http://");
+				}
+				song.put("songUrl", songUrl);
+				song.put("songName", songs.get(VariablesList.TAG_NAME));
+				song.put("albumName", albumName);
+				song.put("coverart_small", songs.get("AlbumImage"));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return song;
+
+		}
+
+		@Override
+		public void onPostExecute(HashMap<String, String> result) {
+
+			instance.addToSelectedList(song);
+			// NewMediaPlayer.selectedSongs.add(song);
+			if (!NewMediaPlayer.mediaPlayer.isPlaying()) {
+				HashMap<String, String> playingSong = song;
+				if (playingSong != null) {
+					String url = playingSong.get("songUrl");
+					
+					String songName = playingSong.get("songName");
+					if (songName != null) {
+						instance.setCurrentSongName(albumName + "-"+ songName);
+					}
+					instance.playSong(url);
+				}
+			}
+		}
+
 	}
 
 }
