@@ -11,6 +11,8 @@ import com.example.beamto.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.assist.ImageSize;
 
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer;
@@ -24,6 +26,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Color;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MotionEvent;
@@ -69,7 +72,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	public static ImageButton btnPlayList;
 	private static ImageButton currentPlayList;
 	public static TextView songTitle;
-	private static SlidingDrawer slidingDrawer;
+	static SlidingDrawer slidingDrawer;
 	int mVisibleThreashold = 6;
 	static boolean mLoading = false;
 	static boolean mLastPage = false;
@@ -127,12 +130,18 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 		options = new DisplayImageOptions.Builder()
 				.showStubImage(R.drawable.ic_launcher)
 				.showImageForEmptyUri(R.drawable.ic_launcher).cacheOnDisc()
-				.cacheInMemory().build();
+				.cacheInMemory().imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2).build();
 
 		utils = new Utilities();
 
 		mediaPlayer.pause();
+		DisplayMetrics metrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		float density = metrics.density;
+		
 		btnPlayList.setVisibility(View.INVISIBLE);
+		artistImage.getLayoutParams().height = (int) (density*240);
+		artistImage.getLayoutParams().width = (int) (density*300);
 
 		// Listeners
 		songProgressBar.setOnSeekBarChangeListener(this); // Important
@@ -182,7 +191,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 
 			@Override
 			public void onDrawerClosed() {
-				if (selectedSongs.size() > 0) {
+				if (selectedSongs.size() > 0 ) {
 					btnPlayList.setVisibility(View.VISIBLE);
 
 				}
@@ -438,6 +447,9 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	public static void setLastPage(boolean lastPage) {
 		mLastPage = lastPage;
 	}
+	public ImageLoader getImageLoader(){
+		return imageLoader;
+	}
 
 	@SuppressWarnings("deprecation")
 	public void setLoading(boolean loading) {
@@ -461,15 +473,12 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 				if (slidingDrawer.isOpened()) {
 					btnPlayList.setVisibility(View.INVISIBLE);
 				}
-				else
-				{
-					btnPlayList.setVisibility(View.VISIBLE);
-				}
-
+				
 				mediaPlayer.reset();
 				mediaPlayer.setDataSource(url);
 				mediaPlayer.prepareAsync();
 				imageLoader.displayImage(imageURL, artistImage, options);
+				
 
 			}
 		} catch (IllegalArgumentException e) {
@@ -668,7 +677,6 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			int visibleItemCount, int totalItemCount) {
 
 		int lastInScreen = firstVisibleItem + visibleItemCount;
-		System.out.println("***** " + totalItemCount);
 		if (!mLastPage && !(mLoading) && (totalItemCount == lastInScreen)
 				&& lastInScreen > 0) {
 			setLoading(true);
