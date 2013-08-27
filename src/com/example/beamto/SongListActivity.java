@@ -13,10 +13,14 @@ import com.example.beamto.R;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class SongListActivity extends ListActivity {
 
@@ -25,22 +29,54 @@ public class SongListActivity extends ListActivity {
 	public ArrayList<HashMap<String, String>> songList = new ArrayList<HashMap<String, String>>();
 
 	private String albumName = "";
-	private String albumImageURL = "";
 	Button submitButton;
 	SongListAdapter songAdapter;
 	private ProgressDialog progressDialog;
-
+	ImageView imageView;
+	TextView textView ; 
+	TextView artistName;
+	TextView totalAlbumSongs;
+	NewMediaPlayer instance;
+	String albumImageURL;
+	String albumUrl;
+    String artist;
+    String totalSongs;
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.songlist);
+		instance = NewMediaPlayer.getActivity();
 		albumIndex = getIntent().getExtras().getString("albumIndex");
 		albumName = getIntent().getExtras().getString("albumName");
-		albumImageURL = getIntent().getExtras().getString("AlbumImage");
+		albumImageURL = getIntent().getExtras().getString("albumImage");
+		artist = getIntent().getExtras().getString("artistName");
+	    totalSongs = getIntent().getExtras().getString("totalSongs");
+		
 		url = getResources().getString(R.string.songsListURL);
 		songAdapter = new SongListAdapter(this, songList, albumName);
+		imageView = (ImageView)findViewById(R.id.albumThumbnailImage);
+		textView = (TextView)findViewById(R.id.albumName);
+		artistName = (TextView)findViewById(R.id.artistName);
+		totalAlbumSongs = (TextView)findViewById(R.id.totalSongs);
+		
+		textView.setText(albumName);
+		artistName.setText(artist);
+		totalAlbumSongs.setText(totalSongs + " songs");
+		
+		imageView.setOnClickListener(new View.OnClickListener() {
+			// @Override
+			public void onClick(View v) {
+				albumUrl = getResources().getString(R.string.songsListURL);
+					new SongsList(getResources()).execute(albumImageURL, albumUrl, albumName,
+						albumIndex);
+					instance.slidingDrawer.open();
+					finish();
+			}
+		});
+		
+		instance.getImageLoader().displayImage(albumImageURL, imageView);
 		ListView lv = getListView();
 		lv.setAdapter(songAdapter);
 		showDialog(0);
