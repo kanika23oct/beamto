@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import com.example.beamto.R;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.AsyncTask;
@@ -125,6 +126,8 @@ public class SongListAdapter extends BaseAdapter {
 						instance.setCurrentSongName(albumName + "-"+ songName);
 					}
 					instance.playSong(url);
+					instance.slidingDrawer.open();
+					((Activity)context).finish();
 				}
 			}
 		}
