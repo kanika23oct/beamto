@@ -90,13 +90,7 @@ public class ClickableListAdapter extends BaseAdapter {
 		imageView.setOnClickListener(new View.OnClickListener() {
 			// @Override
 			public void onClick(View v) {
-				albumUrl = resources.getString(R.string.songsListURL);
-				String albumIndex = song.get("id");
-				albumName = (song.get("name"));
-				imageURL = song.get(VariablesList.TAG_ALBUM_IMAGE);
-
-				new SongsList(resources).execute(imageURL, albumUrl, albumName,
-						albumIndex);
+				click(position);
 			}
 		});
 
@@ -105,19 +99,46 @@ public class ClickableListAdapter extends BaseAdapter {
 		itemAlbumName.setText(song.get("name"));
 		itemAlbumName.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				HashMap<String, String> song = songsList.get(position);
-				String songIndex = song.get("id");
-				String albumName = (song.get("name"));
-				Intent in = new Intent(context, SongListActivity.class);
-				in.putExtra("albumIndex", songIndex);
-				in.putExtra("albumName", albumName);
-				in.putExtra("AlbumImage",
-						song.get(VariablesList.TAG_ALBUM_IMAGE));
-				context.startActivity(in);
+				click(position);
+			}
+		});
+		
+		final TextView itemArtistName = (TextView) v
+				.findViewById(R.id.album_artist);
+		itemArtistName.setText(song.get(VariablesList.TAG_ARTIST_NAME));
+		itemArtistName.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				click(position);
+			}
+		});
+		
+		final TextView itemTotalSongs = (TextView) v
+				.findViewById(R.id.total_songs);
+		itemTotalSongs.setText(song.get(VariablesList.NUMBER_OF_SONGS)+ " songs");
+		itemTotalSongs.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				click(position);
 			}
 		});
 
 		return v;
 	}
 
+	public void click(int position){
+		HashMap<String, String> song = songsList.get(position);
+		String songIndex = song.get("id");
+		String albumName = (song.get("name"));
+		String artistName = song.get(VariablesList.TAG_ARTIST_NAME);
+		String totalSongs = song.get(VariablesList.NUMBER_OF_SONGS);
+		System.out.println("%%%%%%% total Songs :"+ totalSongs);
+		Intent in = new Intent(context, SongListActivity.class);
+		in.putExtra("albumIndex", songIndex);
+		in.putExtra("albumName", albumName);
+		in.putExtra("albumImage",
+				song.get(VariablesList.TAG_ALBUM_IMAGE));
+		in.putExtra("artistName", artistName);
+		in.putExtra("totalSongs", totalSongs);
+		context.startActivity(in);
+		
+	}
 }
