@@ -45,6 +45,7 @@ public class SongsList extends AsyncTask<String, Void, Boolean> {
 				JSONObject songDetails = songs.getJSONObject(i);
 				String id = songDetails.getString(VariablesList.TAG_ID);
 				String name = songDetails.getString(VariablesList.TAG_NAME);
+				String artistName = songDetails.getString(VariablesList.TAG_ARTIST_NAME);
 				String jsonSongUrl = resources.getString(R.string.songURL);
 				String jsonStringSong = jParser.readJsonFromUrl(
 						jsonSongUrl.toString(), VariablesList.TAG_ID, id);
@@ -60,6 +61,7 @@ public class SongsList extends AsyncTask<String, Void, Boolean> {
 				song.put(VariablesList.SONG_NAME_PARAMETER, name);
 				song.put(VariablesList.ALBUM_NAME_PARAMETER, albumName);
 				song.put(VariablesList.TAG_ALBUM_IMAGE, imageURL);
+				song.put(VariablesList.TAG_ARTIST_NAME, artistName);
 				// NewMediaPlayer.selectedSongs.add(song);
 				instance.addToSelectedList(song);
 			}
@@ -89,6 +91,7 @@ public class SongsList extends AsyncTask<String, Void, Boolean> {
 						instance.setCurrentSongName(albumName + "-"+ songName);
 					}
 					instance.playSong(url);
+					
 
 				}
 			}
