@@ -36,6 +36,8 @@ public class AlbumList {
 				String name = albumDetails.getString(VariablesList.TAG_NAME);
 				String labelName = albumDetails.getString(VariablesList.TAG_LABEL_NAME);
 				String albumImage = albumDetails.getString(VariablesList.TAG_ALBUM_IMAGE);
+				String artistName = albumDetails.getString(VariablesList.TAG_ARTIST_NAME);
+				
 				String songJsonString = jParser.readJsonFromUrl(albumUrl.toString(),VariablesList.ALBUM_JSON_PARAMETER,id);
 				JSONObject songjsonObject = new JSONObject(songJsonString);
 				NewMediaPlayer.albumJsonString.put(id+";"+name,songjsonObject.getJSONArray(VariablesList.JSON_SONG_OBJECT));
@@ -43,6 +45,9 @@ public class AlbumList {
 				album.put(VariablesList.TAG_NAME, name);
 				album.put(VariablesList.TAG_LABEL_NAME, labelName);
 				album.put(VariablesList.TAG_ALBUM_IMAGE, albumImage);
+				album.put(VariablesList.TAG_ARTIST_NAME, artistName);
+				String size = ""+songjsonObject.getJSONArray(VariablesList.JSON_SONG_OBJECT).length();
+				album.put(VariablesList.NUMBER_OF_SONGS,size );
 				albumList.add(album);
 			}
 
