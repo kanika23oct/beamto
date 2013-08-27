@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import com.example.beamto.R;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,7 +64,8 @@ public class PlayListAdaptor extends BaseAdapter {
 				String url = songs.get(VariablesList.SONG_URL_PARAMETER);
 				instance.setCurrentSongName(albumName + "-" + songName);
 				instance.playSong(url);
-				
+				instance.slidingDrawer.open();
+				((Activity)context).finish();
 			}
 		});
 		return v;
