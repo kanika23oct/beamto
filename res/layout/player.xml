@@ -13,10 +13,8 @@
         android:horizontalSpacing="10dp"
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="30dp" >
-    
-        
-    </GridView>
+        android:verticalSpacing="30dp">
+   </GridView>
 
     <com.example.beamto.ClickableSlidingDrawer
    
@@ -27,8 +25,7 @@
         android:layout_centerHorizontal="true"
         android:content="@+id/content"
         android:allowSingleTap="false"
-        android:handle="@+id/buttonPlayList" 
-        >
+        android:handle="@+id/buttonPlayList">
 
         <RelativeLayout
             android:id="@+id/buttonPlayList"
@@ -54,6 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                 android:gravity="center" 
                 android:clickable="true"
                 android:tag="click_intercepted"
                 android:layout_alignParentTop="true"
@@ -182,7 +180,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="left"
-                    android:textColor="#eeeeee"
+                    android:textColor="#04cbde"
                     android:textStyle="bold" />
                 <!-- Total Duration Label -->
 
@@ -198,58 +196,66 @@
 
             <!-- Player Footer -->
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/player_footer_bg"
                 android:layout_width="fill_parent"
-                android:layout_height="103dp"
+                android:layout_height="wrap_content"
                 android:background="@layout/bg_player_footer"
-                android:gravity="center" >
+                 android:layout_alignParentBottom = "true"
+                android:gravity="center">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="103dp"
+                    android:layout_height="wrap_content"
                     android:background="@layout/rounded_corner"
                     android:gravity="center_vertical"
+                    android:layout_alignParentBottom = "true"
                     android:orientation="horizontal"
                     android:paddingLeft="10dp"
-                    android:paddingRight="10dp" >
+                    android:paddingRight="10dp"
+                    >
 
                     <ImageButton
                         android:id="@+id/btnPrevious"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@null"
-                        android:src="@drawable/btn_previous" />
+                        android:src="@drawable/btn_previous" 
+                        />
 
                     <ImageButton
                         android:id="@+id/btnBackward"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@null"
-                        android:src="@drawable/btn_backward" />
+                        android:src="@drawable/btn_backward" 
+                        />
 
                     <ImageButton
                         android:id="@+id/btnPlay"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@null"
-                        android:src="@drawable/btn_play" />
+                        android:src="@drawable/btn_play" 
+                        />
 
                     <ImageButton
                         android:id="@+id/btnForward"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@null"
-                        android:src="@drawable/btn_forward" />
+                        android:src="@drawable/btn_forward" 
+                        />
 
                     <ImageButton
                         android:id="@+id/btnNext"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@null"
-                        android:src="@drawable/btn_next" />
+                        android:src="@drawable/btn_next" 
+                        />
                 </LinearLayout>
-            </LinearLayout>
+            </RelativeLayout>
 
         </LinearLayout>
     </com.example.beamto.ClickableSlidingDrawer>
