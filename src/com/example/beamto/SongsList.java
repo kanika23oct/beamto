@@ -88,6 +88,7 @@ public class SongsList extends AsyncTask<String, Void, Boolean> {
 					if (songName != null) {
 						instance.setCurrentSongName(albumName + "-"+ songName);
 					}
+					instance.slidingDrawer.open();
 					instance.playSong(url);
 					
 
