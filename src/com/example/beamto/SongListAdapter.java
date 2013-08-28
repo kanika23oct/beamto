@@ -55,7 +55,7 @@ public class SongListAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, ViewGroup parent) {
 		songs = songsList.get(position);
 		instance = NewMediaPlayer.getActivity();
 		View v = null;
@@ -70,9 +70,8 @@ public class SongListAdapter extends BaseAdapter {
 		
 			@Override
 			public void onClick(View view) {
-
-				String jsonSongURL = resources.getString(R.string.songURL);
-				new PlaySong().execute(jsonSongURL);
+               String jsonSongURL = resources.getString(R.string.songURL);
+               	new PlaySong().execute(jsonSongURL,songsList.get(position).get(VariablesList.TAG_ID),songsList.get(position).get(VariablesList.TAG_NAME) );
 
 			}
 
@@ -91,7 +90,7 @@ public class SongListAdapter extends BaseAdapter {
 			JSONParser jParser = new JSONParser();
 			try {
 				String jsonString = jParser.readJsonFromUrl(params[0],
-						VariablesList.TAG_ID, songs.get(VariablesList.TAG_ID));
+						VariablesList.TAG_ID, params[1]);
 				JSONObject jsonObject = new JSONObject(jsonString);
 				String songUrl = jsonObject.getString("url");
 				System.out.println(songUrl);
@@ -99,7 +98,7 @@ public class SongListAdapter extends BaseAdapter {
 					songUrl = songUrl.replaceFirst("https://", "http://");
 				}
 				song.put("songUrl", songUrl);
-				song.put("songName", songs.get(VariablesList.TAG_NAME));
+				song.put("songName", params[2]);
 				song.put("albumName", albumName);
 				song.put("coverart_small", songs.get("AlbumImage"));
 			} catch (JSONException e) {
@@ -114,19 +113,19 @@ public class SongListAdapter extends BaseAdapter {
 		@Override
 		public void onPostExecute(HashMap<String, String> result) {
 
-			instance.addToSelectedList(song);
+			instance.addToSelectedList(result);
 			// NewMediaPlayer.selectedSongs.add(song);
 			if (!NewMediaPlayer.mediaPlayer.isPlaying()) {
-				HashMap<String, String> playingSong = song;
-				if (playingSong != null) {
-					String url = playingSong.get("songUrl");
+			//	HashMap<String, String> playingSong = result;
+				if (result != null) {
+					String url = result.get("songUrl");
 					
-					String songName = playingSong.get("songName");
+					String songName = result.get("songName");
 					if (songName != null) {
 						instance.setCurrentSongName(albumName + "-"+ songName);
 					}
-					instance.playSong(url);
 					instance.slidingDrawer.open();
+					instance.playSong(url);
 					((Activity)context).finish();
 				}
 			}
