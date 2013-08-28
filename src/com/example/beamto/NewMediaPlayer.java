@@ -472,6 +472,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 				songTitle.setText("");
 				if (slidingDrawer.isOpened()) {
 					btnPlayList.setVisibility(View.INVISIBLE);
+					showDialog(1);
 				}
 				
 				mediaPlayer.reset();
@@ -667,6 +668,13 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 			progDialog.setMessage("Loading...Please wait");
 			progDialog.setCancelable(true);
 			return progDialog;
+			
+		case 1: // Spinner
+			progDialog = new ProgressDialog(activity);
+			progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			progDialog.setMessage("Playing...Please wait");
+			progDialog.setCancelable(true);
+			return progDialog;
 		default:
 			return null;
 		}
@@ -700,6 +708,7 @@ public class NewMediaPlayer extends Activity implements OnCompletionListener,
 	@Override
 	public void onPrepared(MediaPlayer mediaPlayer) {
 		mediaPlayer.start();
+		progDialog.dismiss();
 		songTitle.setVisibility(View.VISIBLE);
 		btnPlay.setImageResource(R.drawable.btn_pause);
 		songProgressBar.setProgress(0);
