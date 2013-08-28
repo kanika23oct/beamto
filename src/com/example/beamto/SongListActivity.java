@@ -71,7 +71,7 @@ public class SongListActivity extends ListActivity {
 				albumUrl = getResources().getString(R.string.songsListURL);
 					new SongsList(getResources()).execute(albumImageURL, albumUrl, albumName,
 						albumIndex);
-					instance.slidingDrawer.open();
+					
 					finish();
 			}
 		});
