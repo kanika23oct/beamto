@@ -89,7 +89,7 @@ public class ClickableListAdapter extends BaseAdapter {
 		if (convertView != null) {
 			v = convertView;
 		} else {
-			v = inflater.inflate(R.layout.gridlayout_item, parent, false);
+			v = inflater.inflate(R.layout.li_clickable_list, parent, false);
 		}
 
 		ImageView imageView = (ImageView) v.findViewById(R.id.icon_image);
