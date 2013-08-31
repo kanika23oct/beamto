@@ -16,7 +16,7 @@
         android:verticalSpacing="30dp">
    </GridView>
 
-    <com.example.beamto.ClickableSlidingDrawer
+    <us.beamto.newplayer.components.ClickableSlidingDrawer
    
         android:id="@+id/slidingDrawer1"
         android:layout_width="match_parent"
@@ -200,14 +200,14 @@
                 android:id="@+id/player_footer_bg"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@layout/bg_player_footer"
+                android:background="@drawable/bg_player_footer"
                  android:layout_alignParentBottom = "true"
                 android:gravity="center">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@layout/rounded_corner"
+                    android:background="@drawable/rounded_corner"
                     android:gravity="center_vertical"
                     android:layout_alignParentBottom = "true"
                     android:orientation="horizontal"
@@ -258,6 +258,6 @@
             </RelativeLayout>
 
         </LinearLayout>
-    </com.example.beamto.ClickableSlidingDrawer>
+    </us.beamto.newplayer.components.ClickableSlidingDrawer>
 
 </RelativeLayout>
