@@ -22,6 +22,7 @@
         android:textColorHighlight="#656565">
     </TextView>
 
+    
     <TextView
         android:id="@+id/album_artist"
         android:layout_width="wrap_content"
