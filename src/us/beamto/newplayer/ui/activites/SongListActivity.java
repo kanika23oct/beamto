@@ -55,7 +55,7 @@ public class SongListActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.songlist);
+		setContentView(R.layout.ac_song_list);
 		instance = NewMediaPlayerActivity.getActivity();
 		albumIndex = getIntent().getExtras().getString("albumIndex");
 		albumName = getIntent().getExtras().getString("albumName");
