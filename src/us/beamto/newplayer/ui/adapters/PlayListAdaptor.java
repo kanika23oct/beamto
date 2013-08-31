@@ -55,7 +55,7 @@ public class PlayListAdaptor extends BaseAdapter {
 		if (convertView != null)
 			v = convertView;
 		else
-			v = inflater.inflate(R.layout.playlist_item, parent, false);
+			v = inflater.inflate(R.layout.li_play_list, parent, false);
 
 		final String songName = songs.get(VariablesList.SONG_NAME_PARAMETER);
 

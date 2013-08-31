@@ -70,7 +70,7 @@ public class SongListAdapter extends BaseAdapter {
 		if (convertView != null)
 			v = convertView;
 		else
-			v = inflater.inflate(R.layout.songlist_item, parent, false);
+			v = inflater.inflate(R.layout.li_song_list, parent, false);
 
 		TextView itemSongName = (TextView) v.findViewById(R.id.songTitle);
 		itemSongName.setText(songs.get(VariablesList.TAG_NAME));
