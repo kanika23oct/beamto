@@ -593,7 +593,9 @@ public class NewMediaPlayerActivity extends Activity implements OnCompletionList
 		if (slidingDrawer.isOpened())
 			slidingDrawer.close();
 		else {
+
 			mediaPlayer.pause();
+			mediaPlayer.reset();
 			System.gc();
 			clearData();
 			this.finish();
