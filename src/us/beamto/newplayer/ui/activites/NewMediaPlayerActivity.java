@@ -16,6 +16,7 @@ import us.beamto.newplayer.R.menu;
 import us.beamto.newplayer.R.string;
 import us.beamto.newplayer.api.LoadAlbumPage;
 import us.beamto.newplayer.common.BuildValues;
+import us.beamto.newplayer.common.PhoneStateChange;
 import us.beamto.newplayer.common.Utilities;
 import us.beamto.newplayer.common.VariablesList;
 import us.beamto.newplayer.ui.adapters.ClickableListAdapter;
@@ -38,6 +39,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Color;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -187,6 +190,11 @@ public class NewMediaPlayerActivity extends Activity implements OnCompletionList
 			}
 		}
 
+		PhoneStateChange listener = new PhoneStateChange();
+		TelephonyManager tManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        if(tManager != null)
+            tManager.listen(listener, PhoneStateListener.LISTEN_CALL_STATE);
+        
 		slidingDrawer.setOnDrawerOpenListener(new OnDrawerOpenListener() {
 
 			@Override

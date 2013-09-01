@@ -15,6 +15,7 @@ import us.beamto.newplayer.R.string;
 import us.beamto.newplayer.api.JSONParser;
 import us.beamto.newplayer.api.SongsList;
 import us.beamto.newplayer.common.BuildValues;
+import us.beamto.newplayer.common.PhoneStateChange;
 import us.beamto.newplayer.common.VariablesList;
 import us.beamto.newplayer.ui.adapters.SongListAdapter;
 
@@ -23,9 +24,12 @@ import us.beamto.newplayer.ui.adapters.SongListAdapter;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -75,6 +79,11 @@ public class SongListActivity extends ListActivity {
 		artistName.setText(artist);
 		totalAlbumSongs.setText(totalSongs + " songs");
 		
+		PhoneStateChange listener = new PhoneStateChange();
+		TelephonyManager tManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        if(tManager != null)
+            tManager.listen(listener, PhoneStateListener.LISTEN_CALL_STATE);
+        
 		imageView.setOnClickListener(new View.OnClickListener() {
 			// @Override
 			public void onClick(View v) {
