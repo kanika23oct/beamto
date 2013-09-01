@@ -136,7 +136,7 @@
         <copy
             file="./templates/BuildValues.java"
             overwrite="true"
-            todir="./src/com/example/beamto/common" >
+            todir="./src/us//beamto/newplayer/common" >
 
             <filterset refid="build-tokens" />
         </copy>
