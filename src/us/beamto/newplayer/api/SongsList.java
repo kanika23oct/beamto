@@ -20,7 +20,7 @@ import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.view.View;
 
-public class SongsList extends AsyncTask<String, Void, Boolean> {
+public class SongsList extends AsyncTask<String, Void, Integer> {
 
 	String albumName = "";
 	private static Resources resources;
@@ -28,15 +28,16 @@ public class SongsList extends AsyncTask<String, Void, Boolean> {
 	private String imageURL = "";
 	private String albumIndex = "";
 	NewMediaPlayerActivity instance = null;
-
+	
 	public SongsList(Resources resources) {
 		this.resources = resources;
 	}
 
 	@Override
-	public Boolean doInBackground(String... params) {
+	public Integer doInBackground(String... params) {
 		JSONParser jParser = new JSONParser();
 		instance = NewMediaPlayerActivity.getActivity();
+		int size = 0;
 		boolean playSongs = false;
 		try {
 
@@ -46,6 +47,7 @@ public class SongsList extends AsyncTask<String, Void, Boolean> {
 			this.albumIndex = params[3];
 			JSONArray songs = NewMediaPlayerActivity.albumJsonString.get(albumIndex
 					+ ";" + albumName);
+			size = songs.length();
 			for (int i = 0; i < songs.length(); i++) {
 				HashMap<String, String> song = new HashMap<String, String>();
 				JSONObject songDetails = songs.getJSONObject(i);
@@ -78,28 +80,27 @@ public class SongsList extends AsyncTask<String, Void, Boolean> {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return playSongs;
+		return size-1;
 	}
 
 	@Override
-	public void onPostExecute(Boolean result) {
+	public void onPostExecute(Integer result) {
 
-		if (result == true) {
-			if (!NewMediaPlayerActivity.mediaPlayer.isPlaying()) {
+		       instance.setCurrentIndex(instance.getSelectedSongList().size()-1-result);
 				HashMap<String, String> playingSong = instance
-						.getSelectedSong(0);
+						.getSelectedSong(instance.getCurrentIndex());
 				if (playingSong != null) {
 					String url = playingSong.get("songUrl");
 					String songName = playingSong.get("songName");
 					if (songName != null) {
 						instance.setCurrentSongName(albumName + "-"+ songName);
 					}
+					
 					instance.slidingDrawer.open();
 					instance.playSong(url);
 					
 
-				}
-			}
+			
 		}
 
 	}
