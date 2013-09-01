@@ -471,6 +471,15 @@ public class NewMediaPlayerActivity extends Activity implements OnCompletionList
 		return imageLoader;
 	}
 
+	public static void setCurrentIndex(int index) {
+		currentIndex = index;
+	}
+	
+	public static Integer getCurrentIndex() {
+		return currentIndex ;
+	}
+	
+	
 	@SuppressWarnings("deprecation")
 	public void setLoading(boolean loading) {
 		mLoading = loading;
