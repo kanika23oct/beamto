@@ -80,7 +80,7 @@ public class SongListAdapter extends BaseAdapter {
 			@Override
 			public void onClick(View view) {
 				 String jsonSongURL = BuildValues.BASE_URL + VariablesList.SONG_URL;
-               	new PlaySong().execute(jsonSongURL,songsList.get(position).get(VariablesList.TAG_ID),songsList.get(position).get(VariablesList.TAG_NAME) );
+               	new PlaySong().execute(jsonSongURL,songsList.get(position).get(VariablesList.TAG_ID),songsList.get(position).get(VariablesList.TAG_NAME),songsList.get(position).get("AlbumImage") );
 
 			}
 
@@ -109,7 +109,7 @@ public class SongListAdapter extends BaseAdapter {
 				song.put("songUrl", songUrl);
 				song.put("songName", params[2]);
 				song.put("albumName", albumName);
-				song.put("coverart_small", songs.get("AlbumImage"));
+				song.put("coverart_small", params[3]);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -124,20 +124,15 @@ public class SongListAdapter extends BaseAdapter {
 
 			instance.addToSelectedList(result);
 			// NewMediaPlayer.selectedSongs.add(song);
-			if (!NewMediaPlayerActivity.mediaPlayer.isPlaying()) {
 			//	HashMap<String, String> playingSong = result;
-				if (result != null) {
 					String url = result.get("songUrl");
-					
+					instance.setCurrentIndex(instance.getSelectedSongList().size()-1);
 					String songName = result.get("songName");
-					if (songName != null) {
-						instance.setCurrentSongName(albumName + "-"+ songName);
-					}
-					instance.slidingDrawer.open();
+					instance.setCurrentSongName(albumName + "-"+ songName);
 					instance.playSong(url);
+					instance.slidingDrawer.open();
 					((Activity)context).finish();
-				}
-			}
+			
 		}
 
 	}
