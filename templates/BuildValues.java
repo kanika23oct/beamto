@@ -1,4 +1,4 @@
-package com.example.beamto;
+package us.beamto.newplayer.common;
 
 /**
  * This class is automatically generated on build process. Change template in /templates/BuildValues.java
