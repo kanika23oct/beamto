@@ -59,14 +59,15 @@ public class PlayListAdaptor extends BaseAdapter {
 
 		final String songName = songs.get(VariablesList.SONG_NAME_PARAMETER);
 
+		final String albumName = songs
+				.get(VariablesList.ALBUM_NAME_PARAMETER);
+		
 		TextView itemSongName = (TextView) v.findViewById(R.id.albumTitle);
-		itemSongName.setText(songName);
+		itemSongName.setText(albumName+ "- "+songName);
 		itemSongName.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				String albumName = songs
-						.get(VariablesList.ALBUM_NAME_PARAMETER);
 				String url = songs.get(VariablesList.SONG_URL_PARAMETER);
 				instance.setCurrentSongName(albumName + "-" + songName);
 				instance.playSong(url);
