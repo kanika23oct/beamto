@@ -14,6 +14,7 @@ import us.beamto.newplayer.R.layout;
 import us.beamto.newplayer.R.string;
 import us.beamto.newplayer.api.JSONParser;
 import us.beamto.newplayer.api.SongsList;
+import us.beamto.newplayer.common.BuildValues;
 import us.beamto.newplayer.common.VariablesList;
 import us.beamto.newplayer.ui.adapters.SongListAdapter;
 
@@ -63,7 +64,7 @@ public class SongListActivity extends ListActivity {
 		artist = getIntent().getExtras().getString("artistName");
 	    totalSongs = getIntent().getExtras().getString("totalSongs");
 		
-		url = getResources().getString(R.string.songsListURL);
+	    url = BuildValues.BASE_URL + VariablesList.SONGS_LIST_URL;
 		songAdapter = new SongListAdapter(this, songList, albumName);
 		imageView = (ImageView)findViewById(R.id.albumThumbnailImage);
 		textView = (TextView)findViewById(R.id.albumName);

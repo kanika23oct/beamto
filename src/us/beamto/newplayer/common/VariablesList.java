@@ -18,6 +18,11 @@ public class VariablesList {
 	public static final String JSON_SONG_OBJECT = "songs";
 	public static final String JSON_PAGE_OBJECT = "page";
 	public static final String NUMBER_OF_SONGS = "totalSongs";
+	
+	public static final String SONGS_LIST_URL = "/api/v1/getAlbumObject";
+	public static final String SONG_URL = "/api/v1/getSongPlaybackUrl";
+	public static final String ALBUMS_URL = "/api/v1/getAlbums";
+
 
 
 }

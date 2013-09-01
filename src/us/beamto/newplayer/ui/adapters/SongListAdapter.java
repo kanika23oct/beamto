@@ -13,6 +13,7 @@ import us.beamto.newplayer.R.id;
 import us.beamto.newplayer.R.layout;
 import us.beamto.newplayer.R.string;
 import us.beamto.newplayer.api.JSONParser;
+import us.beamto.newplayer.common.BuildValues;
 import us.beamto.newplayer.common.VariablesList;
 import us.beamto.newplayer.ui.activites.NewMediaPlayerActivity;
 
@@ -78,7 +79,7 @@ public class SongListAdapter extends BaseAdapter {
 		
 			@Override
 			public void onClick(View view) {
-               String jsonSongURL = resources.getString(R.string.songURL);
+				 String jsonSongURL = BuildValues.BASE_URL + VariablesList.SONG_URL;
                	new PlaySong().execute(jsonSongURL,songsList.get(position).get(VariablesList.TAG_ID),songsList.get(position).get(VariablesList.TAG_NAME) );
 
 			}

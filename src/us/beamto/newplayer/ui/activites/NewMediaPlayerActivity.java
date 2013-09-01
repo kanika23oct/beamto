@@ -15,7 +15,9 @@ import us.beamto.newplayer.R.layout;
 import us.beamto.newplayer.R.menu;
 import us.beamto.newplayer.R.string;
 import us.beamto.newplayer.api.LoadAlbumPage;
+import us.beamto.newplayer.common.BuildValues;
 import us.beamto.newplayer.common.Utilities;
+import us.beamto.newplayer.common.VariablesList;
 import us.beamto.newplayer.ui.adapters.ClickableListAdapter;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -113,7 +115,7 @@ public class NewMediaPlayerActivity extends Activity implements OnCompletionList
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.player);
+		setContentView(R.layout.ac_new_media_player);
 		activity = this;
 		mediaPlayer.setOnPreparedListener(this);
 
@@ -175,8 +177,8 @@ public class NewMediaPlayerActivity extends Activity implements OnCompletionList
 		view.setAdapter(adaptor);
 		view.setOnScrollListener(this);
 		// view.setSmoothScrollbarEnabled(true);
-		albumURL = getResources().getString(R.string.albumsURL);
-		songURL = getString(R.string.songsListURL);
+		albumURL = BuildValues.BASE_URL + VariablesList.ALBUMS_URL;
+		songURL = BuildValues.BASE_URL + VariablesList.SONGS_LIST_URL;
 		if (songsList.size() == 0) {
 			if (numberOfPages == 1) {
 				setLoading(true);

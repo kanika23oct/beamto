@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import us.beamto.newplayer.R;
 import us.beamto.newplayer.R.string;
+import us.beamto.newplayer.common.BuildValues;
 import us.beamto.newplayer.common.VariablesList;
 import us.beamto.newplayer.ui.activites.NewMediaPlayerActivity;
 
@@ -50,7 +51,7 @@ public class SongsList extends AsyncTask<String, Void, Boolean> {
 				JSONObject songDetails = songs.getJSONObject(i);
 				String id = songDetails.getString(VariablesList.TAG_ID);
 				String name = songDetails.getString(VariablesList.TAG_NAME);
-				String jsonSongUrl = resources.getString(R.string.songURL);
+				String jsonSongUrl = BuildValues.BASE_URL + VariablesList.SONG_URL;
 				String jsonStringSong = jParser.readJsonFromUrl(
 						jsonSongUrl.toString(), VariablesList.TAG_ID, id);
 				JSONObject jsonObjectSong = new JSONObject(jsonStringSong);
