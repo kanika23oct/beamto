@@ -99,7 +99,7 @@ public class SongListActivity extends ListActivity {
 		ListView lv = getListView();
 		lv.setAdapter(songAdapter);
 		showDialog(0);
-		new LoadSongs().execute(url, albumIndex);
+		new LoadSongs().execute(url, albumIndex,albumImageURL);
 
 	}
 
@@ -138,7 +138,7 @@ public class SongListActivity extends ListActivity {
 					String name = songDetails.getString(VariablesList.TAG_NAME);
 					song.put(VariablesList.TAG_ID, id);
 					song.put(VariablesList.TAG_NAME, name);
-					song.put("AlbumImage", albumImageURL);
+					song.put("AlbumImage", params[2]);
 					songList.add(song);
 				}
 
