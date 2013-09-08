@@ -136,6 +136,7 @@ public class NewMediaPlayerActivity extends Activity implements OnCompletionList
 		btnPlayList = (ImageButton) findViewById(R.id.playList);
 		songTitle = (TextView) findViewById(R.id.songTitle);
 		slidingDrawer = (SlidingDrawer) findViewById(R.id.slidingDrawer1);
+		slidingDrawer.setVisibility(View.INVISIBLE);
 		final RelativeLayout layout = (RelativeLayout) findViewById(R.id.buttonPlayList);
 		currentPlayList = (ImageButton) findViewById(R.id.currentPlayList);
 		currentPlayList.setVisibility(View.INVISIBLE);
@@ -199,6 +200,7 @@ public class NewMediaPlayerActivity extends Activity implements OnCompletionList
 
 			@Override
 			public void onDrawerOpened() {
+				slidingDrawer.setVisibility(View.VISIBLE);
 				btnPlayList.setVisibility(View.INVISIBLE);
 				currentPlayList.setVisibility(View.VISIBLE);
 				view.setVisibility(View.INVISIBLE);
@@ -219,6 +221,7 @@ public class NewMediaPlayerActivity extends Activity implements OnCompletionList
 				currentPlayList.setVisibility(View.INVISIBLE);
 				layout.setBackgroundColor(Color.rgb(211, 211, 211));
 				if (mediaPlayer.isPlaying()) {
+					slidingDrawer.setVisibility(View.VISIBLE);
 					btnPlayList.setImageResource(R.drawable.btn_stop);
 				} else {
 					btnPlayList.setImageResource(R.drawable.btn_start);
@@ -260,9 +263,13 @@ public class NewMediaPlayerActivity extends Activity implements OnCompletionList
 						if (name != null) {
 							setCurrentSongName(albumName + " - " + name);
 						}
-						mediaPlayer.prepareAsync();
-						// btnPlay.setImageResource(R.drawable.btn_pause);
-						// btnPlayList.setImageResource(R.drawable.btn_stop);
+						mediaPlayer.start();
+						btnPlay.setImageResource(R.drawable.btn_pause);
+
+						btnPlayList.setImageResource(R.drawable.btn_stop);
+						if (slidingDrawer.isOpened()) {
+							btnPlayList.setVisibility(View.INVISIBLE);
+						}
 					}
 				} else {
 					mediaPlayer.pause();
