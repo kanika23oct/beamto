@@ -13,6 +13,7 @@ import android.util.Log;
 
 import org.json.*;
 
+
 import us.beamto.newplayer.common.VariablesList;
 import us.beamto.newplayer.ui.activites.NewMediaPlayerActivity;
 
@@ -43,7 +44,7 @@ public class AlbumList {
 				
 				String songJsonString = jParser.readJsonFromUrl(albumUrl.toString(),VariablesList.ALBUM_JSON_PARAMETER,id);
 				JSONObject songjsonObject = new JSONObject(songJsonString);
-				NewMediaPlayerActivity.albumJsonString.put(id+";"+name,songjsonObject.getJSONArray(VariablesList.JSON_SONG_OBJECT));
+				NewMediaPlayerActivity.getActivity().setAlbumJsonArray(id+";"+name,songjsonObject.getJSONArray(VariablesList.JSON_SONG_OBJECT));
 				album.put(VariablesList.TAG_ID, id);
 				album.put(VariablesList.TAG_NAME, name);
 				album.put(VariablesList.TAG_LABEL_NAME, labelName);
@@ -61,44 +62,7 @@ public class AlbumList {
 		return albumList;
 	}
 
-	public static void LoadImageFromWebOperations(String url) {
-		final String image = url;
-		final Thread startAlbum = new Thread() {
-			public void run() {
-				InputStream in;
-				try {
-
-					in = new java.net.URL(image).openStream();
-					final Bitmap mIcon11 = BitmapFactory.decodeStream(in);
-					NewMediaPlayerActivity.artistImage.post(new Runnable() {
-						public void run() {
-							NewMediaPlayerActivity.artistImage.setImageBitmap(mIcon11);
-						}
-					});
-
-					synchronized (this) {
-						this.notifyAll();
-					}
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		};
-
-		synchronized (startAlbum) {
-			startAlbum.start();
-			try {
-				startAlbum.wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
+	
 	public static Bitmap LoadImagetoGridView(String url) {
 		String image = url;
 		Bitmap mIcon11 = null;

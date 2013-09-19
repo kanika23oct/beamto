@@ -45,7 +45,7 @@ public class SongsList extends AsyncTask<String, Void, Integer> {
 			this.albumUrl = new StringBuffer(params[1]);
 			this.albumName = params[2];
 			this.albumIndex = params[3];
-			JSONArray songs = NewMediaPlayerActivity.albumJsonString.get(albumIndex
+			JSONArray songs = instance.getAlbumJsonArray().get(albumIndex
 					+ ";" + albumName);
 			size = songs.length();
 			for (int i = 0; i < songs.length(); i++) {
@@ -93,7 +93,7 @@ public class SongsList extends AsyncTask<String, Void, Integer> {
 					String url = playingSong.get("songUrl");
 					String songName = playingSong.get("songName");
 					if (songName != null) {
-						instance.setCurrentSongName(albumName + "-"+ songName);
+						instance.setSongTitle(albumName + "-"+ songName);
 					}
 					
 					instance.slidingDrawer.open();
