@@ -78,9 +78,9 @@ public class SongListActivity extends ListActivity {
 		textView.setText(albumName);
 		artistName.setText(artist);
 		totalAlbumSongs.setText(totalSongs + " songs");
-		
 		PhoneStateChange listener = new PhoneStateChange();
 		TelephonyManager tManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+		
         if(tManager != null)
             tManager.listen(listener, PhoneStateListener.LISTEN_CALL_STATE);
         
