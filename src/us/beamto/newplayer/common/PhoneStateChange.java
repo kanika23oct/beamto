@@ -5,19 +5,24 @@ import android.telephony.TelephonyManager;
 import us.beamto.newplayer.ui.activites.NewMediaPlayerActivity;
 
 public class PhoneStateChange extends PhoneStateListener{
-	private boolean pausedForPhoneCall = false;
+	private static boolean pausedForPhoneCall = false;
 	
 	 @Override
 	    public void onCallStateChanged(int state, String incomingNumber) {
 
 	        switch (state) {
 	            case TelephonyManager.CALL_STATE_IDLE:
-	            	NewMediaPlayerActivity.mediaPlayer.start();
+	              if(pausedForPhoneCall)	
+	            	{
+	            	  NewMediaPlayerActivity.mediaPlayer.start();
+	            	  pausedForPhoneCall = false;
+	            	}
 	                return;
 	            case TelephonyManager.CALL_STATE_OFFHOOK: 
 	            	NewMediaPlayerActivity.mediaPlayer.pause();   
 	                return;
 	            case TelephonyManager.CALL_STATE_RINGING: 
+	            	pausedForPhoneCall = true;
 	            	NewMediaPlayerActivity.mediaPlayer.pause();     
 	                return;
 	        }
