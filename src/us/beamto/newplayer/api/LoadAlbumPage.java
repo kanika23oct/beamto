@@ -21,7 +21,7 @@ public class LoadAlbumPage extends
 	@Override
 	protected ArrayList<HashMap<String, String>> doInBackground(
 			String... params) {
-		NewMediaPlayerActivity instance = NewMediaPlayerActivity.getActivity();
+		instance = NewMediaPlayerActivity.getActivity();
 
 		this.url = params[0];
 		this.pageNumber = params[1];
@@ -36,12 +36,12 @@ public class LoadAlbumPage extends
 
 		}
 		if (list.size() == 0) {
-			NewMediaPlayerActivity.setLastPage(true);
+			instance.setLastPage(true);
 			instance.setLoading(false);
 
 		} else {
-			NewMediaPlayerActivity.setNewList(list);
-			NewMediaPlayerActivity.appendToAdaptor();
+			instance.setNewList(list);
+			instance.appendToAdaptor();
 			instance.setLoading(false);
 		}
 		return list;
@@ -50,7 +50,7 @@ public class LoadAlbumPage extends
 
 	@Override
 	public void onPostExecute(ArrayList<HashMap<String, String>> result) {
-		ClickableListAdapter adapter = NewMediaPlayerActivity.getClickableListAdapter();
+		ClickableListAdapter adapter = instance.getClickableListAdapter();
 		adapter.notifyDataSetChanged();
 	}
 
