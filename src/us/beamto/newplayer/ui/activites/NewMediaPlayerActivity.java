@@ -77,6 +77,8 @@ public class NewMediaPlayerActivity extends Activity implements
 	private ArrayList<HashMap<String, String>> newList;
 	public static SlidingDrawer slidingDrawer;
 	boolean mLoading = false;
+	
+	
 	boolean mLastPage = false;
 	private ClickableListAdapter adaptor;
 	private int numberOfPages = 1;
