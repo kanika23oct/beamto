@@ -55,6 +55,7 @@ public class SongListActivity extends ListActivity {
 	String albumUrl;
     String artist;
     String totalSongs;
+    String slug;
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -67,6 +68,7 @@ public class SongListActivity extends ListActivity {
 		albumImageURL = getIntent().getExtras().getString("albumImage");
 		artist = getIntent().getExtras().getString("artistName");
 	    totalSongs = getIntent().getExtras().getString("totalSongs");
+	    slug = getIntent().getExtras().getString("albumSlug");
 		
 	    url = BuildValues.BASE_URL + VariablesList.SONGS_LIST_URL;
 		songAdapter = new SongListAdapter(this, songList, albumName);
@@ -99,7 +101,7 @@ public class SongListActivity extends ListActivity {
 		ListView lv = getListView();
 		lv.setAdapter(songAdapter);
 		showDialog(0);
-		new LoadSongs().execute(url, albumIndex,albumImageURL);
+		new LoadSongs().execute(url, slug,albumImageURL);
 
 	}
 
