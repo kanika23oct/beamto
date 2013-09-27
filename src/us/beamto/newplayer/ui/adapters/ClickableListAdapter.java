@@ -134,6 +134,7 @@ public class ClickableListAdapter extends BaseAdapter {
 	public void click(int position){
 		HashMap<String, String> song = songsList.get(position);
 		String songIndex = song.get("id");
+		String songSlug = song.get(VariablesList.TAG_SLUG);
 		String albumName = (song.get("name"));
 		String artistName = song.get(VariablesList.TAG_ARTIST_NAME);
 		String totalSongs = song.get(VariablesList.NUMBER_OF_SONGS);
@@ -141,6 +142,7 @@ public class ClickableListAdapter extends BaseAdapter {
 		Intent in = new Intent(context, SongListActivity.class);
 		in.putExtra("albumIndex", songIndex);
 		in.putExtra("albumName", albumName);
+		in.putExtra("albumSlug", songSlug);
 		in.putExtra("albumImage",
 				song.get(VariablesList.TAG_ALBUM_IMAGE));
 		in.putExtra("artistName", artistName);
