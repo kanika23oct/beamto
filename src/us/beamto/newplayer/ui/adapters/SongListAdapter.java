@@ -16,6 +16,7 @@ import us.beamto.newplayer.api.JSONParser;
 import us.beamto.newplayer.common.BuildValues;
 import us.beamto.newplayer.common.VariablesList;
 import us.beamto.newplayer.ui.activites.NewMediaPlayerActivity;
+import us.beamto.newplayer.ui.activites.Subscriber;
 
 
 
@@ -128,7 +129,7 @@ public class SongListAdapter extends BaseAdapter {
 					String url = result.get("songUrl");
 					instance.setCurrentIndex(instance.getSelectedSongList().size()-1);
 					String songName = result.get("songName");
-					instance.setCurrentSongName(albumName + "-"+ songName);
+					Subscriber.getInstance().message("SET_TITLE;"+albumName + "-"+ songName);
 					instance.playSong(url);
 					instance.slidingDrawer.open();
 					((Activity)context).finish();
