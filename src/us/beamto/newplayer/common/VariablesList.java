@@ -3,6 +3,7 @@ package us.beamto.newplayer.common;
 public class VariablesList {
 	
 	public static final String TAG_ID = "id";
+	public static final String TAG_SLUG = "slug";
 	public static final String TAG_NAME = "name";
 	public static final String SOURCE_URL = "source_url";
 	public static final String TAG_LABEL_NAME = "label_name";
