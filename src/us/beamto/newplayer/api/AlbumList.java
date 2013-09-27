@@ -60,6 +60,7 @@ public class AlbumList {
 									songjsonObject
 											.getJSONArray(VariablesList.JSON_SONG_OBJECT));
 					album.put(VariablesList.TAG_ID, id);
+					album.put(VariablesList.TAG_SLUG, slug);
 					album.put(VariablesList.TAG_NAME, name);
 					album.put(VariablesList.TAG_LABEL_NAME, labelName);
 					album.put(VariablesList.TAG_ALBUM_IMAGE, albumImage);
