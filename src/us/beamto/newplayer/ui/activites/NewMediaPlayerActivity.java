@@ -86,7 +86,7 @@ public class NewMediaPlayerActivity extends Activity implements
 	private ImageLoader imageLoader;
 
 	private static ArrayList<HashMap<String, String>> selectedSongs = new ArrayList<HashMap<String, String>>();
-	private HashMap<String, JSONArray> albumJsonString = new HashMap<String, JSONArray>();
+	private static HashMap<String, JSONArray> albumJsonString = new HashMap<String, JSONArray>();
 
 	// Handler to update UI timer, progress bar etc,.
 	private Handler mHandler = new Handler();
@@ -170,8 +170,8 @@ public class NewMediaPlayerActivity extends Activity implements
 		view.setAdapter(adaptor);
 		view.setOnScrollListener(this);
 		// view.setSmoothScrollbarEnabled(true);
-		albumURL = getResources().getString(R.string.albumsURL);
-		songURL = getString(R.string.songsListURL);
+		albumURL = BuildValues.BASE_URL + VariablesList.ALBUMS_URL;//getResources().getString(R.string.albumsURL);
+		songURL = BuildValues.BASE_URL + VariablesList.SONGS_LIST_URL;//getString(R.string.songsListURL);
 		if (songsList.size() == 0) {
 			if (numberOfPages == 1) {
 				setLoading(true);
