@@ -87,7 +87,7 @@ public class SongListActivity extends ListActivity {
 		imageView.setOnClickListener(new View.OnClickListener() {
 			// @Override
 			public void onClick(View v) {
-				albumUrl = getResources().getString(R.string.songsListURL);
+				albumUrl = BuildValues.BASE_URL + VariablesList.SONGS_LIST_URL;
 					new SongsList(getResources()).execute(albumImageURL, albumUrl, albumName,
 						albumIndex);
 					
