@@ -19,8 +19,6 @@ import us.beamto.newplayer.common.PhoneStateChange;
 import us.beamto.newplayer.common.VariablesList;
 import us.beamto.newplayer.ui.adapters.SongListAdapter;
 
-
-
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -47,15 +45,16 @@ public class SongListActivity extends ListActivity {
 	SongListAdapter songAdapter;
 	private ProgressDialog progressDialog;
 	ImageView imageView;
-	TextView textView ; 
+	TextView textView;
 	TextView artistName;
 	TextView totalAlbumSongs;
 	NewMediaPlayerActivity instance;
 	String albumImageURL;
 	String albumUrl;
-    String artist;
-    String totalSongs;
-    String slug;
+	String artist;
+	String totalSongs;
+	String slug;
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -67,41 +66,41 @@ public class SongListActivity extends ListActivity {
 		albumName = getIntent().getExtras().getString("albumName");
 		albumImageURL = getIntent().getExtras().getString("albumImage");
 		artist = getIntent().getExtras().getString("artistName");
-	    totalSongs = getIntent().getExtras().getString("totalSongs");
-	    slug = getIntent().getExtras().getString("albumSlug");
-		
-	    url = BuildValues.BASE_URL + VariablesList.SONGS_LIST_URL;
+		totalSongs = getIntent().getExtras().getString("totalSongs");
+		slug = getIntent().getExtras().getString("albumSlug");
+
+		url = BuildValues.BASE_URL + VariablesList.SONGS_LIST_URL;
 		songAdapter = new SongListAdapter(this, songList, albumName);
-		imageView = (ImageView)findViewById(R.id.albumThumbnailImage);
-		textView = (TextView)findViewById(R.id.albumName);
-		artistName = (TextView)findViewById(R.id.artistName);
-		totalAlbumSongs = (TextView)findViewById(R.id.totalSongs);
-		
+		imageView = (ImageView) findViewById(R.id.albumThumbnailImage);
+		textView = (TextView) findViewById(R.id.albumName);
+		artistName = (TextView) findViewById(R.id.artistName);
+		totalAlbumSongs = (TextView) findViewById(R.id.totalSongs);
+
 		textView.setText(albumName);
 		artistName.setText(artist);
 		totalAlbumSongs.setText(totalSongs + " songs");
 		PhoneStateChange listener = new PhoneStateChange();
 		TelephonyManager tManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-		
-        if(tManager != null)
-            tManager.listen(listener, PhoneStateListener.LISTEN_CALL_STATE);
-        
+
+		if (tManager != null)
+			tManager.listen(listener, PhoneStateListener.LISTEN_CALL_STATE);
+
 		imageView.setOnClickListener(new View.OnClickListener() {
 			// @Override
 			public void onClick(View v) {
 				albumUrl = BuildValues.BASE_URL + VariablesList.SONGS_LIST_URL;
-					new SongsList(getResources()).execute(albumImageURL, albumUrl, albumName,
-						albumIndex);
-					
-					finish();
+				new SongsList(getResources()).execute(albumImageURL, albumUrl,
+						albumName, albumIndex);
+
+				finish();
 			}
 		});
-		
+
 		instance.getImageLoader().displayImage(albumImageURL, imageView);
 		ListView lv = getListView();
 		lv.setAdapter(songAdapter);
 		showDialog(0);
-		new LoadSongs().execute(url, slug,albumImageURL);
+		new LoadSongs().execute(url, slug, albumImageURL);
 
 	}
 
@@ -119,7 +118,7 @@ public class SongListActivity extends ListActivity {
 	}
 
 	private class LoadSongs extends
-	AsyncTask<String, Void, ArrayList<HashMap<String, String>>> {
+			AsyncTask<String, Void, ArrayList<HashMap<String, String>>> {
 
 		@Override
 		protected ArrayList<HashMap<String, String>> doInBackground(
