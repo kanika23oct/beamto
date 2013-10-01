@@ -18,8 +18,6 @@ import us.beamto.newplayer.common.VariablesList;
 import us.beamto.newplayer.ui.activites.NewMediaPlayerActivity;
 import us.beamto.newplayer.ui.activites.Subscriber;
 
-
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
@@ -77,11 +75,15 @@ public class SongListAdapter extends BaseAdapter {
 		TextView itemSongName = (TextView) v.findViewById(R.id.songTitle);
 		itemSongName.setText(songs.get(VariablesList.TAG_NAME));
 		itemSongName.setOnClickListener(new View.OnClickListener() {
-		
+
 			@Override
 			public void onClick(View view) {
-				 String jsonSongURL = BuildValues.BASE_URL + VariablesList.SONG_URL;
-               	new PlaySong().execute(jsonSongURL,songsList.get(position).get(VariablesList.TAG_ID),songsList.get(position).get(VariablesList.TAG_NAME),songsList.get(position).get("AlbumImage") );
+				String jsonSongURL = BuildValues.BASE_URL
+						+ VariablesList.SONG_URL;
+				new PlaySong().execute(jsonSongURL, songsList.get(position)
+						.get(VariablesList.TAG_ID), songsList.get(position)
+						.get(VariablesList.TAG_NAME), songsList.get(position)
+						.get("AlbumImage"));
 
 			}
 
@@ -125,15 +127,16 @@ public class SongListAdapter extends BaseAdapter {
 
 			instance.addToSelectedList(result);
 			// NewMediaPlayer.selectedSongs.add(song);
-			//	HashMap<String, String> playingSong = result;
-					String url = result.get("songUrl");
-					instance.setCurrentIndex(instance.getSelectedSongList().size()-1);
-					String songName = result.get("songName");
-					Subscriber.getInstance().message("SET_TITLE;"+albumName + "-"+ songName);
-					instance.playSong(url);
-					instance.slidingDrawer.open();
-					((Activity)context).finish();
-			
+			// HashMap<String, String> playingSong = result;
+			String url = result.get("songUrl");
+			instance.setCurrentIndex(instance.getSelectedSongList().size() - 1);
+			String songName = result.get("songName");
+			Subscriber.getInstance().message(
+					"SET_TITLE;" + albumName + "-" + songName);
+			instance.playSong(url);
+			instance.slidingDrawer.open();
+			((Activity) context).finish();
+
 		}
 
 	}
