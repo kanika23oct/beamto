@@ -33,6 +33,7 @@ public class SongsList extends AsyncTask<String, Void, Integer> {
 		this.resources = resources;
 	}
 
+	
 	@Override
 	public Integer doInBackground(String... params) {
 		JSONParser jParser = new JSONParser();
@@ -59,6 +60,12 @@ public class SongsList extends AsyncTask<String, Void, Integer> {
 				JSONObject jsonObjectSong = new JSONObject(jsonStringSong);
 				String songUrl = jsonObjectSong.getString("url");
 
+				/*
+				 *Converting  https to http because https is not supported
+				 * below android versions 4.0
+				 * http://developer.android.com/about/versions/android-4.0.html
+				 */
+								
 				if (songUrl.startsWith("https://")) {
 					songUrl = songUrl.replaceFirst("https://", "http://");
 				}
