@@ -48,7 +48,7 @@ public class PlayListAdaptor extends BaseAdapter {
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, ViewGroup parent) {
 		final HashMap<String, String> songs = songsList.get(position);
 		final NewMediaPlayerActivity instance = NewMediaPlayerActivity.getActivity();
 		View v = null;
@@ -65,11 +65,11 @@ public class PlayListAdaptor extends BaseAdapter {
 		TextView itemSongName = (TextView) v.findViewById(R.id.albumTitle);
 		itemSongName.setText(albumName+ "- "+songName);
 		itemSongName.setOnClickListener(new View.OnClickListener() {
-
-			@Override
+       	@Override
 			public void onClick(View v) {
-				String url = songs.get(VariablesList.SONG_URL_PARAMETER);
-				instance.setCurrentSongName(albumName + "-" + songName);
+       			String url = songs.get(VariablesList.SONG_URL_PARAMETER);
+				instance.setSongTitle(albumName + "-" + songName);
+				instance.setCurrentIndex(position);
 				instance.playSong(url);
 				instance.slidingDrawer.open();
 				((Activity)context).finish();
