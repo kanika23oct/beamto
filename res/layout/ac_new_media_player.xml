@@ -5,6 +5,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <include
+            android:id="@+id/drawerLayout"
+            layout="@layout/drawer_layout" />
+    
     <GridView
         android:id="@+id/grid_view_albums"
         android:layout_width="match_parent"
