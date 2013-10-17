@@ -3,6 +3,7 @@ package us.beamto.newplayer.ui.activites;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Random;
 
 import org.json.JSONArray;
@@ -13,7 +14,13 @@ import us.beamto.newplayer.R.id;
 import us.beamto.newplayer.R.layout;
 import us.beamto.newplayer.R.menu;
 import us.beamto.newplayer.R.string;
+
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+
 import us.beamto.newplayer.api.LoadAlbumPage;
+
 import us.beamto.newplayer.common.BuildValues;
 import us.beamto.newplayer.common.PhoneStateChange;
 import us.beamto.newplayer.common.Utilities;
@@ -32,12 +39,17 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -46,16 +58,24 @@ import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.SeekBar;
 import android.widget.SlidingDrawer;
 import android.widget.SlidingDrawer.OnDrawerCloseListener;
@@ -69,6 +89,9 @@ import android.view.View;
 public class NewMediaPlayerActivity extends Activity implements
 		OnCompletionListener, 
 		OnScrollListener, OnClickListener, MediaPlayer.OnPreparedListener {
+	
+	    
+	    
 	private static Activity activity;
 	public static MediaPlayer mediaPlayer;
 	protected static ProgressDialog progDialog;
@@ -95,7 +118,8 @@ public class NewMediaPlayerActivity extends Activity implements
 	public PlayerCenterPart centerPart;
 	public PlayerFooterLayout footerLayout;
 	public SlidingWindow slidingWindow;
-
+	public NavigationLayout navigationLayout;
+	
 	private int seekForwardTime = 5000; // 5000 milliseconds
 	private int seekBackwardTime = 5000; // 5000 milliseconds
 	boolean isShuffle = false;
@@ -108,27 +132,77 @@ public class NewMediaPlayerActivity extends Activity implements
 	String albumName;
 	private String currentSongName;
 	static int currentIndex;
+	private String[] mPlanetTitles;
+    private ListView mDrawerList;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private CharSequence mDrawerTitle;
+    private CharSequence mTitle;
+    private DrawerLayout drawerLayout;
+    private static View gridView;
 
+	  
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.ac_new_media_player);
+	//	showActionBar();
+		drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+		gridView = (GridView)findViewById(R.id.grid_view_albums);
 		LinearLayout mainLayout = (LinearLayout) findViewById(R.id.content);
 		final RelativeLayout windowLayout = (RelativeLayout) findViewById(R.id.windowLayout);
 		DisplayMetrics metrics = getResources().getDisplayMetrics();
 		float density = metrics.density;
 		
-		System.out.println("*********** Screen Width :"+metrics.widthPixels);
-		System.out.println("*********** Screen Height :"+metrics.heightPixels);
-		
+		 LayoutInflater inflator = (LayoutInflater) this
+		            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
 		activity = this;
+	//	playActionBar = new PlayerActionBar(inflator);
+		
+		mPlanetTitles = drawerLayout.getResources().getStringArray(R.array.planets_array);
+    	mDrawerList = (ListView) drawerLayout.findViewById(R.id.left_drawer);
+    	mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+                 R.layout.drawer_list_item, mPlanetTitles));
+    	 mTitle = mDrawerTitle = getTitle();
+    	
+	
+    	
+        // enable ActionBar app icon to behave as action to toggle nav drawer
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+        
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,                  /* host Activity */
+                drawerLayout,         /* DrawerLayout object */
+                R.drawable.img_btn_playlist,  /* nav drawer image to replace 'Up' caret */
+                R.string.drawer_open,  /* "open drawer" description for accessibility */
+                R.string.drawer_close  /* "close drawer" description for accessibility */
+                ) {
+            public void onDrawerClosed(View view) {
+                getActionBar().setTitle(mTitle);
+         //       grid.setVisibility(View.VISIBLE);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                getActionBar().setTitle(mDrawerTitle);
+         //       grid.setVisibility(View.INVISIBLE);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
+        
+        drawerLayout.setDrawerListener(mDrawerToggle);
+        
+		
 		artistImage = new ThumbnailImage(mainLayout, density, metrics.heightPixels, metrics.widthPixels);
 		centerPart = new PlayerCenterPart(mainLayout);
 		timerDisplay = new PlayerTimerDisplay(mainLayout);
 		footerLayout = new PlayerFooterLayout(mainLayout);
+	//	navigationLayout = new NavigationLayout(dwawerLayout);
 		slidingWindow = new SlidingWindow(this, windowLayout);
+		
 
 		centerPart.eventSubscriber();
 		slidingWindow.eventSubscriber();
@@ -234,6 +308,60 @@ public class NewMediaPlayerActivity extends Activity implements
 
 	}
 
+	/* Called whenever we call invalidateOptionsMenu() */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // If the nav drawer is open, hide action items related to the content view
+        boolean drawerOpen = drawerLayout.isDrawerOpen(mDrawerList);
+        menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
+    }
+    
+    /**
+     * When using the ActionBarDrawerToggle, you must call it during
+     * onPostCreate() and onConfigurationChanged()...
+     */
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggls
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+         // The action bar home/up action should open or close the drawer.
+         // ActionBarDrawerToggle will take care of this.
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+       
+        
+        return super.onOptionsItemSelected(item);
+    }
+    
+	private void showActionBar() {
+        LayoutInflater inflator = (LayoutInflater) this
+            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    View v = inflator.inflate(R.layout.media_player_menu, null);
+    ActionBar actionBar = getActionBar();
+    actionBar.setDisplayHomeAsUpEnabled(false);
+    actionBar.setDisplayShowHomeEnabled (false);
+    actionBar.setDisplayShowCustomEnabled(true);
+    actionBar.setDisplayShowTitleEnabled(false);
+    actionBar.setCustomView(v);
+}
+	
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.media_player, menu);
@@ -483,6 +611,50 @@ public class NewMediaPlayerActivity extends Activity implements
 
 	}
 
-	
+	 /* The click listner for ListView in the navigation drawer */
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            selectItem(position);
+        }
+    }
+
+    private void selectItem(int position) {
+        // update the main content by replacing fragments
+        Fragment fragment = new PlanetFragment();
+        
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+
+        // update selected item and title, then close the drawer
+        mDrawerList.setItemChecked(position, true);
+        setTitle(mPlanetTitles[position]);
+        drawerLayout.closeDrawer(mDrawerList);
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+        mTitle = title;
+        getActionBar().setTitle(mTitle);
+    }
+    
+
+    /**
+     * Fragment that appears in the "content_frame", shows a planet
+     */
+    public static class PlanetFragment extends Fragment {
+       
+        public PlanetFragment() {
+            // Empty constructor required for fragment subclasses
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                Bundle savedInstanceState) {
+           
+            return gridView;
+        }
+    }
+    
 
 }
