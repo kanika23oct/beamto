@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
 
+import android.support.v7.app.ActionBarActivity;
 import org.json.JSONArray;
 
 import us.beamto.newplayer.R;
@@ -86,7 +87,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.view.View;
 
-public class NewMediaPlayerActivity extends Activity implements
+public class NewMediaPlayerActivity extends ActionBarActivity implements
 		OnCompletionListener, 
 		OnScrollListener, OnClickListener, MediaPlayer.OnPreparedListener {
 	
@@ -118,7 +119,7 @@ public class NewMediaPlayerActivity extends Activity implements
 	public PlayerCenterPart centerPart;
 	public PlayerFooterLayout footerLayout;
 	public SlidingWindow slidingWindow;
-	public NavigationLayout navigationLayout;
+	//public NavigationLayout navigationLayout;
 	
 	private int seekForwardTime = 5000; // 5000 milliseconds
 	private int seekBackwardTime = 5000; // 5000 milliseconds
@@ -170,9 +171,9 @@ public class NewMediaPlayerActivity extends Activity implements
 	
     	
         // enable ActionBar app icon to behave as action to toggle nav drawer
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
-        
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host Activity */
                 drawerLayout,         /* DrawerLayout object */
@@ -181,17 +182,18 @@ public class NewMediaPlayerActivity extends Activity implements
                 R.string.drawer_close  /* "close drawer" description for accessibility */
                 ) {
             public void onDrawerClosed(View view) {
-                getActionBar().setTitle(mTitle);
+                getSupportActionBar().setTitle(mTitle);
          //       grid.setVisibility(View.VISIBLE);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
 
             public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
+                getSupportActionBar().setTitle(mDrawerTitle);
          //       grid.setVisibility(View.INVISIBLE);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                supportInvalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
             }
         };
+
         
         drawerLayout.setDrawerListener(mDrawerToggle);
         
@@ -348,11 +350,12 @@ public class NewMediaPlayerActivity extends Activity implements
         
         return super.onOptionsItemSelected(item);
     }
-    
+
+    /*
 	private void showActionBar() {
         LayoutInflater inflator = (LayoutInflater) this
             .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    View v = inflator.inflate(R.layout.media_player_menu, null);
+    View v = inflator.inflate(R.layout.drawer_layout, null);
     ActionBar actionBar = getActionBar();
     actionBar.setDisplayHomeAsUpEnabled(false);
     actionBar.setDisplayShowHomeEnabled (false);
@@ -360,7 +363,8 @@ public class NewMediaPlayerActivity extends Activity implements
     actionBar.setDisplayShowTitleEnabled(false);
     actionBar.setCustomView(v);
 }
-	
+*/
+
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -635,7 +639,7 @@ public class NewMediaPlayerActivity extends Activity implements
     @Override
     public void setTitle(CharSequence title) {
         mTitle = title;
-        getActionBar().setTitle(mTitle);
+        getSupportActionBar().setTitle(mTitle);
     }
     
 

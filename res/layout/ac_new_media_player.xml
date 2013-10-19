@@ -1,48 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main"
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
-
+    android:layout_height="match_parent">
+    <!-- The main content view -->
     <include
-            android:id="@+id/drawerLayout"
-            layout="@layout/drawer_layout" />
-    
-    <GridView
-        android:id="@+id/grid_view_albums"
-        android:layout_width="match_parent"
+        android:id="@+id/content_frame"
+        layout="@layout/drawer_content"
+		/>
+    <!-- The navigation drawer -->
+    <ListView android:id="@+id/left_drawer"
+        android:layout_width="240dp"
         android:layout_height="match_parent"
-        android:columnWidth="150dp"
-        android:gravity="center"
-        android:horizontalSpacing="10dp"
-        android:numColumns="auto_fit"
-        android:stretchMode="columnWidth"
-        android:verticalSpacing="30dp" >
-    </GridView>
+        android:layout_gravity="start"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        android:background="#111"/>
+</android.support.v4.widget.DrawerLayout>
 
-    <us.beamto.newplayer.components.ClickableSlidingDrawer
-        android:id="@+id/slidingDrawer1"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:allowSingleTap="false"
-        android:content="@+id/content"
-        android:handle="@+id/windowLayout" >
-
-        <include
-            android:id="@+id/windowLayout"
-            layout="@layout/slidingwindow_layout" />
-
-        <include
-            android:id="@+id/content"
-            layout="@layout/player" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-    </us.beamto.newplayer.components.ClickableSlidingDrawer>
-
-</RelativeLayout>
+	
