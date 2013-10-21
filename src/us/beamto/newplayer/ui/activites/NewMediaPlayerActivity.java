@@ -86,6 +86,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.view.View;
 
+@SuppressLint("NewApi")
 public class NewMediaPlayerActivity extends Activity implements
 		OnCompletionListener, 
 		OnScrollListener, OnClickListener, MediaPlayer.OnPreparedListener {
@@ -118,7 +119,6 @@ public class NewMediaPlayerActivity extends Activity implements
 	public PlayerCenterPart centerPart;
 	public PlayerFooterLayout footerLayout;
 	public SlidingWindow slidingWindow;
-	public NavigationLayout navigationLayout;
 	
 	private int seekForwardTime = 5000; // 5000 milliseconds
 	private int seekBackwardTime = 5000; // 5000 milliseconds
@@ -141,13 +141,13 @@ public class NewMediaPlayerActivity extends Activity implements
     private static View gridView;
 
 	  
+	@SuppressLint("NewApi")
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.ac_new_media_player);
-	//	showActionBar();
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 		gridView = (GridView)findViewById(R.id.grid_view_albums);
 		LinearLayout mainLayout = (LinearLayout) findViewById(R.id.content);
@@ -349,17 +349,7 @@ public class NewMediaPlayerActivity extends Activity implements
         return super.onOptionsItemSelected(item);
     }
     
-	private void showActionBar() {
-        LayoutInflater inflator = (LayoutInflater) this
-            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    View v = inflator.inflate(R.layout.media_player_menu, null);
-    ActionBar actionBar = getActionBar();
-    actionBar.setDisplayHomeAsUpEnabled(false);
-    actionBar.setDisplayShowHomeEnabled (false);
-    actionBar.setDisplayShowCustomEnabled(true);
-    actionBar.setDisplayShowTitleEnabled(false);
-    actionBar.setCustomView(v);
-}
+	
 	
 	
 	@Override
