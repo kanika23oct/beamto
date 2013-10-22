@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/content_frame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <GridView
+        android:id="@+id/grid_view_albums"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:columnWidth="150dp"
+        android:gravity="center"
+        android:horizontalSpacing="10dp"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="30dp" >
+    </GridView>
+
+    <us.beamto.newplayer.components.ClickableSlidingDrawer
+        android:id="@+id/slidingDrawer1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:allowSingleTap="false"
+        android:content="@+id/content"
+        android:handle="@+id/windowLayout" >
+
+        <include
+            android:id="@+id/windowLayout"
+            layout="@layout/slidingwindow_layout" />
+
+        <include
+            android:id="@+id/content"
+            layout="@layout/player" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </us.beamto.newplayer.components.ClickableSlidingDrawer>
+
+</RelativeLayout>
