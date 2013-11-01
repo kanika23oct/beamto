@@ -18,6 +18,7 @@ import us.beamto.newplayer.R.string;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarActivity;
 
 import us.beamto.newplayer.api.LoadAlbumPage;
 
@@ -26,6 +27,11 @@ import us.beamto.newplayer.common.PhoneStateChange;
 import us.beamto.newplayer.common.Utilities;
 import us.beamto.newplayer.common.VariablesList;
 import us.beamto.newplayer.ui.adapters.ClickableListAdapter;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -60,8 +66,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
+
 import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -87,7 +92,7 @@ import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.view.View;
 
 @SuppressLint("NewApi")
-public class NewMediaPlayerActivity extends Activity implements
+public class NewMediaPlayerActivity extends SlidingFragmentActivity implements
 		OnCompletionListener, OnScrollListener, OnClickListener,
 		MediaPlayer.OnPreparedListener {
 
@@ -140,11 +145,16 @@ public class NewMediaPlayerActivity extends Activity implements
 	@SuppressLint("NewApi")
 	@SuppressWarnings("deprecation")
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.ac_new_media_player);
-		drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+		setBehindContentView(R.layout.sliding_content);
+	    getSupportActionBar().setIcon(android.R.color.transparent);
+	    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+		//drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 		RelativeLayout contentLayout = (RelativeLayout) findViewById(R.id.content_frame);
 
 		gridView = (GridView) contentLayout.findViewById(R.id.grid_view_albums);
@@ -159,41 +169,19 @@ public class NewMediaPlayerActivity extends Activity implements
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 		activity = this;
-		// playActionBar = new PlayerActionBar(inflator);
-
-		mPlanetTitles = drawerLayout.getResources().getStringArray(
-				R.array.planets_array);
-		mDrawerList = (ListView) drawerLayout.findViewById(R.id.left_drawer);
-		mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-				R.layout.drawer_list_item, mPlanetTitles));
-		mTitle = mDrawerTitle = getTitle();
-
-		// enable ActionBar app icon to behave as action to toggle nav drawer
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		getActionBar().setHomeButtonEnabled(true);
-
-		mDrawerToggle = new ActionBarDrawerToggle(this, /* host Activity */
-		drawerLayout, /* DrawerLayout object */
-		R.drawable.img_btn_playlist, /* nav drawer image to replace 'Up' caret */
-		R.string.drawer_open, /* "open drawer" description for accessibility */
-		R.string.drawer_close /* "close drawer" description for accessibility */
-		) {
-			public void onDrawerClosed(View view) {
-				getActionBar().setTitle(mTitle);
-				// grid.setVisibility(View.VISIBLE);
-				invalidateOptionsMenu(); // creates call to
-											// onPrepareOptionsMenu()
-			}
-
-			public void onDrawerOpened(View drawerView) {
-				getActionBar().setTitle(mDrawerTitle);
-				// grid.setVisibility(View.INVISIBLE);
-				invalidateOptionsMenu(); // creates call to
-											// onPrepareOptionsMenu()
-			}
-		};
-
-		drawerLayout.setDrawerListener(mDrawerToggle);
+		// customize the SlidingMenu
+		
+		SlidingMenu menu = getSlidingMenu();
+		menu.setMode(SlidingMenu.LEFT);        
+	    menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+	    menu.setShadowWidthRes(R.dimen.shadow_width);
+	    menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+	    menu.setFadeDegree(0.35f);
+	    menu.setMenu(R.layout.sliding_content); 
+	//    menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+	   
+		
+		//drawerLayout.setDrawerListener(mDrawerToggle);
 
 		artistImage = new ThumbnailImage(mainLayout, density,
 				metrics.heightPixels, metrics.widthPixels);
@@ -308,10 +296,6 @@ public class NewMediaPlayerActivity extends Activity implements
 	/* Called whenever we call invalidateOptionsMenu() */
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		// If the nav drawer is open, hide action items related to the content
-		// view
-		boolean drawerOpen = drawerLayout.isDrawerOpen(mDrawerList);
-		menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -321,35 +305,30 @@ public class NewMediaPlayerActivity extends Activity implements
 	 */
 
 	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
+	public void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		// Sync the toggle state after onRestoreInstanceState has occurred.
-		mDrawerToggle.syncState();
 	}
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		// Pass any configuration change to the drawer toggls
-		mDrawerToggle.onConfigurationChanged(newConfig);
-	}
+		}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// The action bar home/up action should open or close the drawer.
-		// ActionBarDrawerToggle will take care of this.
-		if (mDrawerToggle.onOptionsItemSelected(item)) {
-			return true;
-		}
 
 		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.media_player, menu);
-		return true;
+	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+	    menu.add(0,R.menu.media_player,0,"Menu")
+	    .setIcon(R.drawable.indicator)
+	    .setShowAsAction(com.actionbarsherlock.view.MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+	    return super.onCreateOptionsMenu(menu);
 	}
+
 
 	@SuppressWarnings("deprecation")
 	public void playSong(String url) {
@@ -617,7 +596,7 @@ public class NewMediaPlayerActivity extends Activity implements
 	@Override
 	public void setTitle(CharSequence title) {
 		mTitle = title;
-		getActionBar().setTitle(mTitle);
+		getSupportActionBar().setTitle(mTitle);
 	}
 
 	/**
