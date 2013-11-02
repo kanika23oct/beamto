@@ -16,6 +16,7 @@ import us.beamto.newplayer.R.menu;
 import us.beamto.newplayer.R.string;
 
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.ListFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -91,8 +92,8 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.view.View;
 
-@SuppressLint("NewApi")
-public class NewMediaPlayerActivity extends SlidingFragmentActivity implements
+@SuppressLint({ "NewApi", "ValidFragment" })
+public class NewMediaPlayerActivity extends BaseActivity implements
 		OnCompletionListener, OnScrollListener, OnClickListener,
 		MediaPlayer.OnPreparedListener {
 
@@ -142,6 +143,10 @@ public class NewMediaPlayerActivity extends SlidingFragmentActivity implements
 	private DrawerLayout drawerLayout;
 	private static View gridView;
 
+	public NewMediaPlayerActivity() {
+		super(R.string.app_name);
+	}
+	
 	@SuppressLint("NewApi")
 	@SuppressWarnings("deprecation")
 	@Override
@@ -149,11 +154,7 @@ public class NewMediaPlayerActivity extends SlidingFragmentActivity implements
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.ac_new_media_player);
-		setBehindContentView(R.layout.sliding_content);
-	    getSupportActionBar().setIcon(android.R.color.transparent);
-	    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
+		
 		//drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 		RelativeLayout contentLayout = (RelativeLayout) findViewById(R.id.content_frame);
 
@@ -169,16 +170,7 @@ public class NewMediaPlayerActivity extends SlidingFragmentActivity implements
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 		activity = this;
-		// customize the SlidingMenu
 		
-		SlidingMenu menu = getSlidingMenu();
-		menu.setMode(SlidingMenu.LEFT);        
-	    menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-	    menu.setShadowWidthRes(R.dimen.shadow_width);
-	    menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
-	    menu.setFadeDegree(0.35f);
-	    menu.setMenu(R.layout.sliding_content); 
-	//    menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
 	   
 		
 		//drawerLayout.setDrawerListener(mDrawerToggle);
@@ -314,20 +306,7 @@ public class NewMediaPlayerActivity extends SlidingFragmentActivity implements
 		super.onConfigurationChanged(newConfig);
 		}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-
-		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
-	    menu.add(0,R.menu.media_player,0,"Menu")
-	    .setIcon(R.drawable.indicator)
-	    .setShowAsAction(com.actionbarsherlock.view.MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-	    return super.onCreateOptionsMenu(menu);
-	}
+	
 
 
 	@SuppressWarnings("deprecation")
@@ -581,16 +560,7 @@ public class NewMediaPlayerActivity extends SlidingFragmentActivity implements
 
 	private void selectItem(int position) {
 		// update the main content by replacing fragments
-		Fragment fragment = new PlanetFragment();
-
-		FragmentManager fragmentManager = getFragmentManager();
-		fragmentManager.beginTransaction()
-				.replace(R.id.content_frame, fragment).commit();
-
-		// update selected item and title, then close the drawer
-		mDrawerList.setItemChecked(position, true);
-		setTitle(mPlanetTitles[position]);
-		drawerLayout.closeDrawer(mDrawerList);
+		
 	}
 
 	@Override
@@ -602,17 +572,20 @@ public class NewMediaPlayerActivity extends SlidingFragmentActivity implements
 	/**
 	 * Fragment that appears in the "content_frame", shows a planet
 	 */
-	public static class PlanetFragment extends Fragment {
+	public class PlanetFragment extends ListFragment {
 
 		public PlanetFragment() {
 			// Empty constructor required for fragment subclasses
 		}
 
 		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
 
-			return gridView;
+			String[] birds = getResources().getStringArray(R.array.planets_array);
+			ArrayAdapter<String> colorAdapter = new ArrayAdapter<String>(getActivity(), 
+					android.R.layout.simple_list_item_1, android.R.id.text1, birds);
+			setListAdapter(colorAdapter);
 		}
 	}
 
