@@ -67,4 +67,18 @@ public class Utilities {
 		// return current duration in milliseconds
 		return currentDuration * 1000;
 	}
+
+	public static String albumURL(int albumID){
+		String albumURL = "";
+		switch ((albumID)){
+		case 1: albumURL = BuildValues.BASE_URL + VariablesList.ALBUMS_URL;
+		        break;
+		case 2: albumURL = BuildValues.BASE_URL + VariablesList.TRENDING_ALBUM_URL;
+				break;
+		default: albumURL = BuildValues.BASE_URL + VariablesList.ALBUMS_URL;
+                 break;
+			
+		}
+	  return albumURL;
+	}
 }
