@@ -23,7 +23,9 @@ public class VariablesList {
 	public static final String SONGS_LIST_URL = "/api/v1/getAlbumObject";
 	public static final String SONG_URL = "/api/v1/getSongPlaybackUrl";
 	public static final String ALBUMS_URL = "/api/v1/getAlbums";
-	public static final String TRENDING_SONGS_URL = "/api/v1/getTrendingAlbums";
+	public static final String TRENDING_ALBUM_URL = "/api/v1/getTrendingAlbums";
+	public static final String RECENT_ALBUM = "1";
+	public static final String TRENDING_ALBUM = "2"; 
 
 
 
