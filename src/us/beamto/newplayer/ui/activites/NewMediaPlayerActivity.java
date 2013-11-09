@@ -142,11 +142,12 @@ public class NewMediaPlayerActivity extends BaseActivity implements
 	private CharSequence mTitle;
 	private DrawerLayout drawerLayout;
 	private static View gridView;
+	private String albumApi;
 
 	public NewMediaPlayerActivity() {
 		super(R.string.app_name);
 	}
-	
+
 	@SuppressLint("NewApi")
 	@SuppressWarnings("deprecation")
 	@Override
@@ -154,8 +155,8 @@ public class NewMediaPlayerActivity extends BaseActivity implements
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.ac_new_media_player);
-		
-		//drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+
+		// drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 		RelativeLayout contentLayout = (RelativeLayout) findViewById(R.id.content_frame);
 
 		gridView = (GridView) contentLayout.findViewById(R.id.grid_view_albums);
@@ -170,10 +171,8 @@ public class NewMediaPlayerActivity extends BaseActivity implements
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 		activity = this;
-		
-	   
-		
-		//drawerLayout.setDrawerListener(mDrawerToggle);
+
+		// drawerLayout.setDrawerListener(mDrawerToggle);
 
 		artistImage = new ThumbnailImage(mainLayout, density,
 				metrics.heightPixels, metrics.widthPixels);
@@ -206,22 +205,33 @@ public class NewMediaPlayerActivity extends BaseActivity implements
 		mediaPlayer.setOnPreparedListener(this);
 		Bundle b = getIntent().getExtras();
 		if (b != null) {
+			albumApi = (String) getIntent().getSerializableExtra("Album_Url");
+			albumApi = albumApi.trim();
 			selectedSongs = (ArrayList<HashMap<String, String>>) getIntent()
 					.getSerializableExtra("SelectedSongList");
-			currentIndex = 0;
-			HashMap<String, String> song = selectedSongs.get(0);
-			url = song.get("songUrl");
-			name = song.get("songName");
-			albumName = song.get("albumName");
-			playSong(url);
+			if (selectedSongs != null) {
+				currentIndex = 0;
+				HashMap<String, String> song = selectedSongs.get(0);
+				url = song.get("songUrl");
+				name = song.get("songName");
+				albumName = song.get("albumName");
+				playSong(url);
+			}
+			else
+			{
+				selectedSongs = new ArrayList<HashMap<String, String>>();
+			}
+		} else {
+			albumApi = "1";
 		}
-
 		adaptor = new ClickableListAdapter(this, songsList);
 		final GridView view = (GridView) findViewById(R.id.grid_view_albums);
 		view.setAdapter(adaptor);
 		view.setOnScrollListener(this);
 		// view.setSmoothScrollbarEnabled(true);
-		albumURL = BuildValues.BASE_URL + VariablesList.ALBUMS_URL;// getResources().getString(R.string.albumsURL);
+
+		albumURL = Utilities.albumURL(Integer.parseInt(albumApi));
+
 		songURL = BuildValues.BASE_URL + VariablesList.SONGS_LIST_URL;// getString(R.string.songsListURL);
 		if (songsList.size() == 0) {
 			if (numberOfPages == 1) {
@@ -304,10 +314,7 @@ public class NewMediaPlayerActivity extends BaseActivity implements
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		}
-
-	
-
+	}
 
 	@SuppressWarnings("deprecation")
 	public void playSong(String url) {
@@ -454,7 +461,7 @@ public class NewMediaPlayerActivity extends BaseActivity implements
 	@Override
 	public void onCompletion(android.media.MediaPlayer arg0) {
 		HashMap<String, String> song = null;
-		if (selectedSongs.size() >= 1) {
+		if (selectedSongs != null && selectedSongs.size() >= 1) {
 			if (isRepeat) {
 				song = selectedSongs.get(currentIndex);
 			} else if (isShuffle) {
@@ -548,45 +555,15 @@ public class NewMediaPlayerActivity extends BaseActivity implements
 
 	}
 
-	/* The click listner for ListView in the navigation drawer */
-	private class DrawerItemClickListener implements
-			ListView.OnItemClickListener {
-		@Override
-		public void onItemClick(AdapterView<?> parent, View view, int position,
-				long id) {
-			selectItem(position);
-		}
-	}
-
 	private void selectItem(int position) {
 		// update the main content by replacing fragments
-		
+
 	}
 
 	@Override
 	public void setTitle(CharSequence title) {
 		mTitle = title;
 		getSupportActionBar().setTitle(mTitle);
-	}
-
-	/**
-	 * Fragment that appears in the "content_frame", shows a planet
-	 */
-	public class PlanetFragment extends ListFragment {
-
-		public PlanetFragment() {
-			// Empty constructor required for fragment subclasses
-		}
-
-		@Override
-		public void onCreate(Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
-
-			String[] birds = getResources().getStringArray(R.array.planets_array);
-			ArrayAdapter<String> colorAdapter = new ArrayAdapter<String>(getActivity(), 
-					android.R.layout.simple_list_item_1, android.R.id.text1, birds);
-			setListAdapter(colorAdapter);
-		}
 	}
 
 }
