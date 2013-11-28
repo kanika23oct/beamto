@@ -3,6 +3,8 @@ package us.beamto.newplayer.ui.activites;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,6 +15,7 @@ import us.beamto.newplayer.R.id;
 import us.beamto.newplayer.R.layout;
 import us.beamto.newplayer.R.string;
 import us.beamto.newplayer.api.JSONParser;
+import us.beamto.newplayer.api.LoadSongsService;
 import us.beamto.newplayer.api.SongsList;
 import us.beamto.newplayer.common.BuildValues;
 import us.beamto.newplayer.common.PhoneStateChange;
@@ -34,11 +37,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class SongListActivity extends ListActivity {
+public class SongListActivity extends ListActivity implements Observer {
 
 	String albumIndex = "";
 	String url = "";
-	public ArrayList<HashMap<String, String>> songList = new ArrayList<HashMap<String, String>>();
+	private static ArrayList<HashMap<String, String>> songList = new ArrayList<HashMap<String, String>>();
 
 	private String albumName = "";
 	Button submitButton;
@@ -61,6 +64,9 @@ public class SongListActivity extends ListActivity {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.ac_song_list);
+		Subscriber.getInstance().addObserver(this);
+		
+		songList.clear();
 		instance = NewMediaPlayerActivity.getActivity();
 		albumIndex = getIntent().getExtras().getString("albumIndex");
 		albumName = getIntent().getExtras().getString("albumName");
@@ -100,8 +106,25 @@ public class SongListActivity extends ListActivity {
 		ListView lv = getListView();
 		lv.setAdapter(songAdapter);
 		showDialog(0);
-		new LoadSongs().execute(url, slug, albumImageURL);
+		Intent service = new Intent(this, LoadSongsService.class);
+	    service.putExtra("Album-Index", slug);
+	    service.putExtra("Album-Image", albumImageURL);
+	    this.startService(service);
+	
+	}
 
+	public static void addToSongsList(HashMap<String, String> song) {
+     	songList.add(song);
+    }
+
+	@Override
+	public void update(Observable observable, Object message) {
+		String data = (String) message;
+		System.out.println(" Message data: "+ data);
+		if (data.equalsIgnoreCase("NOTIFY_SONG_LOAD")) {
+			progressDialog.dismiss();
+		//	songAdapter.notifyDataSetChanged();
+		}
 	}
 
 	protected Dialog onCreateDialog(int id) {
@@ -117,7 +140,7 @@ public class SongListActivity extends ListActivity {
 		}
 	}
 
-	private class LoadSongs extends
+/*	private class LoadSongs extends
 			AsyncTask<String, Void, ArrayList<HashMap<String, String>>> {
 
 		@Override
@@ -157,5 +180,6 @@ public class SongListActivity extends ListActivity {
 			progressDialog.dismiss();
 			songAdapter.notifyDataSetChanged();
 		}
-	}
+	}*/
+
 }
