@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Random;
 
 import org.json.JSONArray;
@@ -24,9 +26,13 @@ import android.support.v7.app.ActionBarActivity;
 import us.beamto.newplayer.api.LoadAlbumPage;
 
 import us.beamto.newplayer.common.BuildValues;
+import us.beamto.newplayer.common.LoadAlbumBroadcastReceiver;
 import us.beamto.newplayer.common.PhoneStateChange;
 import us.beamto.newplayer.common.Utilities;
 import us.beamto.newplayer.common.VariablesList;
+import us.beamto.newplayer.service.LoadAlbumService;
+import us.beamto.newplayer.service.LoadSongsService;
+import us.beamto.newplayer.service.LoadTrendingAlbumsService;
 import us.beamto.newplayer.ui.adapters.ClickableListAdapter;
 
 import com.actionbarsherlock.view.Menu;
@@ -55,6 +61,7 @@ import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
@@ -97,6 +104,7 @@ public class NewMediaPlayerActivity extends BaseActivity implements
 		OnCompletionListener, OnScrollListener, OnClickListener,
 		MediaPlayer.OnPreparedListener {
 
+	private LoadAlbumBroadcastReceiver broadcastReceiver;
 	private static Activity activity;
 	public static MediaPlayer mediaPlayer;
 	protected static ProgressDialog progDialog;
@@ -155,7 +163,6 @@ public class NewMediaPlayerActivity extends BaseActivity implements
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.ac_new_media_player);
-
 		// drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
 		RelativeLayout contentLayout = (RelativeLayout) findViewById(R.id.content_frame);
 
@@ -216,9 +223,7 @@ public class NewMediaPlayerActivity extends BaseActivity implements
 				name = song.get("songName");
 				albumName = song.get("albumName");
 				playSong(url);
-			}
-			else
-			{
+			} else {
 				selectedSongs = new ArrayList<HashMap<String, String>>();
 			}
 		} else {
@@ -231,15 +236,34 @@ public class NewMediaPlayerActivity extends BaseActivity implements
 		// view.setSmoothScrollbarEnabled(true);
 
 		albumURL = Utilities.albumURL(Integer.parseInt(albumApi));
-
-		songURL = BuildValues.BASE_URL + VariablesList.SONGS_LIST_URL;// getString(R.string.songsListURL);
-		if (songsList.size() == 0) {
-			if (numberOfPages == 1) {
-				setLoading(true);
-				new LoadAlbumPage().execute(albumURL, "1", songURL);
-
-			}
+		/*
+		 * albumURL = BuildValues.BASE_URL + VariablesList.ALBUMS_URL;
+		 * 
+		 * songURL = BuildValues.BASE_URL + VariablesList.SONGS_LIST_URL;//
+		 * getString(R.string.songsListURL); if (songsList.size() == 0) { if
+		 * (numberOfPages == 1) { setLoading(true); new
+		 * LoadAlbumPage().execute(albumURL, "1", songURL);
+		 * 
+		 * } }
+		 */
+		if (albumURL.equalsIgnoreCase("Trending")) {
+			setLoading(true);
+			Intent service = new Intent(this, LoadTrendingAlbumsService.class);
+			service.putExtra("Page-Number", "1");
+			this.startService(service);
+			
+		} else {
+			setLoading(true);
+			Intent service = new Intent(this, LoadAlbumService.class);
+			service.putExtra("Page-Number", "1");
+			this.startService(service);
 		}
+
+		broadcastReceiver = new LoadAlbumBroadcastReceiver();
+		IntentFilter intentFilter = new IntentFilter(
+				"us.beamto.newplayer.service.RESPONSE");
+		intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+		registerReceiver(broadcastReceiver, intentFilter);
 
 		slidingDrawer.setOnDrawerOpenListener(new OnDrawerOpenListener() {
 
@@ -362,9 +386,17 @@ public class NewMediaPlayerActivity extends BaseActivity implements
 			this.finish();
 
 		}
+		 unregisterReceiver(broadcastReceiver);
 		return;
 	}
 
+	@Override
+	 protected void onDestroy() {
+	  super.onDestroy();
+	  //un-register BroadcastReceiver
+	  unregisterReceiver(broadcastReceiver);
+	 }
+	
 	private void clearData() {
 		selectedSongs.clear();
 	}
@@ -399,7 +431,25 @@ public class NewMediaPlayerActivity extends BaseActivity implements
 	public void AddToList(int numberOfPages) {
 
 		String page = "" + numberOfPages;
-		new LoadAlbumPage().execute(albumURL, page, songURL);
+		//new LoadAlbumPage().execute(albumURL, page, songURL);
+		if (albumURL.equalsIgnoreCase("Trending")) {
+			setLoading(true);
+			Intent service = new Intent(this, LoadTrendingAlbumsService.class);
+			service.putExtra("Page-Number", page);
+			this.startService(service);
+			
+		} else {
+			setLoading(true);
+			Intent service = new Intent(this, LoadAlbumService.class);
+			service.putExtra("Page-Number", page);
+			this.startService(service);
+		}
+		
+		LoadAlbumBroadcastReceiver broadcastReceiver = new LoadAlbumBroadcastReceiver();
+		IntentFilter intentFilter = new IntentFilter(
+				"us.beamto.newplayer.service.RESPONSE");
+		intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+		registerReceiver(broadcastReceiver, intentFilter);
 
 	}
 
@@ -435,6 +485,7 @@ public class NewMediaPlayerActivity extends BaseActivity implements
 		for (int i = 0; i < newList.size(); i++) {
 			adaptor.addToList(newList.get(i));
 		}
+		System.out.println("Total Album Count :" + adaptor.getCount());
 	}
 
 	public void setCurrentSongName(String songName) {
