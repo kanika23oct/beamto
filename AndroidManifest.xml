@@ -29,6 +29,14 @@
         <activity android:name=".ui.activites.SongListActivity" />
         <activity android:name=".ui.activites.PlayListActivity" />
         <activity android:name="com.crittercism.NotificationActivity"/>
+        <service android:enabled="true" android:name="us.beamto.newplayer.service.LoadSongsService" >
+        </service>
+        <service android:enabled="true" android:name="us.beamto.newplayer.service.TotalSongsService" >
+        </service>
+        <service android:enabled="true" android:name="us.beamto.newplayer.service.LoadAlbumService" >
+        </service>
+        <service android:enabled="true" android:name="us.beamto.newplayer.service.LoadTrendingAlbumsService" >
+        </service>
     </application>
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
