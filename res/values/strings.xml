@@ -13,5 +13,6 @@
     <string name="drawer_close">Close navigation drawer</string>
     <string name="Recent">Recently Added</string>
     <string name="Trending">Trending</string>
+    <string name="playerview_text">BeamTo Music Video</string>
    
 </resources>
