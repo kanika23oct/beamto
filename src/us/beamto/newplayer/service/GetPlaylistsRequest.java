@@ -59,6 +59,7 @@ public class GetPlaylistsRequest extends PostApiRequest {
 					String name = videoDetails.getString(VariablesList.TAG_NAME);
 					String id = videoDetails.getString(VariablesList.TAG_ID);
 					String imageURL = videoDetails.getString(VariablesList.TAG_ALBUM_IMAGE);
+					String slug = videoDetails.getString(VariablesList.TAG_SLUG);
 					
 				}
 				
