@@ -28,6 +28,7 @@
         </activity>
         <activity android:name=".ui.activites.SongListActivity" />
         <activity android:name=".ui.activites.PlayListActivity" />
+        <activity android:name=".ui.activites.VideoPlayListActivity" />
         <activity android:name="com.crittercism.NotificationActivity"/>
         <service android:enabled="true" android:name="us.beamto.newplayer.service.LoadSongsService" >
         </service>
@@ -36,6 +37,8 @@
         <service android:enabled="true" android:name="us.beamto.newplayer.service.LoadAlbumService" >
         </service>
         <service android:enabled="true" android:name="us.beamto.newplayer.service.LoadTrendingAlbumsService" >
+        </service>
+        <service android:enabled="true" android:name="us.beamto.newplayer.service.GetPlaylistsService" >
         </service>
     </application>
 
