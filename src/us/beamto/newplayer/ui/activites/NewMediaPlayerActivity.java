@@ -236,6 +236,7 @@ public class NewMediaPlayerActivity extends BaseActivity implements
 		// view.setSmoothScrollbarEnabled(true);
 
 		albumURL = Utilities.albumURL(Integer.parseInt(albumApi));
+		System.out.println("Album Trending URL: "+albumURL);
 		/*
 		 * albumURL = BuildValues.BASE_URL + VariablesList.ALBUMS_URL;
 		 * 
@@ -261,7 +262,7 @@ public class NewMediaPlayerActivity extends BaseActivity implements
 
 		broadcastReceiver = new LoadAlbumBroadcastReceiver();
 		IntentFilter intentFilter = new IntentFilter(
-				"us.beamto.newplayer.service.RESPONSE");
+				"us.beamto.newplayer.service.LoadAlbumService");
 		intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
 		registerReceiver(broadcastReceiver, intentFilter);
 
@@ -386,7 +387,7 @@ public class NewMediaPlayerActivity extends BaseActivity implements
 			this.finish();
 
 		}
-		 unregisterReceiver(broadcastReceiver);
+	//	 unregisterReceiver(broadcastReceiver);
 		return;
 	}
 
@@ -447,7 +448,7 @@ public class NewMediaPlayerActivity extends BaseActivity implements
 		
 		LoadAlbumBroadcastReceiver broadcastReceiver = new LoadAlbumBroadcastReceiver();
 		IntentFilter intentFilter = new IntentFilter(
-				"us.beamto.newplayer.service.RESPONSE");
+				"us.beamto.newplayer.service.LoadAlbumService");
 		intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
 		registerReceiver(broadcastReceiver, intentFilter);
 
