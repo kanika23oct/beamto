@@ -9,9 +9,15 @@ import us.beamto.newplayer.ui.adapters.ClickableListAdapter;
 public class LoadAlbumBroadcastReceiver extends BroadcastReceiver {
 
 	@Override
-	  public void onReceive(Context context, Intent intent) {
-		ClickableListAdapter adapter = NewMediaPlayerActivity.getActivity().getClickableListAdapter();
-		adapter.notifyDataSetChanged();
-	  }
-	
+	public void onReceive(Context context, Intent intent) {
+		String action = intent.getAction();
+		if (action
+				.equalsIgnoreCase("us.beamto.newplayer.service.LoadAlbumService")) {
+			ClickableListAdapter adapter = NewMediaPlayerActivity.getActivity()
+					.getClickableListAdapter();
+			adapter.notifyDataSetChanged();
+		}
+
+	}
+
 }
