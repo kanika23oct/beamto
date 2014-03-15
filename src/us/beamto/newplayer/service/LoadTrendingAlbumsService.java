@@ -34,7 +34,7 @@ public class LoadTrendingAlbumsService extends IntentService{
 	
 		// send update
 		Intent intentUpdate = new Intent();
-		intentUpdate.setAction("us.beamto.newplayer.service.RESPONSE");
+		intentUpdate.setAction("us.beamto.newplayer.service.LoadAlbumService");
 		intentUpdate.addCategory(Intent.CATEGORY_DEFAULT);
 		sendBroadcast(intentUpdate);
 	}
