@@ -16,32 +16,33 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-
+import android.widget.TextView;
 
 import us.beamto.newplayer.common.VariablesList;
+import us.beamto.newplayer.ui.activites.NewMediaPlayerActivity;
 
-public class VideoAdaptor extends BaseAdapter{
+public class VideoAdaptor extends BaseAdapter {
 	private Context context;
-	private ArrayList<HashMap<String, String>> videoPlayLists = new ArrayList<HashMap<String, String>> ();
+	private ArrayList<HashMap<String, String>> videoPlayLists = new ArrayList<HashMap<String, String>>();
 	private LayoutInflater inflater;
 	private static Resources resources;
 	ImageView imageView;
 	DisplayImageOptions options;
 	ImageLoader imageLoader;
-    String imageURL = "";
-	
-	public VideoAdaptor(Context context,ArrayList<HashMap<String, String>> videoPlayList)
-	{
+	String imageURL = "";
+
+	public VideoAdaptor(Context context,
+			ArrayList<HashMap<String, String>> videoPlayList) {
 		this.context = context;
 		inflater = LayoutInflater.from(context);
 		this.videoPlayLists = videoPlayList;
 		resources = context.getResources();
-		imageLoader = ImageLoader.getInstance();
-		imageLoader.init(ImageLoaderConfiguration.createDefault(context));
-		options = new DisplayImageOptions.Builder()
-				.showStubImage(R.drawable.ic_launcher)
-				.showImageForEmptyUri(R.drawable.ic_launcher).cacheOnDisc()
-				.cacheInMemory().build();
+		imageLoader =  NewMediaPlayerActivity.getActivity().getImageLoader();
+			}
+	
+	public void addToList(HashMap<String, String> video) {
+		System.out.println("%%%%% Added a video to adaptor %%%%");
+		videoPlayLists.add(video);
 	}
 
 	@Override
@@ -61,18 +62,24 @@ public class VideoAdaptor extends BaseAdapter{
 
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
-		HashMap<String,String> videoPlayList = videoPlayLists.get(position);
+		System.out.println("***** Playing the video *******");
+		HashMap<String, String> videoPlayList = videoPlayLists.get(position);
 		View v = null;
-		if(convertView != null)
+		if (convertView != null)
 			v = convertView;
 		else
 			v = inflater.inflate(R.layout.li_clickable_list, parent, false);
-		
-		ImageView imageView = (ImageView)v.findViewById(R.id.icon_image);
+
+		ImageView imageView = (ImageView) v.findViewById(R.id.icon_image);
 		imageURL = videoPlayList.get(VariablesList.TAG_ALBUM_IMAGE);
-		imageLoader.displayImage(imageURL, imageView,options);
-		
-		
+		imageLoader.displayImage(imageURL, imageView, options);
+
+		TextView textView = (TextView) v.findViewById(R.id.icon_text);
+        textView.setText(videoPlayList.get(VariablesList.TAG_NAME));
+        
+        final TextView itemTotalSongs = (TextView) v
+				.findViewById(R.id.total_songs);
+		itemTotalSongs.setText(videoPlayList.get(VariablesList.NUMBER_OF_SONGS)+ " songs");
 		return v;
 	}
 
