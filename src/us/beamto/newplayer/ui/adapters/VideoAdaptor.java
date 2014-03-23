@@ -37,9 +37,9 @@ public class VideoAdaptor extends BaseAdapter {
 		inflater = LayoutInflater.from(context);
 		this.videoPlayLists = videoPlayList;
 		resources = context.getResources();
-		imageLoader =  NewMediaPlayerActivity.getActivity().getImageLoader();
-			}
-	
+		imageLoader = NewMediaPlayerActivity.getActivity().getImageLoader();
+	}
+
 	public void addToList(HashMap<String, String> video) {
 		System.out.println("%%%%% Added a video to adaptor %%%%");
 		videoPlayLists.add(video);
@@ -75,11 +75,17 @@ public class VideoAdaptor extends BaseAdapter {
 		imageLoader.displayImage(imageURL, imageView, options);
 
 		TextView textView = (TextView) v.findViewById(R.id.icon_text);
-        textView.setText(videoPlayList.get(VariablesList.TAG_NAME));
-        
-        final TextView itemTotalSongs = (TextView) v
+		textView.setText(videoPlayList.get(VariablesList.TAG_NAME));
+
+		final TextView itemArtistName = (TextView) v
+				.findViewById(R.id.album_artist);
+		itemArtistName
+				.setText(videoPlayList.get(VariablesList.TAG_USERNAME));
+
+		final TextView itemTotalSongs = (TextView) v
 				.findViewById(R.id.total_songs);
-		itemTotalSongs.setText(videoPlayList.get(VariablesList.NUMBER_OF_SONGS)+ " songs");
+		itemTotalSongs.setText(videoPlayList.get(VariablesList.NUMBER_OF_SONGS)
+				+ " songs");
 		return v;
 	}
 
